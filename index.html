@@ -1,50 +1,307 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Рейтинг волонтёрского штаба</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ДоброЗАУ — Волонтёрский центр</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg-page: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --badge-bg: #dbeafe;
+      --badge-text: #1e40af;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.5;
+    }
+
+    /* Навигация */
+    header {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-main);
+      text-decoration: none;
+    }
+
+    .logo-badge {
+      background: var(--primary);
+      color: white;
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-size: 1.1rem;
+    }
+
+    .btn-admin {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .btn-admin:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+
+    /* Главный баннер */
+    .hero {
+      max-width: 1200px;
+      margin: 40px auto 30px;
+      padding: 0 24px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 14px;
+    }
+
+    .hero p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Контейнер мероприятий */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto 60px;
+      padding: 0 24px;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .event-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .event-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    }
+
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .badge {
+      background: var(--badge-bg);
+      color: var(--badge-text);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .event-card h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+
+    .event-card p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+      flex-grow: 1;
+    }
+
+    .event-details {
+      border-top: 1px solid var(--border-color);
+      padding-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .event-details span {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Блок контактов для связи */
+    .join-box {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      color: white;
+      border-radius: 16px;
+      padding: 40px 30px;
+      text-align: center;
+      margin-top: 60px;
+    }
+
+    .join-box h2 {
+      font-size: 1.8rem;
+      margin-bottom: 12px;
+    }
+
+    .join-box p {
+      color: #94a3b8;
+      max-width: 540px;
+      margin: 0 auto 24px;
+      font-size: 1rem;
+    }
+
+    .join-btn {
+      display: inline-block;
+      background: var(--primary);
+      color: white;
+      text-decoration: none;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: background 0.2s ease;
+    }
+
+    .join-btn:hover {
+      background: var(--primary-hover);
+    }
+
+    footer {
+      border-top: 1px solid var(--border-color);
+      text-align: center;
+      padding: 24px;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      background: var(--card-bg);
+    }
+  </style>
 </head>
-<body class="bg-gray-100 min-h-screen text-gray-800 p-4 sm:p-8">
-    <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-sm p-6 sm:p-8 border border-gray-200">
-        
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-6 mb-6 border-b border-gray-100 gap-4">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-900">Волонтёрский штаб</h1>
-                <p class="text-sm text-gray-500">Официальный рейтинг по волонтёрским часам</p>
-            </div>
-            
-            <div>
+<body>
 
-            </div>
-        </div>
-
-        <h2 class="text-lg font-bold mb-4">🏆 Таблица лидеров</h2>
-        <div class="space-y-3">
-            {% for idx, item in enumerate(leaderboard) %}
-            <div class="flex items-center justify-between p-4 rounded-xl border {% if idx == 0 %}bg-amber-50/70 border-amber-300{% elif idx == 1 %}bg-slate-50 border-slate-300{% elif idx == 2 %}bg-orange-50/50 border-orange-200{% else %}bg-white border-gray-100{% endif %}">
-                <div class="flex items-center space-x-4">
-                    <span class="w-8 text-center font-bold text-lg text-gray-500">
-                        {% if idx == 0 %}🥇{% elif idx == 1 %}🥈{% elif idx == 2 %}🥉{% else %}{{ idx + 1 }}{% endif %}
-                    </span>
-                    <div>
-                        <div class="font-semibold text-gray-900">{{ item.name }}</div>
-                        <div class="text-xs text-gray-400">@{{ item.username if item.username else 'нет_ника' }}</div>
-                    </div>
-                </div>
-                <div class="text-right">
-                    <span class="text-xl font-bold text-blue-600">{{ item.hours }}</span>
-                    <span class="text-xs text-gray-500 block">часов</span>
-                </div>
-            </div>
-            {% else %}
-            <div class="text-center py-10 bg-gray-50 rounded-xl border border-dashed border-gray-200 text-gray-400">
-                Пока в базе нет записей. Данные появятся после добавления акций и волонтеров!
-            </div>
-            {% endfor %}
-        </div>
-
+  <!-- Навигация -->
+  <header>
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <div class="logo-badge">❤️</div>
+        <span>ДоброЗАУ</span>
+      </a>
+      <a href="/admin" class="btn-admin">⚙️ Панель координатора</a>
     </div>
+  </header>
+
+  <!-- Главный баннер -->
+  <section class="hero">
+    <h1>Волонтёрский центр ДоброЗАУ</h1>
+    <p>Помогаем вместе. Список актуальных мероприятий и добрых дел, в которых нужна помощь волонтёров.</p>
+  </section>
+
+  <!-- Список событий -->
+  <main class="container">
+    <div class="section-title">
+      Актуальные мероприятия
+    </div>
+
+    <div class="cards-grid">
+      {% for event in events %}
+      <div class="event-card">
+        <div>
+          <div class="card-meta">
+            <span class="badge">{{ event.category or "Волонтёрство" }}</span>
+          </div>
+          <h3>{{ event.title }}</h3>
+          <p>{{ event.description }}</p>
+        </div>
+        <div class="event-details">
+          <span>📅 <strong>Дата:</strong> {{ event.date or "Уточняется" }}</span>
+          <span>📍 <strong>Место:</strong> {{ event.location or "По договорённости" }}</span>
+        </div>
+      </div>
+      {% else %}
+      <div style="grid-column: 1 / -1; text-align: center; padding: 40px; background: white; border-radius: 12px; border: 1px solid var(--border-color); color: #64748b;">
+        На данный момент активных мероприятий нет. Следите за обновлениями!
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Информационный блок координатора -->
+    <div class="join-box">
+      <h2>Хотите присоединиться к команде?</h2>
+      <p>Регистрация новых волонтёров проходит через руководителя центра. Свяжитесь с нами, чтобы получить допуск и выбрать направление.</p>
+      <a href="mailto:contact@dobrozau.ru" class="join-btn">Связаться с координатором</a>
+    </div>
+  </main>
+
+  <footer>
+    © 2026 ДоброЗАУ. Волонтёрская деятельность и социальные проекты.
+  </footer>
+
 </body>
 </html>
