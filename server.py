@@ -6,7 +6,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from jinja2 import Template
 from sqlalchemy import Column, Float, ForeignKey, Integer, String, create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
-
+from fastapi.staticfiles import StaticFiles
 # --- НАСТРОЙКИ ---
 BOT_TOKEN = "8647618080:AAFb0elmPHwZXmZlOPPLHDnNaFes1QZfGmI"
 BOT_USERNAME = "DobroZAU_bot"
@@ -46,7 +46,7 @@ class HoursLog(Base):
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # --- ГЛАВНАЯ СТРАНИЦА: РЕЙТИНГ ---
 @app.get("/", response_class=HTMLResponse)
