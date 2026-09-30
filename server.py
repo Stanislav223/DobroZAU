@@ -79,11 +79,6 @@ def home():
     # Передаём И мероприятия, И рейтинг волонтеров
     return template.render(events=events, leaderboard=leaderboard)
 
-  db.close()
-  return template.render(
-      leaderboard=leaderboard, bot_username=BOT_USERNAME, enumerate=enumerate
-  )
-
 import secrets
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
