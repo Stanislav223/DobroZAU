@@ -1,3 +1,4 @@
+import os
 import time
 import hashlib
 import hmac
@@ -10,10 +11,18 @@ from fastapi.staticfiles import StaticFiles
 # --- НАСТРОЙКИ ---
 BOT_TOKEN = "8647618080:AAFb0elmPHwZXmZlOPPLHDnNaFes1QZfGmI"
 BOT_USERNAME = "DobroZAU_bot"
-# База данных SQLite
-engine = create_engine(
-    "sqlite:///database.db", connect_args={"check_same_thread": False}
-)
+# База данных: берем PostgreSQL из настроек Render, иначе SQLite для локального запуска
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if DATABASE_URL:
+    # Исправление формата префикса для SQLAlchemy
+    if DATABASE_URL.startswith("postgres://"):
+        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+    engine = create_engine(DATABASE_URL)
+else:
+    engine = create_engine(
+        "sqlite:///database.db", connect_args={"check_same_thread": False}
+    )
 SessionLocal = sessionmaker(bind=engine)
 Base = declarative_base()
 
