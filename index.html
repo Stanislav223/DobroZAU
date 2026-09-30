@@ -62,22 +62,25 @@
       text-decoration: none;
     }
 
-    .btn-admin {
-      background: var(--bg-page);
-      border: 1px solid var(--border-color);
-      color: var(--primary);
+   .btn-admin {
+      background: #ffffff;
+      border: 1px solid #ecdfe1;
+      color: #5c0613;
       padding: 8px 18px;
       border-radius: 8px;
       text-decoration: none;
       font-size: 0.9rem;
       font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       transition: all 0.2s ease;
     }
 
     .btn-admin:hover {
-      background: var(--primary);
-      color: #ffffff;
-      border-color: var(--primary);
+      background: #fce8eb;
+      color: #5c0613;
+      border-color: #5c0613;
     }
 
     /* Главный баннер */
@@ -247,7 +250,7 @@
   <header>
     <div class="nav-container">
       <a href="/" class="logo">
-        <img src="/static/static/logo.jpg.png" alt="ДоброЗАУ" style="height: 40px; width: auto; object-fit: contain; border-radius: 6px;">
+        <img src="/static/static/logo.png.jpg" alt="ДоброЗАУ" style="height: 40px; width: auto; object-fit: contain; border-radius: 6px;">
         <span>ДоброЗАУ</span>
       </a>
       <a href="/admin" class="btn-admin">⚙️ Панель координатора</a>
@@ -291,9 +294,9 @@
     <!-- конец cards-grid -->
 
     <!-- Блок рейтинга волонтёров -->
-    <div class="section-title" style="margin-top: 50px;">
-      🏆 Рейтинг волонтёров штаба
-    </div>
+    <div class="section-title" style="margin-top: 50px; color: #ffffff;">
+  🏆 Рейтинг волонтёров штаба
+</div>
 
     <div style="background: white; border-radius: 16px; border: 1px solid var(--border-color); overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03);">
       <table style="width: 100%; border-collapse: collapse; text-align: left;">
