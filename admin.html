@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель управления штабом</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800 p-4 sm:p-8">
+    <div class="max-w-4xl mx-auto space-y-6">
+        
+        <!-- Шапка -->
+        <div class="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-900">⚙️ Панель администратора</h1>
+                <p class="text-sm text-slate-500">Управление мероприятиями и начислением часов</p>
+            </div>
+            <a href="/" class="text-sm bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-lg font-medium transition">
+                ← К общему рейтингу
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Быстрое добавление волонтера -->
+<div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mt-6">
+    <h2 class="text-lg font-bold mb-4">Добавить волонтёра (вручную)</h2>
+    <form action="/admin/add-user" method="post" class="space-y-4">
+        <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">ФИО волонтёра</label>
+            <input type="text" name="name" required placeholder="Иван Иванов" 
+                   class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Ник в Telegram (без @)</label>
+            <input type="text" name="username" placeholder="ivanov" 
+                   class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <button type="submit" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium py-2 rounded-lg transition">
+            Сохранить волонтёра
+        </button>
+    </form>
+</div>
+            <!-- Блок 1: Создание акции -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-lg font-bold mb-4">1. Добавить акцию</h2>
+                <form action="/admin/add-event" method="post" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Название акции</label>
+                        <input type="text" name="title" required placeholder="Например: Субботник в парке" 
+                               class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Дата проведения</label>
+                        <input type="date" name="date" required 
+                               class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition">
+                        Создать акцию
+                    </button>
+                </form>
+
+                <!-- Список созданных акций -->
+                <div class="mt-6 border-t pt-4">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Активные акции</h3>
+                    <ul class="space-y-1 text-sm text-slate-600">
+                        {% for ev in events %}
+                        <li class="flex justify-between py-1 border-b border-slate-100">
+                            <span>{{ ev.title }}</span>
+                            <span class="text-slate-400 text-xs">{{ ev.date }}</span>
+                        </li>
+                        {% else %}
+                        <li class="text-slate-400 italic text-xs">Пока нет созданных акций</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Блок 2: Начисление часов -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-lg font-bold mb-4">2. Записать часы волонтеру</h2>
+                <form action="/admin/add-hours" method="post" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Выберите акцию</label>
+                        <select name="event_id" required class="w-full px-3 py-2 border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            {% for ev in events %}
+                            <option value="{{ ev.id }}">{{ ev.title }} ({{ ev.date }})</option>
+                            {% else %}
+                            <option disabled selected>Сначала создайте акцию слева</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Выберите волонтера</label>
+                        <select name="user_id" required class="w-full px-3 py-2 border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            {% for u in users %}
+                            <option value="{{ u.id }}">{{ u.name }} (@{{ u.username if u.username else 'id' ~ u.telegram_id }})</option>
+                            {% else %}
+                            <option disabled selected>Волонтеры еще не зарегистрировались</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Количество часов</label>
+                        <input type="number" step="0.5" min="0.5" name="hours" required placeholder="Например: 4 или 3.5" 
+                               class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 rounded-lg transition">
+                        Начислить часы
+                    </button>
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+</body>
+</html>
