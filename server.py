@@ -75,10 +75,25 @@ def home():
       leaderboard=leaderboard, bot_username=BOT_USERNAME, enumerate=enumerate
   )
 
+import secrets
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
+security = HTTPBasic()
+
+def check_admin(credentials: HTTPBasicCredentials = Depends(security)):
+    correct_username = secrets.compare_digest(credentials.username, "admin")
+    correct_password = secrets.compare_digest(credentials.password, "12345")  # Укажи свой пароль
+    if not (correct_username and correct_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Неверный логин или пароль",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    return credentials.username
 # --- СТРАНИЦА АДМИНИСТРАТОРА ---
 @app.get("/admin", response_class=HTMLResponse)
-def admin_page():
+def admin_page(username: str = Depends(check_admin)):
   db = SessionLocal()
   events = db.query(Event).all()
   users = db.query(User).all()
