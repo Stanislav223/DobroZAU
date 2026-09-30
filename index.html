@@ -287,7 +287,58 @@
       </div>
       {% endfor %}
     </div>
+</div>
+    <!-- конец cards-grid -->
 
+    <!-- Блок рейтинга волонтёров -->
+    <div class="section-title" style="margin-top: 50px;">
+      🏆 Рейтинг волонтёров штаба
+    </div>
+
+    <div style="background: white; border-radius: 16px; border: 1px solid var(--border-color); overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03);">
+      <table style="width: 100%; border-collapse: collapse; text-align: left;">
+        <thead>
+          <tr style="background: #fdf8f8; border-bottom: 2px solid var(--border-color); color: var(--primary); font-size: 0.9rem;">
+            <th style="padding: 16px 20px; width: 80px;">Место</th>
+            <th style="padding: 16px 20px;">Волонтёр</th>
+            <th style="padding: 16px 20px; text-align: right;">Отработано часов</th>
+          </tr>
+        </thead>
+        <tbody style="font-size: 0.95rem;">
+          {% for u in leaderboard %}
+          <tr style="border-bottom: 1px solid var(--border-color);">
+            <td style="padding: 16px 20px; font-weight: 700;">
+              {% if loop.index == 1 %}🥇 1
+              {% elif loop.index == 2 %}🥈 2
+              {% elif loop.index == 3 %}🥉 3
+              {% else %}#{{ loop.index }}
+              {% endif %}
+            </td>
+            <td style="padding: 16px 20px;">
+              <strong style="color: var(--text-main);">{{ u.name or "Волонтёр" }}</strong>
+              {% if u.username %}
+                <span style="color: var(--text-muted); font-size: 0.85rem; margin-left: 6px;">@{{ u.username }}</span>
+              {% endif %}
+            </td>
+            <td style="padding: 16px 20px; text-align: right;">
+              <span style="background: #fce8eb; color: #5c0613; font-weight: 700; padding: 6px 14px; border-radius: 20px; border: 1px solid #f3cfd4;">
+                {{ u.hours or 0 }} ч.
+              </span>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="3" style="text-align: center; padding: 35px; color: var(--text-muted);">
+              Список волонтёров пока пуст. Зарегистрируйте первых участников через панель координатора!
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Информационный блок координатора -->
+    <div class="join-box">
     <!-- Информационный блок координатора -->
     <div class="join-box">
       <h2>Хотите присоединиться к команде?</h2>
