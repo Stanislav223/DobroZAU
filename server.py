@@ -51,24 +51,33 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # --- ГЛАВНАЯ СТРАНИЦА: РЕЙТИНГ ---
 @app.get("/", response_class=HTMLResponse)
 def home():
-  db = SessionLocal()
-  users = db.query(User).all()
-  leaderboard = []
+    db = SessionLocal()
+    
+    # 1. Загружаем мероприятия
+    events = db.query(Event).all()
 
-  for u in users:
-    logs = db.query(HoursLog).filter(HoursLog.user_id == u.id).all()
-    total_hours = sum(log.hours for log in logs)
-    leaderboard.append({
-        "name": u.name,
-        "username": u.username,
-        "hours": total_hours,
-        "role": u.role,
-    })
+    # 2. Собираем волонтёров и их отработанные часы
+    users = db.query(User).all()
+    leaderboard = []
+    for u in users:
+        logs = db.query(HoursLog).filter(HoursLog.user_id == u.id).all()
+        total_hours = sum(log.hours for log in logs)
+        leaderboard.append({
+            "name": u.name,
+            "username": u.username,
+            "hours": total_hours,
+            "role": u.role,
+        })
+    db.close()
 
-  leaderboard.sort(key=lambda x: x["hours"], reverse=True)
+    # Сортируем рейтинг: сначала те, у кого больше всего часов
+    leaderboard.sort(key=lambda x: x["hours"], reverse=True)
 
-  with open("index.html", "r", encoding="utf-8") as f:
-    template = Template(f.read())
+    with open("index.html", "r", encoding="utf-8") as f:
+        template = Template(f.read())
+    
+    # Передаём И мероприятия, И рейтинг волонтеров
+    return template.render(events=events, leaderboard=leaderboard)
 
   db.close()
   return template.render(
