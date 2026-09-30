@@ -107,15 +107,28 @@ def check_admin(credentials: HTTPBasicCredentials = Depends(security)):
 # --- СТРАНИЦА АДМИНИСТРАТОРА ---
 @app.get("/admin", response_class=HTMLResponse)
 def admin_page(username: str = Depends(check_admin)):
-  db = SessionLocal()
-  events = db.query(Event).all()
-  users = db.query(User).all()
+    db = SessionLocal()
+    events = db.query(Event).all()
+    users = db.query(User).all()
+    logs = db.query(HoursLog).order_by(HoursLog.id.desc()).limit(20).all()
+    
+    # Собираем понятный список последних начислений:
+    history = []
+    for l in logs:
+        u = db.query(User).filter(User.id == l.user_id).first()
+        ev = db.query(Event).filter(Event.id == l.event_id).first()
+        history.append({
+            "id": l.id,
+            "volunteer_name": u.name if u else "Удалённый волонтёр",
+            "event_title": ev.title if ev else "Удалённая акция",
+            "hours": l.hours
+        })
+    db.close()
 
-  with open("admin.html", "r", encoding="utf-8") as f:
-    template = Template(f.read())
+    with open("admin.html", "r", encoding="utf-8") as f:
+        template = Template(f.read())
 
-  db.close()
-  return template.render(events=events, users=users)
+    return template.render(events=events, users=users, history=history)
 
 
 # Обработка: создание акции
@@ -154,3 +167,42 @@ def add_user_manual(name: str = Form(...), username: str = Form("")):
   db.commit()
   db.close()
   return RedirectResponse(url="/admin", status_code=303)
+# --- УДАЛЕНИЕ ДАННЫХ (ТОЛЬКО ДЛЯ АДМИНА) ---
+
+@app.post("/admin/delete-event/{event_id}")
+def delete_event(event_id: int, username: str = Depends(check_admin)):
+    db = SessionLocal()
+    # Находим акцию
+    event = db.query(Event).filter(Event.id == event_id).first()
+    if event:
+        # Удаляем привязанные к ней записи о начисленных часах
+        db.query(HoursLog).filter(HoursLog.event_id == event_id).delete()
+        db.delete(event)
+        db.commit()
+    db.close()
+    return RedirectResponse(url="/admin", status_code=303)
+
+
+@app.post("/admin/delete-user/{user_id}")
+def delete_user(user_id: int, username: str = Depends(check_admin)):
+    db = SessionLocal()
+    user = db.query(User).filter(User.id == user_id).first()
+    if user:
+        # Удаляем все записи часов этого волонтёра
+        db.query(HoursLog).filter(HoursLog.user_id == user_id).delete()
+        db.delete(user)
+        db.commit()
+    db.close()
+    return RedirectResponse(url="/admin", status_code=303)
+
+
+@app.post("/admin/delete-hours/{log_id}")
+def delete_hours(log_id: int, username: str = Depends(check_admin)):
+    db = SessionLocal()
+    log = db.query(HoursLog).filter(HoursLog.id == log_id).first()
+    if log:
+        db.delete(log)
+        db.commit()
+    db.close()
+    return RedirectResponse(url="/admin", status_code=303)
+    
