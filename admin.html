@@ -9,16 +9,20 @@
 <body class="bg-slate-100 min-h-screen text-slate-800 p-4 sm:p-8">
     <div class="max-w-4xl mx-auto space-y-6">
         
-        <!-- Шапка -->
-        <div class="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-            <div>
-                <h1 class="text-2xl font-bold text-slate-900">⚙️ Панель администратора</h1>
-                <p class="text-sm text-slate-500">Управление мероприятиями и начислением часов</p>
-            </div>
-            <a href="/" class="text-sm bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-lg font-medium transition">
-                ← К общему рейтингу
-            </a>
+       ```html
+    <!-- Шапка с логотипом -->
+    <div class="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+      <div class="flex items-center gap-4">
+        <img src="/static/static/logo.png" alt="Логотип" class="h-12 w-auto object-contain rounded-lg">
+        <div>
+          <h1 class="text-2xl font-bold text-slate-900">Панель администратора</h1>
+          <p class="text-sm text-slate-500">Управление мероприятиями и начислением часов</p>
         </div>
+      </div>
+      <a href="/" class="text-sm bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-lg font-medium transition">
+        ← К общему рейтингу
+      </a>
+    </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Быстрое добавление волонтера -->
