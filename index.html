@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рейтинг волонтёрского штаба</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen text-gray-800 p-4 sm:p-8">
+    <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-sm p-6 sm:p-8 border border-gray-200">
+        
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-6 mb-6 border-b border-gray-100 gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Волонтёрский штаб</h1>
+                <p class="text-sm text-gray-500">Официальный рейтинг по волонтёрским часам</p>
+            </div>
+            
+            <div>
+                <script async src="https://telegram.org/js/telegram-widget.js?22" 
+                        data-telegram-login="DobroZAU_bot" 
+                        data-size="medium" 
+                        data-auth-url="/login/telegram" 
+                        data-request-access="write"></script>
+            </div>
+        </div>
+
+        <h2 class="text-lg font-bold mb-4">🏆 Таблица лидеров</h2>
+        <div class="space-y-3">
+            {% for idx, item in enumerate(leaderboard) %}
+            <div class="flex items-center justify-between p-4 rounded-xl border {% if idx == 0 %}bg-amber-50/70 border-amber-300{% elif idx == 1 %}bg-slate-50 border-slate-300{% elif idx == 2 %}bg-orange-50/50 border-orange-200{% else %}bg-white border-gray-100{% endif %}">
+                <div class="flex items-center space-x-4">
+                    <span class="w-8 text-center font-bold text-lg text-gray-500">
+                        {% if idx == 0 %}🥇{% elif idx == 1 %}🥈{% elif idx == 2 %}🥉{% else %}{{ idx + 1 }}{% endif %}
+                    </span>
+                    <div>
+                        <div class="font-semibold text-gray-900">{{ item.name }}</div>
+                        <div class="text-xs text-gray-400">@{{ item.username if item.username else 'нет_ника' }}</div>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <span class="text-xl font-bold text-blue-600">{{ item.hours }}</span>
+                    <span class="text-xs text-gray-500 block">часов</span>
+                </div>
+            </div>
+            {% else %}
+            <div class="text-center py-10 bg-gray-50 rounded-xl border border-dashed border-gray-200 text-gray-400">
+                Пока в базе нет записей. Данные появятся после добавления акций и волонтеров!
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</body>
+</html>
