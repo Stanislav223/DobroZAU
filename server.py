@@ -170,13 +170,21 @@ def admin_page(username: str = Depends(check_admin)):
 
 # Обработка: создание акции
 @app.post("/admin/add-event")
-def add_event(title: str = Form(...), date: str = Form(...)):
-  db = SessionLocal()
-  new_event = Event(title=title, date=date)
-  db.add(new_event)
-  db.commit()
-  db.close()
-  return RedirectResponse(url="/admin", status_code=303)
+def add_event(
+    title: str = Form(...),
+    date: str = Form(...),
+    location: str = Form("По договорённости")
+):
+    db = SessionLocal()
+    new_event = Event(
+        title=title,
+        date=date,
+        location=location.strip() if location.strip() else "По договорённости"
+    )
+    db.add(new_event)
+    db.commit()
+    db.close()
+    return RedirectResponse(url="/admin", status_code=303)
 
 
 # Обработка: начисление часов
