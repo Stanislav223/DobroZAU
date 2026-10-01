@@ -2,8 +2,10 @@ import os
 import time
 import hashlib
 import hmac
+import secrets
 from datetime import date
-from fastapi import FastAPI, Form, HTTPException, Request, Depends
+from fastapi import FastAPI, Form, HTTPException, Request, Depends, status
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.responses import HTMLResponse, RedirectResponse
 from jinja2 import Template
 from sqlalchemy import Column, Float, ForeignKey, Integer, String, create_engine
@@ -92,7 +94,22 @@ def home():
         past_events=past_events, 
         leaderboard=leaderboard
     )
-    return credentials.username
+# --- АВТОРИЗАЦИЯ АДМИНИСТРАТОРА ---
+security = HTTPBasic()
+
+ADMIN_USERNAME = "admin"
+ADMIN_PASSWORD = "12345"  # замени на свой пароль
+
+def check_admin(credentials: HTTPBasicCredentials = Depends(security)):
+    correct_username = secrets.compare_digest(credentials.username, ADMIN_USERNAME)
+    correct_password = secrets.compare_digest(credentials.password, ADMIN_PASSWORD)
+    if not (correct_username and correct_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Неверный логин или пароль",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    return credentials.username    
 # --- СТРАНИЦА АДМИНИСТРАТОРА ---
 @app.get("/admin", response_class=HTMLResponse)
 def admin_page(username: str = Depends(check_admin)):
@@ -159,7 +176,7 @@ def add_user_manual(name: str = Form(...), username: str = Form("")):
 # --- УДАЛЕНИЕ ДАННЫХ (ТОЛЬКО ДЛЯ АДМИНА) ---
 
 @app.post("/admin/delete-event/{event_id}")
-def delete_event(event_id: int, username: str = Depends(check_admin)):
+def delete_event(event_id: int):
     db = SessionLocal()
     # Находим акцию
     event = db.query(Event).filter(Event.id == event_id).first()
@@ -173,7 +190,7 @@ def delete_event(event_id: int, username: str = Depends(check_admin)):
 
 
 @app.post("/admin/delete-user/{user_id}")
-def delete_user(user_id: int, username: str = Depends(check_admin)):
+def delete_user(user_id: int):
     db = SessionLocal()
     user = db.query(User).filter(User.id == user_id).first()
     if user:
@@ -186,7 +203,7 @@ def delete_user(user_id: int, username: str = Depends(check_admin)):
 
 
 @app.post("/admin/delete-hours/{log_id}")
-def delete_hours(log_id: int, username: str = Depends(check_admin)):
+def delete_hours(log_id: int):
     db = SessionLocal()
     log = db.query(HoursLog).filter(HoursLog.id == log_id).first()
     if log:
