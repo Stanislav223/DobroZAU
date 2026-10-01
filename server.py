@@ -64,13 +64,44 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 @app.get("/", response_class=HTMLResponse)
 def home():
     db = SessionLocal()
-    today_str = date.today().isoformat()  # Получаем сегодняшнюю дату в формате '2026-10-01'
+    today_str = date.today().isoformat()
 
-    # Активные акции: дата сегодня или в будущем
-    active_events = db.query(Event).filter(Event.date >= today_str).order_by(Event.date.asc()).all()
-    # Завершенные акции: дата уже прошла
-    past_events = db.query(Event).filter(Event.date < today_str).order_by(Event.date.desc()).all()
+    all_events = db.query(Event).all()
+    events_data = []
 
+    for ev in all_events:
+        # 1. Находим все часы, начисленные именно за это мероприятие
+        logs = db.query(HoursLog).filter(HoursLog.event_id == ev.id).all()
+        participants = []
+        for log in logs:
+            u = db.query(User).filter(User.id == log.user_id).first()
+            if u:
+                participants.append({
+                    "name": u.name,
+                    "username": u.username,
+                    "hours": log.hours
+                })
+
+        # 2. Собираем словарь со всеми нужными полями и списком участников
+        events_data.append({
+            "id": ev.id,
+            "title": ev.title,
+            "date": ev.date,
+            "category": getattr(ev, "category", "Волонтёрство"),
+            "description": getattr(ev, "description", None),
+            "location": getattr(ev, "location", "По договорённости"),
+            "is_past": str(ev.date) < today_str,
+            "participants": participants
+        })
+
+    # Сортируем: предстоящие по возрастанию даты, прошедшие — по убыванию
+    active_events = [e for e in events_data if not e["is_past"]]
+    active_events.sort(key=lambda x: str(x["date"]))
+
+    past_events = [e for e in events_data if e["is_past"]]
+    past_events.sort(key=lambda x: str(x["date"]), reverse=True)
+
+    # Таблица рейтинга
     users = db.query(User).all()
     leaderboard = []
     for u in users:
@@ -90,8 +121,8 @@ def home():
         template = Template(f.read())
     
     return template.render(
-        active_events=active_events, 
-        past_events=past_events, 
+        active_events=active_events,
+        past_events=past_events,
         leaderboard=leaderboard
     )
 # --- АВТОРИЗАЦИЯ АДМИНИСТРАТОРА ---
