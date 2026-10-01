@@ -62,11 +62,13 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 @app.get("/", response_class=HTMLResponse)
 def home():
     db = SessionLocal()
-    
-    # 1. Загружаем мероприятия
-    events = db.query(Event).all()
+    today_str = date.today().isoformat()  # Получаем сегодняшнюю дату в формате '2026-10-01'
 
-    # 2. Собираем волонтёров и их отработанные часы
+    # Активные акции: дата сегодня или в будущем
+    active_events = db.query(Event).filter(Event.date >= today_str).order_by(Event.date.asc()).all()
+    # Завершенные акции: дата уже прошла
+    past_events = db.query(Event).filter(Event.date < today_str).order_by(Event.date.desc()).all()
+
     users = db.query(User).all()
     leaderboard = []
     for u in users:
@@ -80,30 +82,16 @@ def home():
         })
     db.close()
 
-    # Сортируем рейтинг: сначала те, у кого больше всего часов
     leaderboard.sort(key=lambda x: x["hours"], reverse=True)
 
     with open("index.html", "r", encoding="utf-8") as f:
         template = Template(f.read())
     
-    # Передаём И мероприятия, И рейтинг волонтеров
-    return template.render(events=events, leaderboard=leaderboard)
-
-import secrets
-from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBasic, HTTPBasicCredentials
-
-security = HTTPBasic()
-
-def check_admin(credentials: HTTPBasicCredentials = Depends(security)):
-    correct_username = secrets.compare_digest(credentials.username, "admin")
-    correct_password = secrets.compare_digest(credentials.password, "12345")  # Укажи свой пароль
-    if not (correct_username and correct_password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Неверный логин или пароль",
-            headers={"WWW-Authenticate": "Basic"},
-        )
+    return template.render(
+        active_events=active_events, 
+        past_events=past_events, 
+        leaderboard=leaderboard
+    )
     return credentials.username
 # --- СТРАНИЦА АДМИНИСТРАТОРА ---
 @app.get("/admin", response_class=HTMLResponse)
