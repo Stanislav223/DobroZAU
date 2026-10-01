@@ -128,8 +128,8 @@ def home():
 # --- АВТОРИЗАЦИЯ АДМИНИСТРАТОРА ---
 security = HTTPBasic()
 
-ADMIN_USERNAME = "admin"
-ADMIN_PASSWORD = "12345"  # замени на свой пароль
+ADMIN_USERNAME = "adminZao"
+ADMIN_PASSWORD = "2217190808"  # замени на свой пароль
 
 def check_admin(credentials: HTTPBasicCredentials = Depends(security)):
     correct_username = secrets.compare_digest(credentials.username, ADMIN_USERNAME)
