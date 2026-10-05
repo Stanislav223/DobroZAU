@@ -66,9 +66,11 @@ Base.metadata.create_all(bind=engine)
 try:
     with engine.connect() as conn:
         conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS password_hash VARCHAR;"))
+        conn.execute(text("ALTER TABLE events ADD COLUMN IF NOT EXISTS location VARCHAR DEFAULT 'По договорённости';"))
         conn.commit()
 except Exception as e:
     print(f"Миграция users: {e}")
+    
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
