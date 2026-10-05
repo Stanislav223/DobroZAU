@@ -1,1 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Вход волонтёра — ДоброЗАУ</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" type="image/png" href="/static/logo.png">
+  <style>body { background-color: #5c0613; font-family: sans-serif; }</style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+  <div class="bg-white max-w-md w-full p-8 rounded-2xl shadow-xl">
+    <div class="text-center mb-6">
+      <h1 class="text-2xl font-bold text-[#5c0613]">ДоброЗАУ</h1>
+      <p class="text-xs text-slate-500 mt-1">Личный кабинет волонтёра</p>
+    </div>
 
+    <!-- Вкладки Вход / Регистрация -->
+    <div class="flex border-b border-slate-200 mb-6">
+      <button id="tab-login-btn" onclick="showTab('login')" class="w-1/2 py-2 font-semibold text-sm border-b-2 border-[#5c0613] text-[#5c0613]">Вход</button>
+      <button id="tab-reg-btn" onclick="showTab('reg')" class="w-1/2 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-400">Регистрация</button>
+    </div>
+
+    <!-- Форма Входа -->
+    <form id="form-login" action="/auth/login" method="post" class="space-y-4">
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 mb-1">Логин / Telegram</label>
+        <input type="text" name="login" required placeholder="Например: ivan_ivanov" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 mb-1">Пароль</label>
+        <input type="password" name="password" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
+      </div>
+      <button type="submit" class="w-full bg-[#5c0613] text-white py-2.5 rounded-lg font-semibold hover:bg-[#3f030b] transition">Войти в кабинет</button>
+    </form>
+
+    <!-- Форма Регистрации -->
+    <form id="form-reg" action="/auth/register" method="post" class="space-y-4 hidden">
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 mb-1">ФИО (как в зачётке / списках)</label>
+        <input type="text" name="name" required placeholder="Иванов Иван Иванович" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 mb-1">Придумайте логин</label>
+        <input type="text" name="login" required placeholder="ivanov_i" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 mb-1">Придумайте пароль</label>
+        <input type="password" name="password" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
+      </div>
+      <button type="submit" class="w-full bg-[#5c0613] text-white py-2.5 rounded-lg font-semibold hover:bg-[#3f030b] transition">Зарегистрироваться</button>
+    </form>
+
+    <div class="mt-6 text-center">
+      <a href="/" class="text-xs text-slate-400 hover:text-slate-600">← Вернуться на главную</a>
+    </div>
+  </div>
+
+  <script>
+    function showTab(tab) {
+      if (tab === 'login') {
+        document.getElementById('form-login').classList.remove('hidden');
+        document.getElementById('form-reg').classList.add('hidden');
+        document.getElementById('tab-login-btn').className = "w-1/2 py-2 font-semibold text-sm border-b-2 border-[#5c0613] text-[#5c0613]";
+        document.getElementById('tab-reg-btn').className = "w-1/2 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-400";
+      } else {
+        document.getElementById('form-login').classList.add('hidden');
+        document.getElementById('form-reg').classList.remove('hidden');
+        document.getElementById('tab-reg-btn').className = "w-1/2 py-2 font-semibold text-sm border-b-2 border-[#5c0613] text-[#5c0613]";
+        document.getElementById('tab-login-btn').className = "w-1/2 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-400";
+      }
+    }
+  </script>
+</body>
+</html>
