@@ -8,7 +8,7 @@ from fastapi import FastAPI, Form, HTTPException, Request, Depends, status, Resp
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.responses import HTMLResponse, RedirectResponse
 from jinja2 import Template
-from sqlalchemy import Column, Float, ForeignKey, Integer, String, create_engine
+from sqlalchemy import Column, Float, ForeignKey, Integer, String, create_engine, text
 from sqlalchemy.orm import declarative_base, sessionmaker
 from fastapi.staticfiles import StaticFiles
 # --- НАСТРОЙКИ ---
@@ -62,7 +62,13 @@ class HoursLog(Base):
 
 
 Base.metadata.create_all(bind=engine)
-
+# Автоматическое добавление новой колонки password_hash, если её ещё нет в базе
+try:
+    with engine.connect() as conn:
+        conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS password_hash VARCHAR;"))
+        conn.commit()
+except Exception as e:
+    print(f"Миграция users: {e}")
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
