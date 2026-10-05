@@ -215,33 +215,39 @@ def add_hours(
   db.close()
   return RedirectResponse(url="/admin", status_code=303)
   # Обработка: ручное добавление волонтера
+import traceback
+
 @app.post("/admin/add-user")
 def add_user_manual(
     name: str = Form(...),
     username: str = Form(...),
     password: str = Form("123456")
 ):
-    db = SessionLocal()
-    clean_username = username.strip().lstrip("@").lower()
+    try:
+        db = SessionLocal()
+        clean_username = username.strip().lstrip("@").lower()
 
-    # Проверяем, не занят ли логин
-    existing = db.query(User).filter(User.username == clean_username).first()
-    if existing:
+        existing = db.query(User).filter(User.username == clean_username).first()
+        if existing:
+            db.close()
+            return HTMLResponse("<script>alert('Волонтёр с таким логином уже зарегистрирован!'); window.history.back();</script>")
+
+        new_user = User(
+            telegram_id=int(time.time()),
+            name=name.strip(),
+            username=clean_username,
+            password_hash=hash_password(password.strip()),
+            role="volunteer"
+        )
+        db.add(new_user)
+        db.commit()
         db.close()
-        return HTMLResponse("<script>alert('Волонтёр с таким логином уже зарегистрирован!'); window.history.back();</script>")
+        return RedirectResponse(url="/admin", status_code=303)
 
-    new_user = User(
-        telegram_id=int(time.time()),
-        name=name.strip(),
-        username=clean_username,
-        password_hash=hash_password(password.strip()),
-        role="volunteer"
-    )
-    db.add(new_user)
-    db.commit()
-    db.close()
-
-    return RedirectResponse(url="/admin", status_code=303)
+    except Exception as e:
+        error_details = traceback.format_exc()
+        print("ОШИБКА ПРИ ДОБАВЛЕНИИ ВОЛОНТЕРА:\n", error_details)
+        return HTMLResponse(f"<h3>Произошла ошибка при сохранении:</h3><pre style='background:#f4f4f4;padding:15px;border-radius:8px;color:#c00;'>{error_details}</pre>")
 # --- УДАЛЕНИЕ ДАННЫХ (ТОЛЬКО ДЛЯ АДМИНА) ---
 
 @app.post("/admin/delete-event/{event_id}")
