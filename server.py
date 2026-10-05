@@ -47,10 +47,11 @@ def verify_password(password: str, hashed: str) -> bool:
     return hash_password(password) == hashed
 
 class Event(Base):
-  __tablename__ = "events"
-  id = Column(Integer, primary_key=True)
-  title = Column(String)
-  date = Column(String)
+    __tablename__ = "events"
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String)
+    date = Column(String)
+    location = Column(String, default="По договорённости")
 
 
 class HoursLog(Base):
