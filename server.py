@@ -4,7 +4,7 @@ import hashlib
 import hmac
 import secrets
 from datetime import date
-from fastapi import FastAPI, Form, HTTPException, Request, Depends, status
+from fastapi import FastAPI, Form, HTTPException, Request, Depends, status, Response
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.responses import HTMLResponse, RedirectResponse
 from jinja2 import Template
@@ -32,13 +32,19 @@ Base = declarative_base()
 
 # --- ТАБЛИЦЫ ---
 class User(Base):
-  __tablename__ = "users"
-  id = Column(Integer, primary_key=True)
-  telegram_id = Column(Integer, unique=True, index=True)
-  name = Column(String)
-  username = Column(String)
-  role = Column(String, default="volunteer")  # 'admin' или 'volunteer'
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    username = Column(String, unique=True, index=True, nullable=True)  # Логин волонтёра
+    password_hash = Column(String, nullable=True)                      # Хэш пароля
+    role = Column(String, default="volunteer")# 'admin' или 'volunteer'
+    
+def hash_password(password: str) -> str:
+    salt = "DobroZAU_Salt_2026"
+    return hashlib.sha256((password + salt).encode("utf-8")).hexdigest()
 
+def verify_password(password: str, hashed: str) -> bool:
+    return hash_password(password) == hashed
 
 class Event(Base):
   __tablename__ = "events"
@@ -116,6 +122,7 @@ def home():
     db.close()
 
     leaderboard.sort(key=lambda x: x["hours"], reverse=True)
+    top_3 = leaderboard[:3]  # Берём только первые 3 места
 
     with open("index.html", "r", encoding="utf-8") as f:
         template = Template(f.read())
@@ -123,7 +130,7 @@ def home():
     return template.render(
         active_events=active_events,
         past_events=past_events,
-        leaderboard=leaderboard
+        leaderboard=top_3  # Вот это и есть "передать в шаблон" — отправляем в index.html только тройку лидеров
     )
 # --- АВТОРИЗАЦИЯ АДМИНИСТРАТОРА ---
 security = HTTPBasic()
@@ -250,4 +257,122 @@ def delete_hours(log_id: int):
         db.commit()
     db.close()
     return RedirectResponse(url="/admin", status_code=303)
+    # --- АВТОРИЗАЦИЯ И ЛИЧНЫЙ КАБИНЕТ ВОЛОНТЁРА ---
+
+@app.get("/login", response_class=HTMLResponse)
+def login_page(request: Request):
+    user_id = request.cookies.get("volunteer_user_id")
+    if user_id:
+        return RedirectResponse(url="/profile", status_code=303)
+    with open("login.html", "r", encoding="utf-8") as f:
+        return f.read()
+
+@app.post("/auth/login")
+def auth_login(response: Response, login: str = Form(...), password: str = Form(...)):
+    db = SessionLocal()
+    login_clean = login.strip().lstrip("@").lower()
+    user = db.query(User).filter(User.username == login_clean).first()
     
+    if not user or not user.password_hash or not verify_password(password, user.password_hash):
+        db.close()
+        return HTMLResponse("<script>alert('Неверный логин или пароль!'); window.location.href='/login';</script>")
+    
+    db.close()
+    resp = RedirectResponse(url="/profile", status_code=303)
+    resp.set_cookie(key="volunteer_user_id", value=str(user.id), httponly=True, max_age=86400 * 30)
+    return resp
+
+@app.post("/auth/register")
+def auth_register(response: Response, name: str = Form(...), login: str = Form(...), password: str = Form(...)):
+    db = SessionLocal()
+    login_clean = login.strip().lstrip("@").lower()
+    
+    existing = db.query(User).filter(User.username == login_clean).first()
+    if existing:
+        db.close()
+        return HTMLResponse("<script>alert('Этот логин уже занят! Выберите другой.'); window.history.back();</script>")
+    
+    new_user = User(
+        name=name.strip(),
+        username=login_clean,
+        password_hash=hash_password(password)
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    new_id = new_user.id
+    db.close()
+    
+    resp = RedirectResponse(url="/profile", status_code=303)
+    resp.set_cookie(key="volunteer_user_id", value=str(new_id), httponly=True, max_age=86400 * 30)
+    return resp
+
+@app.get("/logout")
+def logout():
+    resp = RedirectResponse(url="/login", status_code=303)
+    resp.delete_cookie("volunteer_user_id")
+    return resp
+
+@app.get("/profile", response_class=HTMLResponse)
+def user_profile(request: Request):
+    user_id = request.cookies.get("volunteer_user_id")
+    if not user_id:
+        return RedirectResponse(url="/login", status_code=303)
+    
+    db = SessionLocal()
+    user = db.query(User).filter(User.id == int(user_id)).first()
+    if not user:
+        db.close()
+        return RedirectResponse(url="/logout", status_code=303)
+    
+    logs = db.query(HoursLog).filter(HoursLog.user_id == user.id).order_by(HoursLog.id.desc()).all()
+    user_history = []
+    total_hours = 0.0
+    for log in logs:
+        ev = db.query(Event).filter(Event.id == log.event_id).first()
+        user_history.append({
+            "event_title": ev.title if ev else "Акция штаба",
+            "event_date": ev.date if ev else "—",
+            "hours": log.hours
+        })
+        total_hours += log.hours
+    
+    db.close()
+    
+    with open("profile.html", "r", encoding="utf-8") as f:
+        template = Template(f.read())
+        
+    return template.render(user=user, total_hours=total_hours, history=user_history)
+
+@app.post("/profile/update")
+def update_profile(
+    request: Request, 
+    new_login: str = Form(...), 
+    old_password: str = Form(...), 
+    new_password: str = Form("")
+):
+    user_id = request.cookies.get("volunteer_user_id")
+    if not user_id:
+        return RedirectResponse(url="/login", status_code=303)
+        
+    db = SessionLocal()
+    user = db.query(User).filter(User.id == int(user_id)).first()
+    
+    if not user.password_hash or not verify_password(old_password, user.password_hash):
+        db.close()
+        return HTMLResponse("<script>alert('Текущий пароль введён неверно!'); window.history.back();</script>")
+    
+    login_clean = new_login.strip().lstrip("@").lower()
+    if login_clean != user.username:
+        taken = db.query(User).filter(User.username == login_clean).first()
+        if taken:
+            db.close()
+            return HTMLResponse("<script>alert('Такой логин уже занят!'); window.history.back();</script>")
+        user.username = login_clean
+        
+    if new_password.strip():
+        user.password_hash = hash_password(new_password.strip())
+        
+    db.commit()
+    db.close()
+    return HTMLResponse("<script>alert('Данные профиля успешно обновлены!'); window.location.href='/profile';</script>")
