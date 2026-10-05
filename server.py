@@ -3,6 +3,7 @@ import time
 import hashlib
 import hmac
 import secrets
+import traceback
 from datetime import date
 from fastapi import FastAPI, Form, HTTPException, Request, Depends, status, Response
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
@@ -215,7 +216,6 @@ def add_hours(
   db.close()
   return RedirectResponse(url="/admin", status_code=303)
   # Обработка: ручное добавление волонтера
-import traceback
 
 @app.post("/admin/add-user")
 def add_user_manual(
@@ -223,44 +223,25 @@ def add_user_manual(
     username: str = Form(...),
     password: str = Form("123456")
 ):
-    try:
-        db = SessionLocal()
-        clean_username = username.strip().lstrip("@").lower()
-
-        existing = db.query(User).filter(User.username == clean_username).first()
-        if existing:
-            db.close()
-            return HTMLResponse("<script>alert('Волонтёр с таким логином уже зарегистрирован!'); window.history.back();</script>")
-
-        new_user = User(
-            telegram_id=int(time.time()),
-            name=name.strip(),
-            username=clean_username,
-            password_hash=hash_password(password.strip()),
-            role="volunteer"
-        )
-        db.add(new_user)
-        db.commit()
-        db.close()
-        return RedirectResponse(url="/admin", status_code=303)
-
-    except Exception as e:
-        error_details = traceback.format_exc()
-        print("ОШИБКА ПРИ ДОБАВЛЕНИИ ВОЛОНТЕРА:\n", error_details)
-        return HTMLResponse(f"<h3>Произошла ошибка при сохранении:</h3><pre style='background:#f4f4f4;padding:15px;border-radius:8px;color:#c00;'>{error_details}</pre>")
-# --- УДАЛЕНИЕ ДАННЫХ (ТОЛЬКО ДЛЯ АДМИНА) ---
-
-@app.post("/admin/delete-event/{event_id}")
-def delete_event(event_id: int):
     db = SessionLocal()
-    # Находим акцию
-    event = db.query(Event).filter(Event.id == event_id).first()
-    if event:
-        # Удаляем привязанные к ней записи о начисленных часах
-        db.query(HoursLog).filter(HoursLog.event_id == event_id).delete()
-        db.delete(event)
-        db.commit()
+    clean_username = username.strip().lstrip("@").lower()
+
+    # Проверяем, не занят ли логин
+    existing = db.query(User).filter(User.username == clean_username).first()
+    if existing:
+        db.close()
+        return HTMLResponse("<script>alert('Волонтёр с таким логином уже зарегистрирован!'); window.history.back();</script>")
+
+    new_user = User(
+        name=name.strip(),
+        username=clean_username,
+        password_hash=hash_password(password.strip()),
+        role="volunteer"
+    )
+    db.add(new_user)
+    db.commit()
     db.close()
+
     return RedirectResponse(url="/admin", status_code=303)
 
 
