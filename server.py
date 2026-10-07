@@ -267,6 +267,26 @@ def delete_hours(log_id: int):
         db.commit()
     db.close()
     return RedirectResponse(url="/admin", status_code=303)
+    # Удаление акции (поддерживает и GET-ссылку, и POST-форму)
+@app.get("/admin/delete-event/{event_id}")
+@app.post("/admin/delete-event/{event_id}")
+def delete_event(event_id: int):
+    db = SessionLocal()
+    try:
+        # 1. Удаляем связанные часы этой акции
+        db.query(HoursLog).filter(HoursLog.event_id == event_id).delete()
+        
+        # 2. Удаляем саму акцию
+        event = db.query(Event).filter(Event.id == event_id).first()
+        if event:
+            db.delete(event)
+            db.commit()
+    except Exception as e:
+        db.rollback()
+        print(f"Ошибка при удалении акции: {e}")
+    finally:
+        db.close()
+    return RedirectResponse(url="/admin", status_code=303)
     # --- АВТОРИЗАЦИЯ И ЛИЧНЫЙ КАБИНЕТ ВОЛОНТЁРА ---
 
 @app.get("/login", response_class=HTMLResponse)
