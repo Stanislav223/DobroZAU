@@ -42,30 +42,34 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Быстрое добавление волонтера -->
-<div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mt-6">
+<!-- Быстрое добавление волонтера -->
+<div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-6">
   <h2 class="text-lg font-bold mb-4 text-[#5c0613]">Добавить волонтёра (вручную)</h2>
+  
   <form action="/admin/add-user" method="post" class="space-y-4">
-          <label class="block text-xs font-semibold text-slate-600 mb-1">ФИО волонтёра</label>
-          <input type="text" name="name" required placeholder="Иван Иванов"
-                 class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
-        </div>
+    <div>
+      <label class="block text-xs font-semibold text-slate-600 mb-1">ФИО волонтёра</label>
+      <input type="text" name="name" required placeholder="Иван Иванов"
+             class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
+    </div>
 
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Логин для входа</label>
-          <input type="text" name="username" required placeholder="Например: ivanov или ник TG без @"
-                 class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
-        </div>
+    <div>
+      <label class="block text-xs font-semibold text-slate-600 mb-1">Логин для входа</label>
+      <input type="text" name="username" required placeholder="Например: ivanov или ник TG без @"
+             class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
+    </div>
 
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Стартовый пароль</label>
-          <input type="text" name="password" required placeholder="Например: 123456" value="123456"
-                 class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
-          <span class="text-[11px] text-slate-400 mt-1 block">Волонтёр сможет сменить этот пароль в своём личном кабинете.</span>
-        </div>
-<button type="submit" class="w-full bg-[#5c0613] hover:bg-[#3f030b] text-white font-medium py-2 rounded-lg transition shadow-sm">
-  Сохранить волонтёра
-</button>
-    </form>
+    <div>
+      <label class="block text-xs font-semibold text-slate-600 mb-1">Стартовый пароль</label>
+      <input type="text" name="password" required placeholder="Например: 123456" value="123456"
+             class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
+      <span class="text-[11px] text-slate-400 mt-1 block">Волонтёр сможет сменить этот пароль в своём личном кабинете.</span>
+    </div>
+
+    <button type="submit" class="w-full bg-[#5c0613] hover:bg-[#3f030b] text-white font-medium py-2 rounded-lg transition shadow-sm mt-2">
+      Сохранить волонтёра
+    </button>
+  </form>
 </div>
             <!-- Блок 1: Создание акции -->
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
