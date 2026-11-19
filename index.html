@@ -381,14 +381,37 @@
 
     <div class="cards-grid" style="opacity: 0.9;">
       {% for event in past_events %}
-      <div class="event-card" style="background: rgba(255, 255, 255, 0.95); border-left: 4px solid #94a3b8;">
-        <div>
+      <div class="event-card" style="padding: 0; overflow: hidden; border-left: 4px solid #94a3b8;">
+      
+      <!-- Шапка: затемнённое фото/видео + бейдж «Завершена» и название -->
+      <div class="card-media-header {% if event.video_url %}has-media{% endif %}"
+           style="position: relative; overflow: hidden; {% if event.video_url %}padding: 24px; min-height: 140px; background: #1a0206; color: #ffffff;{% else %}padding: 24px 24px 0 24px;{% endif %}">
+        
+        {% if event.video_url %}
+          {% set is_video = event.video_url.lower().endswith(('.mp4', '.webm', '.mov')) or '/video/upload/' in event.video_url %}
+          {% if is_video %}
+            <video class="card-bg-video" loop muted playsinline preload="metadata"
+                   style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
+              <source src="{{ event.video_url }}#t=0.001" type="video/mp4">
+            </video>
+          {% else %}
+            <img src="{{ event.video_url }}" alt="{{ event.title }}"
+                 style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
+          {% endif %}
+          <div style="position: absolute; inset: 0; background: rgba(20, 2, 6, 0.55); z-index: 1;"></div>
+        {% endif %}
+
+        <div style="position: relative; z-index: 2;">
           <div class="card-meta">
             <span class="badge" style="background: #e2e8f0; color: #475569;">Завершена</span>
           </div>
-          <h3 style="color: #334155;">{{ event.title }}</h3>
-          {% if event.description %}<p style="color: #64748b;">{{ event.description }}</p>{% endif %}
+          <h3 style="color: {% if event.video_url %}#ffffff{% else %}#334155{% endif %};">{{ event.title }}</h3>
+          {% if event.description %}<p style="color: {% if event.video_url %}#f1f5f9{% else %}#64748b{% endif %};">{{ event.description }}</p>{% endif %}
         </div>
+      </div>
+
+      <!-- Нижняя часть: всегда белая -->
+      <div class="card-body" style="padding: 18px 24px 24px 24px; background: #ffffff;">
         <div class="event-details">
           <span>📅 <strong>Дата:</strong> {{ event.date or "Проведена" }}</span>
           <span>📍 <strong>Место:</strong> {{ event.location or "По договорённости" }}</span>
@@ -422,7 +445,8 @@
           </div>
         </details>
       </div>
-      {% endfor %}
+    </div>
+  {% endfor %}
     </div>
     {% endif %}    
 
