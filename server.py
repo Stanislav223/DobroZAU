@@ -50,9 +50,10 @@ def verify_password(password: str, hashed: str) -> bool:
 class Event(Base):
     __tablename__ = "events"
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String)
-    date = Column(String)
+    title = Column(String, nullable=False)
+    date = Column(String, nullable=False)
     location = Column(String, default="По договорённости")
+    video_url = Column(String, nullable=True)
 
 
 class HoursLog(Base):
@@ -69,6 +70,7 @@ try:
     with engine.connect() as conn:
         conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS password_hash VARCHAR;"))
         conn.execute(text("ALTER TABLE events ADD COLUMN IF NOT EXISTS location VARCHAR DEFAULT 'По договорённости';"))
+        conn.execute(text("ALTER TABLE events ADD COLUMN IF NOT EXISTS video_url VARCHAR;"))
         conn.commit()
 except Exception as e:
     print(f"Миграция users: {e}")
@@ -190,13 +192,15 @@ def admin_page(username: str = Depends(check_admin)):
 def add_event(
     title: str = Form(...),
     date: str = Form(...),
-    location: str = Form("По договорённости")
+    location: str = Form("По договорённости"),
+    video_url: str = Form("")
 ):
     db = SessionLocal()
     new_event = Event(
         title=title,
         date=date,
-        location=location.strip() if location.strip() else "По договорённости"
+        location=location.strip() if location.strip() else "По договорённости",
+        video_url=video_url.strip() if video_url.strip() else None
     )
     db.add(new_event)
     db.commit()
