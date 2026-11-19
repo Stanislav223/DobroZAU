@@ -6,15 +6,15 @@
   <title>ДоброЗАУ — Волонтёрский центр</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
     :root {
-      --primary: #5c0613;          /* Бордовый цвет университета */
-      --primary-hover: #42040d;    /* Глубокий тёмно-бордовый */
-      --accent: #e63946;           /* Кораллово-красный из логотипа */
-      --bg-page: #5c0613;          /* Тёплый светлый фон */
+      --primary: #5c0613;
+      --primary-hover: #42040d;
+      --accent: #e63946;
+      --bg-page: #5c0613;
       --card-bg: #ffffff;
-      --text-main: #2b0b10;        /* Мягкий тёмный текст с оттенком бордо */
+      --text-main: #2b0b10;
       --text-muted: #73595d;
       --border-color: #ecdfe1;
       --badge-bg: #fce8eb;
@@ -40,13 +40,13 @@
       border-bottom: 2px solid var(--border-color);
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: 20;
     }
 
     .nav-container {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 14px 24px;
+      padding: 10px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -55,59 +55,150 @@
     .logo {
       display: flex;
       align-items: center;
-      gap: 12px;
-      font-size: 1.25rem;
+      gap: 8px;
+      font-size: 1.1rem;
       font-weight: 700;
       color: var(--primary);
       text-decoration: none;
-    }
-
-   .btn-admin {
-      background: #ffffff;
-      border: 1px solid #ecdfe1;
-      color: #5c0613;
-      padding: 8px 18px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-size: 0.9rem;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s ease;
-    }
-
-    .btn-admin:hover {
-      background: #fce8eb;
-      color: #5c0613;
-      border-color: #5c0613;
+      min-width: 0;
     }
 
     /* Главный баннер */
     .hero {
       max-width: 1200px;
-      margin: 45px auto 35px;
+      margin: 36px auto 26px;
       padding: 0 24px;
       text-align: center;
     }
 
     .hero h1 {
-      font-size: 2.5rem;
+      font-size: 2.35rem;
       font-weight: 800;
-      color: var(--primary);
+      color: #FFFFF0;
       letter-spacing: -0.02em;
-      margin-bottom: 12px;
-    }
-
-    .hero h1 span {
-      color: var(--accent);
+      margin-bottom: 10px;
     }
 
     .hero p {
-      color: var(--text-muted);
-      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 1.05rem;
       max-width: 620px;
-      margin: 0 auto;
+      margin: 0 auto 20px;
+    }
+
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-suggest {
+      background: #ffffff;
+      color: #5c0613;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+
+    .btn-suggest:hover {
+      transform: translateY(-2px);
+      background: #fce8eb;
+    }
+
+    /* Живые счётчики статистики */
+    .stats-wrapper {
+      max-width: 1200px;
+      margin: 0 auto 30px;
+      padding: 0 24px;
+    }
+
+    .stats-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .stats-period-label {
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 0.88rem;
+      font-weight: 500;
+    }
+
+    .period-toggle {
+      display: inline-flex;
+      background: rgba(255, 255, 255, 0.14);
+      padding: 4px;
+      border-radius: 10px;
+      gap: 4px;
+    }
+
+    .period-btn {
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.85);
+      padding: 6px 14px;
+      border-radius: 7px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .period-btn.active {
+      background: #ffffff;
+      color: #5c0613;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: 14px;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      background: #fce8eb;
+      color: #5c0613;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+
+    .stat-value {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #5c0613;
+      line-height: 1.1;
+    }
+
+    .stat-label {
+      font-size: 0.82rem;
+      color: #73595d;
+      margin-top: 2px;
     }
 
     /* Контейнер мероприятий */
@@ -120,13 +211,67 @@
     .section-title {
       font-size: 1.45rem;
       font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 24px;
+      color: #ffffff;
+      margin-bottom: 18px;
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
+    /* Поиск и фильтры */
+    .search-filter-box {
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 13px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.96);
+      font-size: 0.95rem;
+      color: #1e293b;
+      outline: none;
+      transition: box-shadow 0.2s;
+    }
+
+    .search-input:focus {
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35);
+    }
+
+    .filter-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .filter-btn {
+      padding: 7px 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+      font-size: 0.84rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-btn:hover {
+      background: rgba(255, 255, 255, 0.22);
+    }
+
+    .filter-btn.active {
+      background: #ffffff;
+      color: #5c0613;
+      border-color: #ffffff;
+      font-weight: 700;
+    }
+
+    /* Сетка карточек */
     .cards-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -137,7 +282,6 @@
       background: var(--card-bg);
       border: 1px solid var(--border-color);
       border-radius: 14px;
-      padding: 24px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -146,7 +290,7 @@
 
     .event-card:hover {
       transform: translateY(-3px);
-      box-shadow: 0 12px 20px -4px rgba(92, 6, 19, 0.08);
+      box-shadow: 0 12px 20px -4px rgba(0, 0, 0, 0.18);
       border-color: #d8b7bc;
     }
 
@@ -154,13 +298,15 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     .badge {
       background: var(--badge-bg);
       color: var(--badge-text);
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 600;
       padding: 4px 12px;
       border-radius: 20px;
@@ -171,48 +317,89 @@
       font-size: 1.25rem;
       font-weight: 700;
       color: var(--text-main);
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       line-height: 1.35;
+    }
+
+    .event-card h3 a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .event-card h3 a:hover {
+      text-decoration: underline;
     }
 
     .event-card p {
       color: var(--text-muted);
-      font-size: 0.95rem;
-      margin-bottom: 20px;
-      flex-grow: 1;
+      font-size: 0.92rem;
+      margin-bottom: 6px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
     .event-details {
       border-top: 1px solid var(--border-color);
-      padding-top: 16px;
+      padding-top: 14px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
       font-size: 0.88rem;
       color: var(--text-muted);
     }
 
-    /* Информационный блок */
-    .join-box {
-      background: linear-gradient(135deg, #5c0613 0%, #360209 100%);
-      color: #ffffff;
-      border-radius: 16px;
-      padding: 45px 30px;
-      text-align: center;
-      margin-top: 60px;
-      box-shadow: 0 10px 25px -5px rgba(92, 6, 19, 0.25);
+    .card-media-header {
+      flex-grow: 1;
     }
 
-    .join-box h2 {
-      font-size: 1.9rem;
-      margin-bottom: 12px;
+    .card-media-header.has-media h3,
+    .card-media-header.has-media p {
+      color: #ffffff;
+    }
+
+    .card-media-header.has-media + .card-body .event-details {
+      border-top: none;
+      padding-top: 0;
+    }
+
+    .btn-event-detail {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin-top: 12px;
+      padding: 9px 14px;
+      border-radius: 9px;
+      background: #fce8eb;
+      color: #5c0613;
+      text-decoration: none;
+      font-size: 0.85rem;
       font-weight: 700;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .btn-event-detail:hover {
+      background: #5c0613;
+      color: #ffffff;
+    }
+
+    /* Информационный блок */
+    .join-box {
+      background: linear-gradient(135deg, #42040d 0%, #260106 100%);
+      color: #ffffff;
+      border-radius: 16px;
+      padding: 40px 28px;
+      text-align: center;
+      margin-top: 50px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
     }
 
     .join-box p {
       color: #ffd8dc;
       max-width: 560px;
-      margin: 0 auto 24px;
+      margin: 0 auto 20px;
       font-size: 1rem;
     }
 
@@ -221,7 +408,7 @@
       background: var(--accent);
       color: #ffffff;
       text-decoration: none;
-      padding: 12px 30px;
+      padding: 12px 28px;
       border-radius: 8px;
       font-weight: 600;
       font-size: 0.95rem;
@@ -241,19 +428,113 @@
       font-size: 0.85rem;
       background: #ffffff;
     }
-  .card-media-header {
-  flex-grow: 1;
-}
-.card-media-header.has-media h3,
-.card-media-header.has-media p {
-  color: #ffffff;
-}
-.card-media-header.has-media + .card-body .event-details {
-  border-top: none;
-  padding-top: 0;
-}
+
+    /* Модальное окно «Предложить акцию» */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 2, 5, 0.72);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: #ffffff;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 480px;
+      padding: 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .modal-header h3 {
+      color: #5c0613;
+      font-size: 1.2rem;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #94a3b8;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 5px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      outline: none;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: #5c0613;
+    }
+
+    .btn-submit-modal {
+      width: 100%;
+      background: #5c0613;
+      color: #ffffff;
+      border: none;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-submit-modal:hover {
+      background: #42040d;
+    }
+
+    /* Адаптив для телефонов */
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 1.75rem;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+      .container, .stats-wrapper, .hero {
+        padding: 0 16px;
+      }
+    }
   </style>
-  <!-- Фавиконки для браузера и поисковиков -->
   <link rel="icon" type="image/png" href="/static/static/logo.png.jpg">
   <link rel="shortcut icon" href="/static/static/logo.png.jpg">
   <link rel="apple-touch-icon" href="/static/static/logo.png.jpg">
@@ -261,201 +542,279 @@
 <body>
 
   <!-- Навигация -->
-<!-- Навигация с логотипом -->
   <header>
-    <div class="nav-container" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; max-width: 1200px; margin: 0 auto; box-sizing: border-box;">
-      
-      <!-- Логотип и название слева -->
-      <a href="/" class="logo" style="display: flex; align-items: center; gap: 8px; text-decoration: none; min-width: 0;">
+    <div class="nav-container">
+      <a href="/" class="logo">
         <img src="/static/static/logo.png.jpg" alt="ДоброЗАУ" style="height: 38px; width: auto; object-fit: contain; border-radius: 6px; flex-shrink: 0;">
-        <span style="font-weight: 700; font-size: 1.1rem; color: #5c0613; white-space: nowrap;">ДоброЗАУ</span>
+        <span style="white-space: nowrap;">ДоброЗАУ</span>
       </a>
 
-      <!-- Две компактные кнопки друг под другом справа -->
       <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-end; flex-shrink: 0;">
-        <a href="/profile" style="display: inline-flex; align-items: center; justify-content: center; background-color: #5c0613; color: #ffffff; text-decoration: none; font-size: 11px; font-weight: 600; padding: 5px 10px; border-radius: 6px; white-space: nowrap; line-height: 1.2; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+        <a href="/profile" style="display: inline-flex; align-items: center; justify-content: center; background-color: #5c0613; color: #ffffff; text-decoration: none; font-size: 11px; font-weight: 600; padding: 5px 10px; border-radius: 6px; white-space: nowrap; line-height: 1.2;">
           👤 Личный кабинет
         </a>
-        <a href="/admin" style="display: inline-flex; align-items: center; justify-content: center; background-color: #ffffff; color: #5c0613; border: 1px solid #5c0613; text-decoration: none; font-size: 11px; font-weight: 600; padding: 4px 9px; border-radius: 6px; white-space: nowrap; line-height: 1.2; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+        <a href="/admin" style="display: inline-flex; align-items: center; justify-content: center; background-color: #ffffff; color: #5c0613; border: 1px solid #5c0613; text-decoration: none; font-size: 11px; font-weight: 600; padding: 4px 9px; border-radius: 6px; white-space: nowrap; line-height: 1.2;">
           ⚙️ Координатор
         </a>
       </div>
-
     </div>
   </header>
 
   <!-- Главный баннер -->
   <section class="hero">
-  <h1 style="color: #FFFFF0;">Волонтёрский центр ДоброЗАУ</h1>
+    <h1>Волонтёрский центр ДоброЗАУ</h1>
     <p>Помогаем вместе. Список актуальных мероприятий и добрых дел, в которых нужна помощь волонтёров.</p>
+    <div class="hero-actions">
+      <button type="button" class="btn-suggest" onclick="openSuggestModal()">💡 Предложить акцию</button>
+    </div>
   </section>
 
-  <!-- Список событий -->
+  <!-- Живые счётчики статистики -->
+  {% if stats %}
+  <section class="stats-wrapper">
+    <div class="stats-header">
+      <span class="stats-period-label" id="statsPeriodLabel">Статистика за текущий месяц</span>
+      <div class="period-toggle">
+        <button type="button" class="period-btn active" id="btnPeriodMonth" onclick="setStatsPeriod('month')">За месяц</button>
+        <button type="button" class="period-btn" id="btnPeriodSemester" onclick="setStatsPeriod('semester')">За семестр</button>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">🤝</div>
+        <div>
+          <div class="stat-value">{{ stats.volunteers_total }}</div>
+          <div class="stat-label">Волонтёров в штабе</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">📅</div>
+        <div>
+          <div class="stat-value" id="statEventsValue"
+               data-month="{{ stats.month_events }}"
+               data-semester="{{ stats.semester_events }}">{{ stats.month_events }}</div>
+          <div class="stat-label" id="statEventsLabel">Акций за месяц</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">⏱️</div>
+        <div>
+          <div class="stat-value" id="statHoursValue"
+               data-month="{{ stats.month_hours }}"
+               data-semester="{{ stats.semester_hours }}">{{ stats.month_hours }}</div>
+          <div class="stat-label" id="statHoursLabel">Часов добра за месяц</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- Основной контент -->
   <main class="container">
     <div class="section-title">
-      Актуальные мероприятия
+      🔥 Актуальные мероприятия
     </div>
 
-    <div class="cards-grid">
-     {% for event in active_events %}
-     <div class="event-card" style="padding: 0; overflow: hidden;">
-      
-      <!-- Шапка: затемнённое фото/видео + статус и название -->
-      <div class="card-media-header {% if event.video_url %}has-media{% endif %}"
-           style="position: relative; overflow: hidden; {% if event.video_url %}padding: 24px; min-height: 140px; background: #1a0206; color: #ffffff;{% else %}padding: 24px 24px 0 24px;{% endif %}">
-        
-        {% if event.video_url %}
-          {% set is_video = event.video_url.lower().endswith(('.mp4', '.webm', '.mov')) or '/video/upload/' in event.video_url %}
-          {% if is_video %}
-            <video class="card-bg-video" loop muted playsinline preload="metadata"
-                   style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
-              <source src="{{ event.video_url }}#t=0.001" type="video/mp4">
-            </video>
-          {% else %}
-            <img src="{{ event.video_url }}" alt="{{ event.title }}"
-                 style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
-          {% endif %}
-          <div style="position: absolute; inset: 0; background: rgba(20, 2, 6, 0.55); z-index: 1;"></div>
-        {% endif %}
+    <!-- Панель поиска и фильтрации -->
+    <div class="search-filter-box">
+      <input type="text" id="eventSearch" class="search-input"
+             placeholder="🔍 Поиск акции по названию...">
 
-        <div style="position: relative; z-index: 2;">
-          <div class="card-meta">
-            <span class="badge">{{ event.category or "Волонтёрство" }}</span>
-          </div>
-          <h3>{{ event.title }}</h3>
-          {% if event.description %}<p>{{ event.description }}</p>{% endif %}
-        </div>
+      <div class="filter-pills" id="categoryFilters">
+        <button type="button" class="filter-btn active" data-filter="all">Все</button>
+        <button type="button" class="filter-btn" data-filter="эко-акции">🌱 Эко-акции</button>
+        <button type="button" class="filter-btn" data-filter="зож">🏃 ЗОЖ</button>
+        <button type="button" class="filter-btn" data-filter="адресная помощь">🤝 Адресная помощь</button>
+        <button type="button" class="filter-btn" data-filter="событийное волонтёрство">🎉 Событийное волонтёрство</button>
+        <button type="button" class="filter-btn" data-filter="волонтёрство">❤️ Волонтёрство</button>
       </div>
+    </div>
 
-      <!-- Нижняя часть: всегда белая -->
-      <div class="card-body" style="padding: 18px 24px 24px 24px; background: #ffffff;">
-        <div class="event-details">
-          <span>📅 <strong>Дата:</strong> {{ event.date or "Уточняется" }}</span>
-          <span>📍 <strong>Место:</strong> {{ event.location or "По договорённости" }}</span>
-        </div>
+    <!-- Заглушка, если поиск ничего не нашёл -->
+    <div id="noSearchResults" style="display: none; text-align: center; padding: 30px; background: rgba(255,255,255,0.96); border-radius: 14px; color: #475569; margin-bottom: 24px; font-weight: 500;">
+      По вашему запросу акций не найдено 😕
+    </div>
 
-        <!-- Раскрывающийся список участников прямо внутри карточки -->
-        <details style="margin-top: 14px; border-top: 1px solid #f1f5f9; padding-top: 10px;">
-          <summary style="cursor: pointer; font-size: 0.85rem; font-weight: 600; color: #5c0613; list-style: none; display: flex; justify-content: space-between; align-items: center;">
-            <span>👥 Участники ({{ event.participants|length }})</span>
-            <span style="font-size: 0.75rem; color: #94a3b8;">нажмите чтобы открыть ▾</span>
-          </summary>
-          <div style="margin-top: 10px; background: #fafafa; border-radius: 8px; padding: 8px 10px; max-height: 160px; overflow-y: auto; border: 1px solid #f1f5f9;">
-            {% for p in event.participants %}
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #edf2f7; font-size: 0.85rem;">
-              <div>
-                <strong style="color: #334155;">{{ p.name }}</strong>
-                {% if p.username %}
-                <span style="color: #94a3b8; font-size: 0.75rem;">@{{ p.username }}</span>
-                {% endif %}
-              </div>
-              <span style="background: #fce8eb; color: #5c0613; font-weight: bold; font-size: 0.75rem; padding: 2px 6px; border-radius: 6px;">
-                +{{ p.hours }} ч.
-              </span>
-            </div>
+    <!-- Активные акции -->
+    <div class="cards-grid" id="activeEventsGrid">
+      {% for event in active_events %}
+      <div class="event-card"
+           data-title="{{ event.title|lower }}"
+           data-category="{{ (event.category or 'Волонтёрство')|lower }}"
+           style="padding: 0; overflow: hidden;">
+
+        <!-- Шапка: затемнённое фото/видео + статус и название -->
+        <div class="card-media-header {% if event.video_url %}has-media{% endif %}"
+             style="position: relative; overflow: hidden; {% if event.video_url %}padding: 24px; min-height: 145px; background: #1a0206; color: #ffffff;{% else %}padding: 24px 24px 0 24px;{% endif %}">
+
+          {% if event.video_url %}
+            {% set is_video = event.video_url.lower().endswith(('.mp4', '.webm', '.mov')) or '/video/upload/' in event.video_url %}
+            {% if is_video %}
+              <video class="card-bg-video" loop muted playsinline preload="metadata"
+                     style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
+                <source src="{{ event.video_url }}#t=0.001" type="video/mp4">
+              </video>
             {% else %}
-            <div style="font-size: 0.8rem; color: #94a3b8; text-align: center; padding: 6px 0; font-style: italic;">
-              Участники пока не добавлены
+              <img src="{{ event.video_url }}" alt="{{ event.title }}"
+                   style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
+            {% endif %}
+            <div style="position: absolute; inset: 0; background: rgba(20, 2, 6, 0.55); z-index: 1;"></div>
+          {% endif %}
+
+          <div style="position: relative; z-index: 2;">
+            <div class="card-meta">
+              <span class="badge">{{ event.category or "Волонтёрство" }}</span>
             </div>
-            {% endfor %}
+            <h3><a href="/event/{{ event.id }}">{{ event.title }}</a></h3>
+            {% if event.description %}<p>{{ event.description }}</p>{% endif %}
           </div>
-        </details>
+        </div>
+
+        <!-- Нижняя часть: всегда белая -->
+        <div class="card-body" style="padding: 18px 24px 22px 24px; background: #ffffff;">
+          <div class="event-details">
+            <span>📅 <strong>Дата:</strong> {{ event.date or "Уточняется" }}</span>
+            <span>📍 <strong>Место:</strong> {{ event.location or "По договорённости" }}</span>
+          </div>
+
+          <a href="/event/{{ event.id }}" class="btn-event-detail">📸 Подробнее и галерея →</a>
+
+          <!-- Раскрывающийся список участников -->
+          <details style="margin-top: 14px; border-top: 1px solid #f1f5f9; padding-top: 10px;">
+            <summary style="cursor: pointer; font-size: 0.85rem; font-weight: 600; color: #5c0613; list-style: none; display: flex; justify-content: space-between; align-items: center;">
+              <span>👥 Участники ({{ event.participants|length }})</span>
+              <span style="font-size: 0.75rem; color: #94a3b8;">нажмите чтобы открыть ▾</span>
+            </summary>
+            <div style="margin-top: 10px; background: #fafafa; border-radius: 8px; padding: 8px 10px; max-height: 160px; overflow-y: auto; border: 1px solid #f1f5f9;">
+              {% for p in event.participants %}
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #edf2f7; font-size: 0.85rem;">
+                <div>
+                  <strong style="color: #334155;">{{ p.name }}</strong>
+                  {% if p.username %}
+                  <span style="color: #94a3b8; font-size: 0.75rem;">@{{ p.username }}</span>
+                  {% endif %}
+                </div>
+                <span style="background: #fce8eb; color: #5c0613; font-weight: bold; font-size: 0.75rem; padding: 2px 6px; border-radius: 6px;">
+                  +{{ p.hours }} ч.
+                </span>
+              </div>
+              {% else %}
+              <div style="font-size: 0.8rem; color: #94a3b8; text-align: center; padding: 6px 0; font-style: italic;">
+                Участники пока не добавлены
+              </div>
+              {% endfor %}
+            </div>
+          </details>
+        </div>
       </div>
+      {% else %}
+      <div style="grid-column: 1 / -1; text-align: center; padding: 40px; background: white; border-radius: 12px; color: #475569;">
+        На данный момент активных мероприятий нет. Следите за обновлениями!
+      </div>
+      {% endfor %}
     </div>
-  {% else %}
-    <div style="grid-column: 1 / -1; text-align: center; padding: 40px; background: white; border-radius: 12px; ...">
-      На данный момент активных мероприятий нет. Следите за обновлениями!
-    </div>
-  {% endfor %}
-    </div>
-</div>
-    <!-- конец cards-grid -->
-<!-- Блок: Завершённые акции -->
+
+    <!-- Блок: Завершённые акции -->
     {% if past_events %}
-    <div style="margin-top: 45px; margin-bottom: 18px;">
-      <h3 style="color: rgba(255, 255, 255, 0.85); font-size: 1.15rem; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px;">
-        <span>✅ Завершённые акции</span>
-        <span style="font-size: 0.8rem; font-weight: normal; background: rgba(255,255,255,0.15); padding: 2px 8px; border-radius: 12px; color: #fff;">{{ past_events|length }}</span>
-      </h3>
-    </div>
-
-    <div class="cards-grid" style="opacity: 0.9;">
-      {% for event in past_events %}
-      <div class="event-card" style="padding: 0; overflow: hidden; border-left: 4px solid #94a3b8;">
-      
-      <!-- Шапка: затемнённое фото/видео + бейдж «Завершена» и название -->
-      <div class="card-media-header {% if event.video_url %}has-media{% endif %}"
-           style="position: relative; overflow: hidden; {% if event.video_url %}padding: 24px; min-height: 140px; background: #1a0206; color: #ffffff;{% else %}padding: 24px 24px 0 24px;{% endif %}">
-        
-        {% if event.video_url %}
-          {% set is_video = event.video_url.lower().endswith(('.mp4', '.webm', '.mov')) or '/video/upload/' in event.video_url %}
-          {% if is_video %}
-            <video class="card-bg-video" loop muted playsinline preload="metadata"
-                   style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
-              <source src="{{ event.video_url }}#t=0.001" type="video/mp4">
-            </video>
-          {% else %}
-            <img src="{{ event.video_url }}" alt="{{ event.title }}"
-                 style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
-          {% endif %}
-          <div style="position: absolute; inset: 0; background: rgba(20, 2, 6, 0.55); z-index: 1;"></div>
-        {% endif %}
-
-        <div style="position: relative; z-index: 2;">
-          <div class="card-meta">
-            <span class="badge" style="background: #e2e8f0; color: #475569;">Завершена</span>
-          </div>
-          <h3 style="color: {% if event.video_url %}#ffffff{% else %}#334155{% endif %};">{{ event.title }}</h3>
-          {% if event.description %}<p style="color: {% if event.video_url %}#f1f5f9{% else %}#64748b{% endif %};">{{ event.description }}</p>{% endif %}
-        </div>
+    <div id="pastEventsSection">
+      <div style="margin-top: 45px; margin-bottom: 18px;">
+        <h3 style="color: rgba(255, 255, 255, 0.9); font-size: 1.2rem; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px;">
+          <span>✅ Завершённые акции</span>
+          <span style="font-size: 0.8rem; font-weight: normal; background: rgba(255,255,255,0.15); padding: 2px 8px; border-radius: 12px; color: #fff;">{{ past_events|length }}</span>
+        </h3>
       </div>
 
-      <!-- Нижняя часть: всегда белая -->
-      <div class="card-body" style="padding: 18px 24px 24px 24px; background: #ffffff;">
-        <div class="event-details">
-          <span>📅 <strong>Дата:</strong> {{ event.date or "Проведена" }}</span>
-          <span>📍 <strong>Место:</strong> {{ event.location or "По договорённости" }}</span>
-        </div>
+      <div class="cards-grid" style="opacity: 0.94;">
+        {% for event in past_events %}
+        <div class="event-card"
+             data-title="{{ event.title|lower }}"
+             data-category="{{ (event.category or 'Волонтёрство')|lower }}"
+             style="padding: 0; overflow: hidden; border-left: 4px solid #94a3b8;">
 
-        <!-- Раскрывающийся список участников прошедшей акции -->
-        <details style="margin-top: 14px; border-top: 1px solid #f1f5f9; padding-top: 10px;">
-          <summary style="cursor: pointer; font-size: 0.85rem; font-weight: 600; color: #475569; list-style: none; display: flex; justify-content: space-between; align-items: center; user-select: none;">
-            <span>👥 Участники ({{ event.participants|length }})</span>
-            <span style="font-size: 0.75rem; color: #94a3b8;">посмотреть ▾</span>
-          </summary>
+          <!-- Шапка: затемнённое фото/видео + бейдж «Завершена» и название -->
+          <div class="card-media-header {% if event.video_url %}has-media{% endif %}"
+               style="position: relative; overflow: hidden; {% if event.video_url %}padding: 24px; min-height: 145px; background: #1a0206; color: #ffffff;{% else %}padding: 24px 24px 0 24px;{% endif %}">
 
-          <div style="margin-top: 10px; background: #f8fafc; border-radius: 8px; padding: 8px 10px; max-height: 160px; overflow-y: auto; border: 1px solid #e2e8f0;">
-            {% for p in event.participants %}
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #e2e8f0; font-size: 0.85rem;">
-              <div>
-                <strong style="color: #334155;">{{ p.name }}</strong>
-                {% if p.username %}
-                <span style="color: #94a3b8; font-size: 0.75rem;">@{{ p.username }}</span>
-                {% endif %}
+            {% if event.video_url %}
+              {% set is_video = event.video_url.lower().endswith(('.mp4', '.webm', '.mov')) or '/video/upload/' in event.video_url %}
+              {% if is_video %}
+                <video class="card-bg-video" loop muted playsinline preload="metadata"
+                       style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
+                  <source src="{{ event.video_url }}#t=0.001" type="video/mp4">
+                </video>
+              {% else %}
+                <img src="{{ event.video_url }}" alt="{{ event.title }}"
+                     style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
+              {% endif %}
+              <div style="position: absolute; inset: 0; background: rgba(20, 2, 6, 0.55); z-index: 1;"></div>
+            {% endif %}
+
+            <div style="position: relative; z-index: 2;">
+              <div class="card-meta">
+                <span class="badge" style="background: #e2e8f0; color: #475569; border-color: #cbd5e1;">Завершена</span>
+                <span class="badge" style="background: rgba(255,255,255,0.88); color: #5c0613; border: none;">{{ event.category or "Волонтёрство" }}</span>
               </div>
-              <span style="background: #e2e8f0; color: #334155; font-weight: bold; font-size: 0.75rem; padding: 2px 6px; border-radius: 6px;">
-                +{{ p.hours }} ч.
-              </span>
+              <h3 style="color: {% if event.video_url %}#ffffff{% else %}#334155{% endif %};">
+                <a href="/event/{{ event.id }}">{{ event.title }}</a>
+              </h3>
+              {% if event.description %}
+                <p style="color: {% if event.video_url %}#f1f5f9{% else %}#64748b{% endif %};">{{ event.description }}</p>
+              {% endif %}
             </div>
-            {% else %}
-            <div style="font-size: 0.8rem; color: #94a3b8; text-align: center; padding: 6px 0; font-style: italic;">
-              В этой акции не было отмеченных участников
-            </div>
-            {% endfor %}
           </div>
-        </details>
+
+          <!-- Нижняя часть: всегда белая -->
+          <div class="card-body" style="padding: 18px 24px 22px 24px; background: #ffffff;">
+            <div class="event-details">
+              <span>📅 <strong>Дата:</strong> {{ event.date or "Проведена" }}</span>
+              <span>📍 <strong>Место:</strong> {{ event.location or "По договорённости" }}</span>
+            </div>
+
+            <a href="/event/{{ event.id }}" class="btn-event-detail" style="background: #f1f5f9; color: #334155;">📸 Подробнее и галерея →</a>
+
+            <!-- Раскрывающийся список участников прошедшей акции -->
+            <details style="margin-top: 14px; border-top: 1px solid #f1f5f9; padding-top: 10px;">
+              <summary style="cursor: pointer; font-size: 0.85rem; font-weight: 600; color: #475569; list-style: none; display: flex; justify-content: space-between; align-items: center; user-select: none;">
+                <span>👥 Участники ({{ event.participants|length }})</span>
+                <span style="font-size: 0.75rem; color: #94a3b8;">посмотреть ▾</span>
+              </summary>
+
+              <div style="margin-top: 10px; background: #f8fafc; border-radius: 8px; padding: 8px 10px; max-height: 160px; overflow-y: auto; border: 1px solid #e2e8f0;">
+                {% for p in event.participants %}
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #e2e8f0; font-size: 0.85rem;">
+                  <div>
+                    <strong style="color: #334155;">{{ p.name }}</strong>
+                    {% if p.username %}
+                    <span style="color: #94a3b8; font-size: 0.75rem;">@{{ p.username }}</span>
+                    {% endif %}
+                  </div>
+                  <span style="background: #e2e8f0; color: #334155; font-weight: bold; font-size: 0.75rem; padding: 2px 6px; border-radius: 6px;">
+                    +{{ p.hours }} ч.
+                  </span>
+                </div>
+                {% else %}
+                <div style="font-size: 0.8rem; color: #94a3b8; text-align: center; padding: 6px 0; font-style: italic;">
+                  В этой акции не было отмеченных участников
+                </div>
+                {% endfor %}
+              </div>
+            </details>
+          </div>
+        </div>
+        {% endfor %}
       </div>
     </div>
-  {% endfor %}
-    </div>
-    {% endif %}    
+    {% endif %}
 
     <!-- Блок рейтинга волонтёров -->
-    <div class="section-title" style="margin-top: 50px; color: #ffffff;">
-  🏆 Рейтинг волонтёров штаба
-</div>
+    <div class="section-title" style="margin-top: 50px;">
+      🏆 Рейтинг волонтёров штаба
+    </div>
 
-    <div style="background: white; border-radius: 16px; border: 1px solid var(--border-color); overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03);">
+    <div style="background: white; border-radius: 16px; border: 1px solid var(--border-color); overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08);">
       <table style="width: 100%; border-collapse: collapse; text-align: left;">
         <thead>
           <tr style="background: #fdf8f8; border-bottom: 2px solid var(--border-color); color: var(--primary); font-size: 0.9rem;">
@@ -499,41 +858,154 @@
 
     <!-- Информационный блок координатора -->
     <div class="join-box">
-      <p>Возникли вопросы? Свяжитесь с нами.</p>
-      <a href="mailto:dobrozau.admin@gmail.com" class="join-btn">Связаться с координатором</a>
+      <p>Возникли вопросы или есть идея для нового доброго дела? Напишите нам!</p>
+      <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+        <a href="mailto:dobrozau.admin@gmail.com" class="join-btn">Связаться с координатором</a>
+        <button type="button" class="btn-suggest" onclick="openSuggestModal()">💡 Предложить акцию</button>
+      </div>
     </div>
   </main>
 
   <footer>
     © 2026 ДоброЗАУ. Волонтёрская деятельность и социальные проекты.
   </footer>
-<script>
+
+  <!-- Модальное окно «Предложить акцию» -->
+  <div class="modal-overlay" id="suggestModal" onclick="if(event.target === this) closeSuggestModal()">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>💡 Предложить акцию</h3>
+        <button type="button" class="modal-close" onclick="closeSuggestModal()">&times;</button>
+      </div>
+      <form action="/suggest-event" method="post">
+        <div class="form-group">
+          <label>Ваше имя *</label>
+          <input type="text" name="author_name" required placeholder="Например, Иван Иванов">
+        </div>
+        <div class="form-group">
+          <label>Контакт для связи (Telegram или телефон)</label>
+          <input type="text" name="contact" placeholder="@username или +7...">
+        </div>
+        <div class="form-group">
+          <label>Название акции / идея *</label>
+          <input type="text" name="title" required placeholder="Например, Сбор корма для приюта">
+        </div>
+        <div class="form-group">
+          <label>Подробности (где, когда, что нужно сделать)</label>
+          <textarea name="description" rows="4" placeholder="Кратко опишите вашу идею..."></textarea>
+        </div>
+        <button type="submit" class="btn-submit-modal">Отправить координаторам</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // 1. Переключатель живых счётчиков (Месяц / Семестр)
+    function setStatsPeriod(period) {
+      const btnMonth = document.getElementById('btnPeriodMonth');
+      const btnSem = document.getElementById('btnPeriodSemester');
+      const eventsVal = document.getElementById('statEventsValue');
+      const hoursVal = document.getElementById('statHoursValue');
+      const eventsLbl = document.getElementById('statEventsLabel');
+      const hoursLbl = document.getElementById('statHoursLabel');
+      const periodLbl = document.getElementById('statsPeriodLabel');
+
+      if (!eventsVal || !hoursVal) return;
+
+      if (period === 'semester') {
+        btnMonth.classList.remove('active');
+        btnSem.classList.add('active');
+        eventsVal.textContent = eventsVal.dataset.semester;
+        hoursVal.textContent = hoursVal.dataset.semester;
+        eventsLbl.textContent = 'Акций за семестр';
+        hoursLbl.textContent = 'Часов добра за семестр';
+        periodLbl.textContent = 'Статистика: {{ stats.semester_label if stats else "Текущий семестр" }}';
+      } else {
+        btnSem.classList.remove('active');
+        btnMonth.classList.add('active');
+        eventsVal.textContent = eventsVal.dataset.month;
+        hoursVal.textContent = hoursVal.dataset.month;
+        eventsLbl.textContent = 'Акций за месяц';
+        hoursLbl.textContent = 'Часов добра за месяц';
+        periodLbl.textContent = 'Статистика за текущий месяц';
+      }
+    }
+
+    // 2. Модальное окно «Предложить акцию»
+    function openSuggestModal() {
+      document.getElementById('suggestModal').classList.add('open');
+    }
+    function closeSuggestModal() {
+      document.getElementById('suggestModal').classList.remove('open');
+    }
+
+    // 3. Поиск и фильтрация карточек + воспроизведение видео
     document.addEventListener("DOMContentLoaded", () => {
+      const searchInput = document.getElementById('eventSearch');
+      const filterButtons = document.querySelectorAll('.filter-btn');
+      const allCards = document.querySelectorAll('.event-card[data-title]');
+      const noResultsBox = document.getElementById('noSearchResults');
+      const pastSection = document.getElementById('pastEventsSection');
+
+      let currentCategory = 'all';
+
+      function applyFilters() {
+        const query = searchInput.value.trim().toLowerCase();
+        let visibleTotal = 0;
+        let visiblePast = 0;
+
+        allCards.forEach(card => {
+          const title = card.dataset.title || '';
+          const category = card.dataset.category || '';
+          const matchesSearch = title.includes(query);
+          const matchesCategory = (currentCategory === 'all') || (category === currentCategory);
+
+          if (matchesSearch && matchesCategory) {
+            card.style.display = '';
+            visibleTotal++;
+            if (pastSection && pastSection.contains(card)) {
+              visiblePast++;
+            }
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        if (pastSection) {
+          pastSection.style.display = (visiblePast === 0 && (query !== '' || currentCategory !== 'all')) ? 'none' : '';
+        }
+        noResultsBox.style.display = (allCards.length > 0 && visibleTotal === 0) ? 'block' : 'none';
+      }
+
+      if (searchInput) {
+        searchInput.addEventListener('input', applyFilters);
+      }
+
+      filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentCategory = btn.dataset.filter;
+          applyFilters();
+        });
+      });
+
+      // Воспроизведение фоновых видео (ПК: наведение, телефон: центр экрана)
       const cards = document.querySelectorAll(".event-card");
-      // Проверяем, ПК это (есть мышь с наведением) или телефон
       const isDesktop = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
       if (isDesktop) {
-        // На ПК: запуск при наведении, пауза при уходе курсора
         cards.forEach(card => {
           const video = card.querySelector(".card-bg-video");
           if (!video) return;
-
-          card.addEventListener("mouseenter", () => {
-            video.play().catch(() => {});
-          });
-
-          card.addEventListener("mouseleave", () => {
-            video.pause();
-          });
+          card.addEventListener("mouseenter", () => video.play().catch(() => {}));
+          card.addEventListener("mouseleave", () => video.pause());
         });
       } else {
-        // На телефоне: запуск только для карточек в центре экрана
         const observer = new IntersectionObserver((entries) => {
           entries.forEach(entry => {
             const video = entry.target.querySelector(".card-bg-video");
             if (!video) return;
-
             if (entry.isIntersecting) {
               video.play().catch(() => {});
             } else {
