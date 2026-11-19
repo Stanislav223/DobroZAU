@@ -74,22 +74,43 @@
             <!-- Блок 1: Создание акции -->
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                <h2 class="text-lg font-bold mb-4 text-[#5c0613]">1. Добавить акцию</h2>
-                <form action="/admin/add-event" method="post" class="space-y-4">
+                <form action="/admin/add-event" method="post" enctype="multipart/form-data" class="space-y-4">
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1">Название акции</label>
-                        <input type="text" name="title" required placeholder="Например: Субботник в парке" 
-                               class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5c0613] focus:border-[#5c0613]">
+                        <input type="text" name="title" required placeholder="Например: Субботник в парке"
+                               class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
                     </div>
+
                     <div>
-                          <label class="block text-xs font-semibold text-slate-600 mb-1">Видео-фон (необязательно)</label>
-                          <input type="text" name="video_url" placeholder="/static/videos/subbotnik.mp4 или https://..."
-                                 class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Дата проведения</label>
+                        <input type="date" name="date" required
+                               class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
                     </div>
-<div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Место проведения</label>
-            <input type="text" name="location" placeholder="Например: Центральный парк / Главный корпус"
-                   class="w-full px-3 py-2 border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#5c0613] focus:border-[#5c0613]">
-          </div>                    
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Место проведения</label>
+                        <input type="text" name="location" placeholder="Например: Кампус ЗАУ"
+                               class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">
+                            Добавление фото или видео к карточке акции
+                        </label>
+                        <input type="file" name="media_file" accept="image/*,video/*"
+                               class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:font-semibold file:bg-[#faf7f7] file:text-[#5c0613] hover:file:bg-[#ecdfe1] border rounded-lg p-1">
+                        <span class="text-[11px] text-slate-400 mt-1 block">
+                            Подойдёт фото (JPG, PNG) или короткое видео (MP4).
+                        </span>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">
+                            Или ссылка на фото/видео (если файл не выбран)
+                        </label>
+                        <input type="text" name="video_url" placeholder="https://..."
+                               class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
+                    </div>                    
                     <button type="submit" class="w-full bg-[#5c0613] hover:bg-[#3f030b] text-white font-medium py-2 rounded-lg transition shadow-sm">
   Создать акцию
 </button>
