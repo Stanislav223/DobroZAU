@@ -243,13 +243,14 @@
                 <div class="grid grid-cols-2 gap-2">
                   <div>
                     <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">Категория</label>
-                    {% set cur_cat = ev.category or "Волонтёрство" %}
+                    {% set cur_cat = ev.category or "Прочее" %}
                     <select name="category" class="w-full px-2 py-1.5 border rounded-lg text-xs bg-white">
-                      <option value="Волонтёрство" {% if cur_cat == 'Волонтёрство' %}selected{% endif %}>Волонтёрство</option>
-                      <option value="Эко-акции" {% if cur_cat == 'Эко-акции' %}selected{% endif %}>Эко-акции</option>
-                      <option value="ЗОЖ" {% if cur_cat == 'ЗОЖ' %}selected{% endif %}>ЗОЖ</option>
-                      <option value="Адресная помощь" {% if cur_cat == 'Адресная помощь' %}selected{% endif %}>Адресная помощь</option>
+                      <option value="Эко волонтёрство" {% if cur_cat == 'Эко волонтёрство' %}selected{% endif %}>Эко волонтёрство</option>
                       <option value="Событийное волонтёрство" {% if cur_cat == 'Событийное волонтёрство' %}selected{% endif %}>Событийное волонтёрство</option>
+                      <option value="Спорт и ЗОЖ" {% if cur_cat == 'Спорт и ЗОЖ' %}selected{% endif %}>Спорт и ЗОЖ</option>
+                      <option value="Адресная помощь" {% if cur_cat == 'Адресная помощь' %}selected{% endif %}>Адресная помощь</option>
+                      <option value="Культурное волонтёрство" {% if cur_cat == 'Культурное волонтёрство' %}selected{% endif %}>Культурное волонтёрство</option>
+                      <option value="Прочее" {% if cur_cat == 'Прочее' %}selected{% endif %}>Прочее</option>
                     </select>
                   </div>
                   <div>
