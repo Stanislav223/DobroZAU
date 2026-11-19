@@ -241,6 +241,17 @@
       font-size: 0.85rem;
       background: #ffffff;
     }
+  .card-media-header {
+  flex-grow: 1;
+}
+.card-media-header.has-media h3,
+.card-media-header.has-media p {
+  color: #ffffff;
+}
+.card-media-header.has-media + .card-body .event-details {
+  border-top: none;
+  padding-top: 0;
+}
   </style>
   <!-- Фавиконки для браузера и поисковиков -->
   <link rel="icon" type="image/png" href="/static/static/logo.png.jpg">
@@ -287,42 +298,48 @@
 
     <div class="cards-grid">
      {% for event in active_events %}
-      <div class="event-card {% if event.video_url %}has-media{% endif %}" style="position: relative; overflow: hidden; {% if event.video_url %}color: #ffffff; background: #1a0206;{% endif %}">
+     <div class="event-card" style="padding: 0; overflow: hidden;">
       
-      {% if event.video_url %}
-        {% set is_video = event.video_url.lower().endswith(('.mp4', '.webm', '.mov')) or '/video/upload/' in event.video_url %}
-        {% if is_video %}
-          <video class="card-bg-video" loop muted playsinline preload="metadata"
+      <!-- Шапка: затемнённое фото/видео + статус и название -->
+      <div class="card-media-header {% if event.video_url %}has-media{% endif %}"
+           style="position: relative; overflow: hidden; {% if event.video_url %}padding: 24px; min-height: 140px; background: #1a0206; color: #ffffff;{% else %}padding: 24px 24px 0 24px;{% endif %}">
+        
+        {% if event.video_url %}
+          {% set is_video = event.video_url.lower().endswith(('.mp4', '.webm', '.mov')) or '/video/upload/' in event.video_url %}
+          {% if is_video %}
+            <video class="card-bg-video" loop muted playsinline preload="metadata"
+                   style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
+              <source src="{{ event.video_url }}#t=0.001" type="video/mp4">
+            </video>
+          {% else %}
+            <img src="{{ event.video_url }}" alt="{{ event.title }}"
                  style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
-            <source src="{{ event.video_url }}#t=0.001" type="video/mp4">
-          </video>
-        {% else %}
-          <img src="{{ event.video_url }}" alt="{{ event.title }}"
-               style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
+          {% endif %}
+          <div style="position: absolute; inset: 0; background: rgba(20, 2, 6, 0.55); z-index: 1;"></div>
         {% endif %}
-        <div style="position: absolute; inset: 0; background: rgba(20, 2, 6, 0.58); z-index: 1;"></div>
-      {% endif %}
 
-      <div style="position: relative; z-index: 2;">
-        <div>
+        <div style="position: relative; z-index: 2;">
           <div class="card-meta">
             <span class="badge">{{ event.category or "Волонтёрство" }}</span>
           </div>
           <h3>{{ event.title }}</h3>
           {% if event.description %}<p>{{ event.description }}</p>{% endif %}
         </div>
+      </div>
+
+      <!-- Нижняя часть: всегда белая -->
+      <div class="card-body" style="padding: 18px 24px 24px 24px; background: #ffffff;">
         <div class="event-details">
           <span>📅 <strong>Дата:</strong> {{ event.date or "Уточняется" }}</span>
           <span>📍 <strong>Место:</strong> {{ event.location or "По договорённости" }}</span>
         </div>
 
         <!-- Раскрывающийся список участников прямо внутри карточки -->
-        <details style="margin-top: 14px; border-top: 1px solid {% if event.video_url %}rgba(255,255,255,0.25){% else %}#f1f5f9{% endif %}; padding-top: 10px;">
-        <summary style="cursor: pointer; font-size: 0.85rem; font-weight: 600; color: {% if event.video_url %}#ffffff{% else %}#5c0613{% endif %}; list-style: none; display: flex; justify-content: space-between; align-items: center;">
-          <span>👥 Участники ({{ event.participants|length }})</span>
-          <span style="font-size: 0.75rem; color: {% if event.video_url %}#e2e8f0{% else %}#94a3b8{% endif %};">нажмите чтобы открыть ▾</span>
-        </summary>
-
+        <details style="margin-top: 14px; border-top: 1px solid #f1f5f9; padding-top: 10px;">
+          <summary style="cursor: pointer; font-size: 0.85rem; font-weight: 600; color: #5c0613; list-style: none; display: flex; justify-content: space-between; align-items: center;">
+            <span>👥 Участники ({{ event.participants|length }})</span>
+            <span style="font-size: 0.75rem; color: #94a3b8;">нажмите чтобы открыть ▾</span>
+          </summary>
           <div style="margin-top: 10px; background: #fafafa; border-radius: 8px; padding: 8px 10px; max-height: 160px; overflow-y: auto; border: 1px solid #f1f5f9;">
             {% for p in event.participants %}
             <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #edf2f7; font-size: 0.85rem;">
