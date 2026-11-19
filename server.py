@@ -112,6 +112,7 @@ def home():
             "category": getattr(ev, "category", "Волонтёрство"),
             "description": getattr(ev, "description", None),
             "location": getattr(ev, "location", "По договорённости"),
+            "video_url": getattr(ev, "video_url", None),
             "is_past": str(ev.date) < today_str,
             "participants": participants
         })
