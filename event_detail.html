@@ -1,1 +1,182 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ event.title }} — ДоброЗАУ</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" type="image/png" href="/static/static/logo.png.jpg">
+  <style>
+    body { background-color: #5c0613; font-family: sans-serif; }
+  </style>
+</head>
+<body class="min-h-screen p-4 sm:p-8 text-slate-800">
+  <div class="max-w-4xl mx-auto space-y-6">
 
+    <!-- Навигация -->
+    <div class="flex justify-between items-center text-white">
+      <a href="/" class="text-sm bg-white/10 hover:bg-white/20 px-3.5 py-2 rounded-lg border border-white/20 transition font-medium">
+        ← Ко всем акциям
+      </a>
+      <a href="/profile" class="text-sm text-white/85 hover:text-white font-medium">
+        👤 Личный кабинет
+      </a>
+    </div>
+
+    <!-- Карточка акции: шапка с обложкой + подробности -->
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+
+      <!-- Шапка с фото/видео -->
+      <div class="relative overflow-hidden {% if event.video_url %}min-h-[240px] bg-[#1a0206] text-white{% else %}bg-[#fdf7f8] text-slate-800 border-b border-slate-200{% endif %} p-6 sm:p-8 flex flex-col justify-end">
+        {% if event.video_url %}
+          {% set is_cover_video = event.video_url.lower().endswith(('.mp4', '.webm', '.mov')) or '/video/upload/' in event.video_url %}
+          {% if is_cover_video %}
+            <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover z-0">
+              <source src="{{ event.video_url }}" type="video/mp4">
+            </video>
+          {% else %}
+            <img src="{{ event.video_url }}" alt="{{ event.title }}" class="absolute inset-0 w-full h-full object-cover z-0">
+          {% endif %}
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/45 to-black/25 z-10"></div>
+        {% endif %}
+
+        <div class="relative z-20">
+          <div class="flex flex-wrap gap-2 mb-3">
+            <span class="text-xs font-bold px-3 py-1 rounded-full bg-[#fce8eb] text-[#5c0613]">
+              {{ event.category or "Волонтёрство" }}
+            </span>
+            {% if is_past %}
+            <span class="text-xs font-bold px-3 py-1 rounded-full bg-slate-200 text-slate-700">
+              ✅ Завершена
+            </span>
+            {% else %}
+            <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800">
+              🔥 Актуальна
+            </span>
+            {% endif %}
+          </div>
+
+          <h1 class="text-2xl sm:text-3xl font-extrabold leading-tight">{{ event.title }}</h1>
+        </div>
+      </div>
+
+      <!-- Подробная информация -->
+      <div class="p-6 sm:p-8 space-y-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm">
+          <div>
+            <span class="text-slate-400 text-xs block">Дата проведения</span>
+            <strong class="text-slate-800">📅 {{ event.date or "Уточняется" }}</strong>
+          </div>
+          <div>
+            <span class="text-slate-400 text-xs block">Место проведения</span>
+            <strong class="text-slate-800">📍 {{ event.location or "По договорённости" }}</strong>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Описание акции</h2>
+          {% if event.description %}
+            <p class="text-slate-700 leading-relaxed whitespace-pre-line">{{ event.description }}</p>
+          {% else %}
+            <p class="text-slate-400 italic text-sm">Подробное описание акции пока не добавлено.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Галерея фото и видео -->
+    <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-bold text-[#5c0613]">🖼️ Галерея акции</h2>
+        <span class="text-xs font-semibold bg-[#fce8eb] text-[#5c0613] px-2.5 py-1 rounded-full">
+          Материалов: {{ media_items|length }}
+        </span>
+      </div>
+
+      {% if media_items %}
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {% for item in media_items %}
+        {% set is_vid = item.media_url.lower().endswith(('.mp4', '.webm', '.mov')) or '/video/upload/' in item.media_url %}
+        <div class="rounded-xl overflow-hidden border border-slate-200 bg-slate-900 aspect-video relative group">
+          {% if is_vid %}
+            <video controls preload="metadata" class="w-full h-full object-cover">
+              <source src="{{ item.media_url }}#t=0.001" type="video/mp4">
+            </video>
+          {% else %}
+            <img src="{{ item.media_url }}" alt="Фото с акции {{ event.title }}"
+                 onclick="openLightbox(this.src)"
+                 class="w-full h-full object-cover cursor-zoom-in group-hover:scale-105 transition duration-200">
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="text-center py-8 bg-slate-50 rounded-xl border border-dashed border-slate-200 text-slate-400 text-sm">
+        Фотографии и видео с этой акции появятся здесь позже 📸
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Список участников -->
+    <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-bold text-[#5c0613]">👥 Участники акции</h2>
+        <span class="text-xs font-semibold bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full">
+          Всего: {{ participants|length }}
+        </span>
+      </div>
+
+      {% if participants %}
+      <div class="divide-y divide-slate-100">
+        {% for p in participants %}
+        <div class="py-3 flex justify-between items-center">
+          <div>
+            <span class="font-semibold text-slate-800">{{ p.name }}</span>
+            {% if p.username %}
+              <span class="text-xs text-slate-400 ml-1.5">@{{ p.username }}</span>
+            {% endif %}
+          </div>
+          <span class="bg-[#fce8eb] text-[#5c0613] font-bold text-xs px-2.5 py-1 rounded-lg">
+            +{{ p.hours }} ч.
+          </span>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="text-center py-6 text-slate-400 text-sm italic">
+        Участники пока не отмечены.
+      </div>
+      {% endif %}
+    </div>
+
+  </div>
+
+  <!-- Полноэкранный просмотр фото (лайтбокс) -->
+  <div id="lightbox" onclick="closeLightbox()"
+       class="fixed inset-0 bg-black/90 hidden items-center justify-center p-4 z-50 cursor-zoom-out">
+    <button type="button" onclick="closeLightbox()"
+            class="absolute top-4 right-5 text-white text-3xl font-bold leading-none hover:text-slate-300">&times;</button>
+    <img id="lightboxImg" src="" alt="Просмотр фото" class="max-w-full max-h-[90vh] rounded-lg shadow-2xl">
+  </div>
+
+  <script>
+    function openLightbox(src) {
+      const box = document.getElementById('lightbox');
+      const img = document.getElementById('lightboxImg');
+      img.src = src;
+      box.classList.remove('hidden');
+      box.classList.add('flex');
+    }
+
+    function closeLightbox() {
+      const box = document.getElementById('lightbox');
+      box.classList.add('hidden');
+      box.classList.remove('flex');
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeLightbox();
+    });
+  </script>
+</body>
+</html>
