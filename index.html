@@ -343,13 +343,13 @@
             {% endfor %}
           </div>
         </details>
-      </div>   
-    </div>     
-  {% endfor %}
-      <div style="grid-column: 1 / -1; text-align: center; padding: 40px; background: white; border-radius: 12px; border: 1px solid var(--border-color); color: #64748b;">
-        На данный момент активных мероприятий нет. Следите за обновлениями!
       </div>
-      {% endfor %}
+    </div>
+  {% else %}
+    <div style="grid-column: 1 / -1; text-align: center; padding: 40px; background: white; border-radius: 12px; ...">
+      На данный момент активных мероприятий нет. Следите за обновлениями!
+    </div>
+  {% endfor %}
     </div>
 </div>
     <!-- конец cards-grid -->
