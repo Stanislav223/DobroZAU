@@ -5,13 +5,17 @@ import hmac
 import secrets
 import traceback
 from datetime import date
-from fastapi import FastAPI, Form, HTTPException, Request, Depends, status, Response
+from fastapi import FastAPI, Form, HTTPException, Request, Depends, status, Response, UploadFile, File
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.responses import HTMLResponse, RedirectResponse
 from jinja2 import Template
 from sqlalchemy import Column, Float, ForeignKey, Integer, String, create_engine, text
 from sqlalchemy.orm import declarative_base, sessionmaker
 from fastapi.staticfiles import StaticFiles
+import cloudinary
+import cloudinary.uploader
+
+cloudinary.config(secure=True)
 # --- НАСТРОЙКИ ---
 BOT_TOKEN = "8647618080:AAFb0elmPHwZXmZlOPPLHDnNaFes1QZfGmI"
 BOT_USERNAME = "DobroZAU_bot"
@@ -193,14 +197,26 @@ def add_event(
     title: str = Form(...),
     date: str = Form(...),
     location: str = Form("По договорённости"),
-    video_url: str = Form("")
+    video_url: str = Form(""),
+    media_file: UploadFile = File(None)
 ):
+    final_media_url = video_url.strip() if video_url.strip() else None
+
+    # Если прикреплён файл — загружаем его в Cloudinary
+    if media_file and media_file.filename:
+        upload_result = cloudinary.uploader.upload(
+            media_file.file,
+            resource_type="auto",  
+            folder="dobrozau_events"
+        )
+        final_media_url = upload_result.get("secure_url")
+
     db = SessionLocal()
     new_event = Event(
         title=title,
         date=date,
         location=location.strip() if location.strip() else "По договорённости",
-        video_url=video_url.strip() if video_url.strip() else None
+        video_url=final_media_url
     )
     db.add(new_event)
     db.commit()
