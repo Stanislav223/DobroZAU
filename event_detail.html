@@ -1,182 +1,975 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{{ event.title }} — ДоброЗАУ</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="icon" type="image/png" href="/static/static/logo.png.jpg">
   <style>
-    body { background-color: #5c0613; font-family: sans-serif; }
+    :root {
+      --bg: #5d0c1d;
+      --card: #ffffff;
+      --accent: #7a1026;
+      --accent-soft: #fce8ec;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px 16px 48px;
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+
+    .top-bar {
+      margin-bottom: 18px;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      background: rgba(255, 255, 255, 0.14);
+      padding: 10px 16px;
+      border-radius: 999px;
+      backdrop-filter: blur(6px);
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.24);
+      transform: translateX(-2px);
+    }
+
+    /* Двухколоночная сетка: слева обложка/инфо, справа галерея */
+    .main-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.24);
+    }
+
+    /* --- ЛЕВАЯ КОЛОНКА --- */
+    .cover-wrap {
+      position: relative;
+      height: 300px;
+      background: linear-gradient(135deg, #3b0813, #7a1026);
+      overflow: hidden;
+    }
+
+    .cover-wrap img,
+    .cover-wrap video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .cover-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.78) 0%, rgba(0, 0, 0, 0.25) 55%, rgba(0, 0, 0, 0.1) 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 24px;
+      pointer-events: none;
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .badge-cat {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .badge-status {
+      background: rgba(255, 255, 255, 0.92);
+      color: #1f2937;
+    }
+
+    .event-title {
+      color: #fff;
+      font-size: 30px;
+      font-weight: 800;
+      line-height: 1.15;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+    }
+
+    .card-body {
+      padding: 24px;
+    }
+
+    .meta-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      padding: 16px 20px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      margin-bottom: 22px;
+      background: #fafafa;
+    }
+
+    .meta-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .meta-value {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .description {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #374151;
+      white-space: pre-line;
+    }
+
+    .description-empty {
+      font-style: italic;
+      color: #9ca3af;
+    }
+
+    /* --- ПРАВАЯ КОЛОНКА: КАРУСЕЛЬ --- */
+    .gallery-card {
+      padding: 24px;
+    }
+
+    .gallery-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .gallery-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .gallery-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .count-pill {
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .all-photos-btn {
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 7px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s ease, transform 0.15s ease;
+    }
+
+    .all-photos-btn:hover {
+      background: #5d0c1d;
+      transform: translateY(-1px);
+    }
+
+    .carousel {
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #111827;
+      aspect-ratio: 4 / 3;
+      user-select: none;
+      cursor: grab;
+    }
+
+    .carousel.is-dragging {
+      cursor: grabbing;
+    }
+
+    .carousel-track {
+      display: flex;
+      height: 100%;
+      transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
+    }
+
+    .carousel.is-dragging .carousel-track {
+      transition: none;
+    }
+
+    .carousel-slide {
+      min-width: 100%;
+      height: 100%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0f172a;
+    }
+
+    .carousel-slide img,
+    .carousel-slide video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      -webkit-user-drag: none;
+      transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
+    }
+
+    .carousel-slide img {
+      cursor: zoom-in;
+    }
+
+    .carousel-slide:not(.is-active) img {
+      transform: scale(0.96);
+      opacity: 0.7;
+    }
+
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 42px;
+      height: 42px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.88);
+      color: var(--accent);
+      font-size: 20px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+      transition: transform 0.2s ease, background 0.2s ease;
+      z-index: 5;
+    }
+
+    .carousel-btn:hover {
+      background: #fff;
+      transform: translateY(-50%) scale(1.08);
+    }
+
+    .carousel-btn.prev { left: 12px; }
+    .carousel-btn.next { right: 12px; }
+
+    .carousel-controls-bottom {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      right: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .autoplay-btn,
+    .carousel-counter {
+      pointer-events: auto;
+      background: rgba(0, 0, 0, 0.62);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 11px;
+      border-radius: 999px;
+      backdrop-filter: blur(4px);
+      border: none;
+    }
+
+    .autoplay-btn {
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.2s ease;
+    }
+
+    .autoplay-btn:hover {
+      background: rgba(0, 0, 0, 0.85);
+    }
+
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 7px;
+      margin-top: 14px;
+    }
+
+    .carousel-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      border: none;
+      background: #d1d5db;
+      cursor: pointer;
+      padding: 0;
+      transition: width 0.3s ease, background 0.3s ease;
+    }
+
+    .carousel-dot.is-active {
+      width: 24px;
+      background: var(--accent);
+    }
+
+    .thumbs {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: thin;
+    }
+
+    .thumb-btn {
+      flex: 0 0 68px;
+      height: 52px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 2px solid transparent;
+      padding: 0;
+      cursor: pointer;
+      background: #111827;
+      opacity: 0.6;
+      transition: opacity 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .thumb-btn.is-active,
+    .thumb-btn:hover {
+      opacity: 1;
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .thumb-btn img,
+    .thumb-btn video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .gallery-empty {
+      text-align: center;
+      padding: 48px 16px;
+      color: var(--muted);
+      background: #f9fafb;
+      border-radius: 16px;
+      border: 1px dashed var(--border);
+    }
+
+    /* --- УЧАСТНИКИ --- */
+    .participants-card {
+      margin-top: 24px;
+      padding: 24px;
+    }
+
+    .participants-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .participant-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #f9fafb;
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .participant-hours {
+      background: var(--accent-soft);
+      color: var(--accent);
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    /* --- МОДАЛЬНОЕ ОКНО «ВСЕ ФОТО» (СЕТКА) --- */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.82);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 900;
+      padding: 20px;
+      backdrop-filter: blur(6px);
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal-box {
+      background: #fff;
+      border-radius: 22px;
+      width: 100%;
+      max-width: 1040px;
+      max-height: 88vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+      animation: modalIn 0.25s ease;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(12px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .modal-close {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: #f3f4f6;
+      color: #374151;
+      font-size: 22px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-close:hover { background: #e5e7eb; }
+
+    .modal-grid {
+      padding: 20px 24px 24px;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 14px;
+    }
+
+    .grid-item {
+      border-radius: 14px;
+      overflow: hidden;
+      background: #111827;
+      aspect-ratio: 4 / 3;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .grid-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+    }
+
+    .grid-item img,
+    .grid-item video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* --- ПОЛНОЭКРАННЫЙ ПРОСМОТР (LIGHTBOX) --- */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.92);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      padding: 20px;
+      backdrop-filter: blur(4px);
+    }
+
+    .lightbox.open { display: flex; }
+
+    .lightbox img {
+      max-width: 92vw;
+      max-height: 88vh;
+      border-radius: 14px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .lightbox-close {
+      position: fixed;
+      top: 18px;
+      right: 22px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      font-size: 26px;
+      cursor: pointer;
+    }
+
+    .lightbox-nav {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 255, 255, 0.18);
+      color: #fff;
+      font-size: 26px;
+      cursor: pointer;
+    }
+
+    .lightbox-nav:hover,
+    .lightbox-close:hover { background: rgba(255, 255, 255, 0.32); }
+
+    .lightbox-nav.prev { left: 18px; }
+    .lightbox-nav.next { right: 18px; }
+
+    @media (max-width: 900px) {
+      .main-grid { grid-template-columns: 1fr; }
+      .cover-wrap { height: 240px; }
+      .event-title { font-size: 24px; }
+      .modal-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 14px; }
+    }
   </style>
 </head>
-<body class="min-h-screen p-4 sm:p-8 text-slate-800">
-  <div class="max-w-4xl mx-auto space-y-6">
-
-    <!-- Навигация -->
-    <div class="flex justify-between items-center text-white">
-      <a href="/" class="text-sm bg-white/10 hover:bg-white/20 px-3.5 py-2 rounded-lg border border-white/20 transition font-medium">
-        ← Ко всем акциям
-      </a>
-      <a href="/profile" class="text-sm text-white/85 hover:text-white font-medium">
-        👤 Личный кабинет
-      </a>
+<body>
+  <div class="container">
+    <div class="top-bar">
+      <a href="/" class="back-btn">← Назад к акциям</a>
     </div>
 
-    <!-- Карточка акции: шапка с обложкой + подробности -->
-    <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
-
-      <!-- Шапка с фото/видео -->
-      <div class="relative overflow-hidden {% if event.video_url %}min-h-[240px] bg-[#1a0206] text-white{% else %}bg-[#fdf7f8] text-slate-800 border-b border-slate-200{% endif %} p-6 sm:p-8 flex flex-col justify-end">
-        {% if event.video_url %}
-          {% set is_cover_video = event.video_url.lower().endswith(('.mp4', '.webm', '.mov')) or '/video/upload/' in event.video_url %}
-          {% if is_cover_video %}
-            <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover z-0">
-              <source src="{{ event.video_url }}" type="video/mp4">
-            </video>
-          {% else %}
-            <img src="{{ event.video_url }}" alt="{{ event.title }}" class="absolute inset-0 w-full h-full object-cover z-0">
-          {% endif %}
-          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/45 to-black/25 z-10"></div>
-        {% endif %}
-
-        <div class="relative z-20">
-          <div class="flex flex-wrap gap-2 mb-3">
-            <span class="text-xs font-bold px-3 py-1 rounded-full bg-[#fce8eb] text-[#5c0613]">
-              {{ event.category or "Волонтёрство" }}
-            </span>
-            {% if is_past %}
-            <span class="text-xs font-bold px-3 py-1 rounded-full bg-slate-200 text-slate-700">
-              ✅ Завершена
-            </span>
+    <div class="main-grid">
+      <!-- ЛЕВАЯ КОЛОНКА: Обложка + инфо -->
+      <div class="card">
+        <div class="cover-wrap">
+          {% if event.video_url %}
+            {% set cover_lower = event.video_url.lower() %}
+            {% if cover_lower.endswith('.mp4') or cover_lower.endswith('.webm') or cover_lower.endswith('.mov') or '/video/upload/' in cover_lower %}
+              <video src="{{ event.video_url }}" autoplay muted loop playsinline></video>
             {% else %}
-            <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800">
-              🔥 Актуальна
-            </span>
+              <img src="{{ event.video_url }}" alt="{{ event.title }}" />
             {% endif %}
-          </div>
-
-          <h1 class="text-2xl sm:text-3xl font-extrabold leading-tight">{{ event.title }}</h1>
-        </div>
-      </div>
-
-      <!-- Подробная информация -->
-      <div class="p-6 sm:p-8 space-y-5">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm">
-          <div>
-            <span class="text-slate-400 text-xs block">Дата проведения</span>
-            <strong class="text-slate-800">📅 {{ event.date or "Уточняется" }}</strong>
-          </div>
-          <div>
-            <span class="text-slate-400 text-xs block">Место проведения</span>
-            <strong class="text-slate-800">📍 {{ event.location or "По договорённости" }}</strong>
+          {% endif %}
+          <div class="cover-overlay">
+            <div class="badges">
+              <span class="badge badge-cat">{{ event.category or 'Волонтёрство' }}</span>
+              <span class="badge badge-status">
+                {% if is_past %}✅ Завершена{% else %}🟢 Активна{% endif %}
+              </span>
+            </div>
+            <h1 class="event-title">{{ event.title }}</h1>
           </div>
         </div>
 
-        <div>
-          <h2 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Описание акции</h2>
+        <div class="card-body">
+          <div class="meta-box">
+            <div>
+              <div class="meta-label">Дата проведения</div>
+              <div class="meta-value">📅 {{ event.date }}</div>
+            </div>
+            <div>
+              <div class="meta-label">Место проведения</div>
+              <div class="meta-value">📍 {{ event.location or 'По договорённости' }}</div>
+            </div>
+          </div>
+
+          <div class="section-label">Описание акции</div>
           {% if event.description %}
-            <p class="text-slate-700 leading-relaxed whitespace-pre-line">{{ event.description }}</p>
+            <p class="description">{{ event.description }}</p>
           {% else %}
-            <p class="text-slate-400 italic text-sm">Подробное описание акции пока не добавлено.</p>
+            <p class="description description-empty">Подробное описание акции пока не добавлено.</p>
           {% endif %}
         </div>
       </div>
-    </div>
 
-    <!-- Галерея фото и видео -->
-    <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg font-bold text-[#5c0613]">🖼️ Галерея акции</h2>
-        <span class="text-xs font-semibold bg-[#fce8eb] text-[#5c0613] px-2.5 py-1 rounded-full">
-          Материалов: {{ media_items|length }}
-        </span>
-      </div>
-
-      {% if media_items %}
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {% for item in media_items %}
-        {% set is_vid = item.media_url.lower().endswith(('.mp4', '.webm', '.mov')) or '/video/upload/' in item.media_url %}
-        <div class="rounded-xl overflow-hidden border border-slate-200 bg-slate-900 aspect-video relative group">
-          {% if is_vid %}
-            <video controls preload="metadata" class="w-full h-full object-cover">
-              <source src="{{ item.media_url }}#t=0.001" type="video/mp4">
-            </video>
-          {% else %}
-            <img src="{{ item.media_url }}" alt="Фото с акции {{ event.title }}"
-                 onclick="openLightbox(this.src)"
-                 class="w-full h-full object-cover cursor-zoom-in group-hover:scale-105 transition duration-200">
-          {% endif %}
-        </div>
-        {% endfor %}
-      </div>
-      {% else %}
-      <div class="text-center py-8 bg-slate-50 rounded-xl border border-dashed border-slate-200 text-slate-400 text-sm">
-        Фотографии и видео с этой акции появятся здесь позже 📸
-      </div>
-      {% endif %}
-    </div>
-
-    <!-- Список участников -->
-    <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg font-bold text-[#5c0613]">👥 Участники акции</h2>
-        <span class="text-xs font-semibold bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full">
-          Всего: {{ participants|length }}
-        </span>
-      </div>
-
-      {% if participants %}
-      <div class="divide-y divide-slate-100">
-        {% for p in participants %}
-        <div class="py-3 flex justify-between items-center">
-          <div>
-            <span class="font-semibold text-slate-800">{{ p.name }}</span>
-            {% if p.username %}
-              <span class="text-xs text-slate-400 ml-1.5">@{{ p.username }}</span>
+      <!-- ПРАВАЯ КОЛОНКА: Карусель + кнопка «Все фото» -->
+      <div class="card gallery-card">
+        <div class="gallery-header">
+          <h2 class="gallery-title">🖼️ Галерея акции</h2>
+          <div class="gallery-actions">
+            <span class="count-pill">Материалов: {{ media_items | length }}</span>
+            {% if media_items %}
+              <button class="all-photos-btn" type="button" onclick="openAllPhotosModal()">⊞ Все фото</button>
             {% endif %}
           </div>
-          <span class="bg-[#fce8eb] text-[#5c0613] font-bold text-xs px-2.5 py-1 rounded-lg">
-            +{{ p.hours }} ч.
-          </span>
         </div>
-        {% endfor %}
+
+        {% if media_items %}
+          <div class="carousel" id="galleryCarousel">
+            <div class="carousel-track" id="carouselTrack">
+              {% for item in media_items %}
+                {% set u = item.media_url.lower() %}
+                <div class="carousel-slide {% if loop.first %}is-active{% endif %}">
+                  {% if u.endswith('.mp4') or u.endswith('.webm') or u.endswith('.mov') or '/video/upload/' in u %}
+                    <video src="{{ item.media_url }}" controls playsinline preload="metadata"></video>
+                  {% else %}
+                    <img src="{{ item.media_url }}" alt="Фото акции {{ loop.index }}" data-photo-src="{{ item.media_url }}" />
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+
+            {% if media_items | length > 1 %}
+              <button class="carousel-btn prev" id="prevBtn" type="button" aria-label="Предыдущее фото">‹</button>
+              <button class="carousel-btn next" id="nextBtn" type="button" aria-label="Следующее фото">›</button>
+              <div class="carousel-controls-bottom">
+                <button class="autoplay-btn" id="autoplayToggle" type="button">⏸ Авто</button>
+                <div class="carousel-counter" id="carouselCounter">1 / {{ media_items | length }}</div>
+              </div>
+            {% endif %}
+          </div>
+
+          {% if media_items | length > 1 %}
+            <div class="carousel-dots" id="carouselDots">
+              {% for item in media_items %}
+                <button class="carousel-dot {% if loop.first %}is-active{% endif %}" type="button" data-index="{{ loop.index0 }}" aria-label="Слайд {{ loop.index }}"></button>
+              {% endfor %}
+            </div>
+
+            <div class="thumbs" id="carouselThumbs">
+              {% for item in media_items %}
+                {% set u = item.media_url.lower() %}
+                <button class="thumb-btn {% if loop.first %}is-active{% endif %}" type="button" data-index="{{ loop.index0 }}">
+                  {% if u.endswith('.mp4') or u.endswith('.webm') or u.endswith('.mov') or '/video/upload/' in u %}
+                    <video src="{{ item.media_url }}" muted preload="metadata"></video>
+                  {% else %}
+                    <img src="{{ item.media_url }}" alt="Превью {{ loop.index }}" />
+                  {% endif %}
+                </button>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% else %}
+          <div class="gallery-empty">
+            Фотографии и видео с этой акции появятся здесь позже.
+          </div>
+        {% endif %}
       </div>
-      {% else %}
-      <div class="text-center py-6 text-slate-400 text-sm italic">
-        Участники пока не отмечены.
-      </div>
-      {% endif %}
     </div>
 
+    {% if participants %}
+      <div class="card participants-card">
+        <div class="section-label">Участники акции ({{ participants | length }})</div>
+        <div class="participants-list">
+          {% for p in participants %}
+            <div class="participant-chip">
+              <span>{{ p.name }}</span>
+              <span class="participant-hours">{{ p.hours }} ч.</span>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
   </div>
 
-  <!-- Полноэкранный просмотр фото (лайтбокс) -->
-  <div id="lightbox" onclick="closeLightbox()"
-       class="fixed inset-0 bg-black/90 hidden items-center justify-center p-4 z-50 cursor-zoom-out">
-    <button type="button" onclick="closeLightbox()"
-            class="absolute top-4 right-5 text-white text-3xl font-bold leading-none hover:text-slate-300">&times;</button>
-    <img id="lightboxImg" src="" alt="Просмотр фото" class="max-w-full max-h-[90vh] rounded-lg shadow-2xl">
+  <!-- Модальное окно: Все фото сеткой -->
+  {% if media_items %}
+    <div class="modal-backdrop" id="allPhotosModal" onclick="closeAllPhotosModal()">
+      <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <div class="modal-title">🖼️ Все материалы акции ({{ media_items | length }})</div>
+          <button class="modal-close" type="button" onclick="closeAllPhotosModal()" aria-label="Закрыть">×</button>
+        </div>
+        <div class="modal-grid">
+          {% for item in media_items %}
+            {% set u = item.media_url.lower() %}
+            <div class="grid-item">
+              {% if u.endswith('.mp4') or u.endswith('.webm') or u.endswith('.mov') or '/video/upload/' in u %}
+                <video src="{{ item.media_url }}" controls playsinline preload="metadata"></video>
+              {% else %}
+                <img src="{{ item.media_url }}" alt="Фото {{ loop.index }}" onclick="openLightboxBySrc('{{ item.media_url }}')" />
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- Полноэкранный просмотр фото (Lightbox) -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <button class="lightbox-close" type="button" onclick="closeLightbox()" aria-label="Закрыть">×</button>
+    <button class="lightbox-nav prev" type="button" onclick="event.stopPropagation(); shiftLightbox(-1)" aria-label="Предыдущее">‹</button>
+    <img id="lightboxImg" src="" alt="Просмотр фото" onclick="event.stopPropagation()" />
+    <button class="lightbox-nav next" type="button" onclick="event.stopPropagation(); shiftLightbox(1)" aria-label="Следующее">›</button>
   </div>
 
   <script>
-    function openLightbox(src) {
-      const box = document.getElementById('lightbox');
-      const img = document.getElementById('lightboxImg');
-      img.src = src;
-      box.classList.remove('hidden');
-      box.classList.add('flex');
+    const photoUrls = Array.from(document.querySelectorAll("[data-photo-src]"))
+      .map((el) => el.getAttribute("data-photo-src"));
+    let lightboxIndex = 0;
+
+    function openLightboxBySrc(src) {
+      const idx = photoUrls.indexOf(src);
+      lightboxIndex = idx >= 0 ? idx : 0;
+      document.getElementById("lightboxImg").src = src;
+      document.getElementById("lightbox").classList.add("open");
+    }
+
+    function shiftLightbox(step) {
+      if (!photoUrls.length) return;
+      lightboxIndex = (lightboxIndex + step + photoUrls.length) % photoUrls.length;
+      document.getElementById("lightboxImg").src = photoUrls[lightboxIndex];
     }
 
     function closeLightbox() {
-      const box = document.getElementById('lightbox');
-      box.classList.add('hidden');
-      box.classList.remove('flex');
+      document.getElementById("lightbox").classList.remove("open");
     }
 
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeLightbox();
-    });
+    function openAllPhotosModal() {
+      const modal = document.getElementById("allPhotosModal");
+      if (modal) modal.classList.add("open");
+    }
+
+    function closeAllPhotosModal() {
+      const modal = document.getElementById("allPhotosModal");
+      if (modal) modal.classList.remove("open");
+    }
+
+    (function () {
+      const track = document.getElementById("carouselTrack");
+      if (!track) return;
+
+      const slides = Array.from(track.children);
+      const total = slides.length;
+      const carousel = document.getElementById("galleryCarousel");
+
+      // Клик по фото в карусели открывает Lightbox (если не было перетаскивания)
+      let dragged = false;
+      slides.forEach((slide) => {
+        const img = slide.querySelector("img[data-photo-src]");
+        if (img) {
+          img.addEventListener("click", () => {
+            if (!dragged) openLightboxBySrc(img.getAttribute("data-photo-src"));
+          });
+        }
+      });
+
+      if (total <= 1) return;
+
+      const prevBtn = document.getElementById("prevBtn");
+      const nextBtn = document.getElementById("nextBtn");
+      const counter = document.getElementById("carouselCounter");
+      const autoplayToggle = document.getElementById("autoplayToggle");
+      const dots = Array.from(document.querySelectorAll(".carousel-dot"));
+      const thumbs = Array.from(document.querySelectorAll(".thumb-btn"));
+
+      let current = 0;
+      let autoplayEnabled = true;
+      let autoplayTimer = null;
+
+      function goTo(index) {
+        const prevVideo = slides[current].querySelector("video");
+        if (prevVideo) prevVideo.pause();
+
+        current = (index + total) % total;
+        track.style.transform = `translateX(-${current * 100}%)`;
+
+        slides.forEach((s, i) => s.classList.toggle("is-active", i === current));
+        dots.forEach((d, i) => d.classList.toggle("is-active", i === current));
+        thumbs.forEach((t, i) => t.classList.toggle("is-active", i === current));
+
+        if (counter) counter.textContent = `${current + 1} / ${total}`;
+        if (thumbs[current]) {
+          thumbs[current].scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+        }
+      }
+
+      function startAutoplay() {
+        stopAutoplay();
+        if (!autoplayEnabled) return;
+        autoplayTimer = setInterval(() => {
+          const activeVideo = slides[current].querySelector("video");
+          if (activeVideo && !activeVideo.paused) return;
+          goTo(current + 1);
+        }, 4500);
+      }
+
+      function stopAutoplay() {
+        if (autoplayTimer) clearInterval(autoplayTimer);
+      }
+
+      autoplayToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        autoplayEnabled = !autoplayEnabled;
+        autoplayToggle.textContent = autoplayEnabled ? "⏸ Авто" : "▶ Авто";
+        if (autoplayEnabled) startAutoplay();
+        else stopAutoplay();
+      });
+
+      prevBtn.addEventListener("click", () => { goTo(current - 1); startAutoplay(); });
+      nextBtn.addEventListener("click", () => { goTo(current + 1); startAutoplay(); });
+
+      dots.forEach((dot) => dot.addEventListener("click", () => {
+        goTo(Number(dot.dataset.index));
+        startAutoplay();
+      }));
+
+      thumbs.forEach((thumb) => thumb.addEventListener("click", () => {
+        goTo(Number(thumb.dataset.index));
+        startAutoplay();
+      }));
+
+      carousel.addEventListener("mouseenter", stopAutoplay);
+      carousel.addEventListener("mouseleave", startAutoplay);
+
+      // Ручное перетаскивание мышкой (drag)
+      let isPointerDown = false;
+      let startX = 0;
+      let deltaX = 0;
+
+      carousel.addEventListener("mousedown", (e) => {
+        if (e.target.closest("button") || e.target.tagName === "VIDEO") return;
+        isPointerDown = true;
+        dragged = false;
+        startX = e.clientX;
+        deltaX = 0;
+        carousel.classList.add("is-dragging");
+        stopAutoplay();
+      });
+
+      window.addEventListener("mousemove", (e) => {
+        if (!isPointerDown) return;
+        deltaX = e.clientX - startX;
+        if (Math.abs(deltaX) > 6) dragged = true;
+        const offsetPercent = (deltaX / carousel.offsetWidth) * 100;
+        track.style.transform = `translateX(calc(-${current * 100}% + ${offsetPercent}%))`;
+      });
+
+      window.addEventListener("mouseup", () => {
+        if (!isPointerDown) return;
+        isPointerDown = false;
+        carousel.classList.remove("is-dragging");
+        if (Math.abs(deltaX) > 50) {
+          goTo(deltaX < 0 ? current + 1 : current - 1);
+        } else {
+          goTo(current);
+        }
+        startAutoplay();
+        setTimeout(() => { dragged = false; }, 50);
+      });
+
+      // Свайп на телефонах
+      let touchStartX = 0;
+      carousel.addEventListener("touchstart", (e) => {
+        touchStartX = e.touches[0].clientX;
+        stopAutoplay();
+      }, { passive: true });
+
+      carousel.addEventListener("touchend", (e) => {
+        const diff = touchStartX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 40) {
+          goTo(diff > 0 ? current + 1 : current - 1);
+        }
+        startAutoplay();
+      }, { passive: true });
+
+      // Управление с клавиатуры
+      document.addEventListener("keydown", (e) => {
+        const lbOpen = document.getElementById("lightbox").classList.contains("open");
+        if (e.key === "Escape") {
+          closeLightbox();
+          closeAllPhotosModal();
+          return;
+        }
+        if (lbOpen) {
+          if (e.key === "ArrowLeft") shiftLightbox(-1);
+          if (e.key === "ArrowRight") shiftLightbox(1);
+        } else {
+          if (e.key === "ArrowLeft") { goTo(current - 1); startAutoplay(); }
+          if (e.key === "ArrowRight") { goTo(current + 1); startAutoplay(); }
+        }
+      });
+
+      startAutoplay();
+    })();
   </script>
 </body>
 </html>
