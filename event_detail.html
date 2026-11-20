@@ -2,14 +2,15 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#5d0c1d" />
   <title>{{ event.title }} — ДоброЗАУ</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Unbounded:wght@600;700;800&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #ffffff;
+      --bg: #5d0c1d;
       --card: #ffffff;
       --accent: #7a1026;
       --accent-soft: #fce8ec;
@@ -23,14 +24,15 @@
     html, body {
       overflow-x: hidden;
       max-width: 100%;
+      background-color: var(--bg);
     }
 
     body {
       font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: var(--bg);
       color: var(--text);
-      min-height: 100vh;
-      padding: 24px 16px 48px;
+      min-height: 100dvh;
+      padding: 24px 16px calc(48px + env(safe-area-inset-bottom));
     }
 
     h1, h2, .event-title, .gallery-title, .modal-title {
@@ -50,21 +52,23 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      color: var(--accent);
+      color: #fff;
       text-decoration: none;
       font-weight: 700;
       font-size: 14px;
-      background: var(--accent-soft);
+      background: rgba(255, 255, 255, 0.14);
       padding: 10px 16px;
       border-radius: 999px;
+      backdrop-filter: blur(6px);
       transition: background 0.2s ease, transform 0.2s ease;
     }
 
     .back-btn:hover {
-      background: #f9d5dc;
+      background: rgba(255, 255, 255, 0.24);
       transform: translateX(-2px);
     }
 
+    /* Двухколоночная сетка: слева обложка/инфо, справа прозрачная галерея */
     .main-grid {
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
@@ -82,8 +86,7 @@
       background: var(--card);
       border-radius: 22px;
       overflow: hidden;
-      border: 1px solid var(--border);
-      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.24);
     }
 
     /* --- ЛЕВАЯ КОЛОНКА --- */
@@ -196,7 +199,7 @@
       color: #9ca3af;
     }
 
-    /* --- ПРАВАЯ КОЛОНКА: КАРУСЕЛЬ НА БЕЛОМ/ПРОЗРАЧНОМ ФОНЕ --- */
+    /* --- ПРАВАЯ КОЛОНКА: ПРОЗРАЧНАЯ КАРУСЕЛЬ С БОКОВЫМИ ПРЕВЬЮ --- */
     .gallery-section {
       background: transparent;
       padding: 4px 0;
@@ -214,7 +217,7 @@
     .gallery-title {
       font-size: 18px;
       font-weight: 700;
-      color: var(--accent);
+      color: #ffffff;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -227,18 +230,19 @@
     }
 
     .count-pill {
-      background: var(--accent-soft);
-      color: var(--accent);
+      background: rgba(255, 255, 255, 0.14);
+      color: #ffffff;
       font-size: 13px;
       font-weight: 700;
       padding: 6px 12px;
       border-radius: 999px;
+      backdrop-filter: blur(4px);
       white-space: nowrap;
     }
 
     .all-photos-btn {
-      border: none;
-      background: var(--accent);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.18);
       color: #fff;
       font-size: 13px;
       font-weight: 700;
@@ -248,11 +252,12 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      backdrop-filter: blur(4px);
       transition: background 0.2s ease, transform 0.15s ease;
     }
 
     .all-photos-btn:hover {
-      background: #5d0c1d;
+      background: rgba(255, 255, 255, 0.3);
       transform: translateY(-1px);
     }
 
@@ -312,7 +317,7 @@
       filter: brightness(1);
       z-index: 3;
       pointer-events: auto;
-      box-shadow: 0 18px 38px rgba(15, 23, 42, 0.22);
+      box-shadow: 0 20px 44px rgba(0, 0, 0, 0.45);
     }
 
     .carousel-slide.is-active img {
@@ -326,7 +331,7 @@
       z-index: 2;
       pointer-events: auto;
       cursor: pointer;
-      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.16);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
     }
 
     .carousel-slide.is-next {
@@ -336,7 +341,7 @@
       z-index: 2;
       pointer-events: auto;
       cursor: pointer;
-      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.16);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
     }
 
     .carousel-slide.is-prev:hover,
@@ -350,9 +355,9 @@
       transform: translateY(-50%);
       width: 42px;
       height: 42px;
-      border: 1px solid var(--border);
+      border: none;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.94);
+      background: rgba(255, 255, 255, 0.9);
       color: var(--accent);
       font-size: 20px;
       font-weight: 700;
@@ -360,7 +365,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.16);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
       transition: transform 0.2s ease, background 0.2s ease;
       z-index: 6;
     }
@@ -383,12 +388,13 @@
 
     .autoplay-btn,
     .carousel-counter {
-      background: var(--accent-soft);
-      color: var(--accent);
+      background: rgba(255, 255, 255, 0.14);
+      color: #fff;
       font-size: 12px;
       font-weight: 700;
       padding: 6px 12px;
       border-radius: 999px;
+      backdrop-filter: blur(4px);
       border: none;
     }
 
@@ -401,7 +407,7 @@
     }
 
     .autoplay-btn:hover {
-      background: #f9d5dc;
+      background: rgba(255, 255, 255, 0.25);
     }
 
     .carousel-dots {
@@ -416,7 +422,7 @@
       height: 8px;
       border-radius: 999px;
       border: none;
-      background: #d1d5db;
+      background: rgba(255, 255, 255, 0.35);
       cursor: pointer;
       padding: 0;
       transition: width 0.3s ease, background 0.3s ease;
@@ -424,7 +430,7 @@
 
     .carousel-dot.is-active {
       width: 24px;
-      background: var(--accent);
+      background: #ffffff;
     }
 
     .thumbs {
@@ -447,14 +453,14 @@
       padding: 0;
       cursor: pointer;
       background: #111827;
-      opacity: 0.55;
+      opacity: 0.5;
       transition: opacity 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
     }
 
     .thumb-btn.is-active,
     .thumb-btn:hover {
       opacity: 1;
-      border-color: var(--accent);
+      border-color: #ffffff;
       transform: translateY(-2px);
     }
 
@@ -469,10 +475,10 @@
     .gallery-empty {
       text-align: center;
       padding: 48px 16px;
-      color: var(--muted);
-      background: #f9fafb;
+      color: rgba(255, 255, 255, 0.78);
+      background: rgba(255, 255, 255, 0.08);
       border-radius: 18px;
-      border: 1px dashed var(--border);
+      border: 1px dashed rgba(255, 255, 255, 0.25);
     }
 
     /* --- УЧАСТНИКИ --- */
