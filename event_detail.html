@@ -17,6 +17,11 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html, body {
+      overflow-x: hidden;
+      max-width: 100%;
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
       background: var(--bg);
@@ -60,6 +65,12 @@
       grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
       gap: 28px;
       align-items: center;
+    }
+
+    .card,
+    .gallery-section {
+      min-width: 0;
+      max-width: 100%;
     }
 
     .card {
@@ -423,9 +434,10 @@
       gap: 8px;
       margin-top: 14px;
       overflow-x: auto;
+      max-width: 100%;
       padding-bottom: 4px;
       scrollbar-width: thin;
-      justify-content: center;
+      justify-content: flex-start;
     }
 
     .thumb-btn {
@@ -499,7 +511,7 @@
       font-weight: 700;
     }
 
-    /* --- МОДАЛЬНОЕ ОКНО «ВСЕ ФОТО» --- */
+    /* --- МОДАЛЬНОЕ ОКНО «ВСЕ ФОТО» (MASONRY-ПЛИТКА) --- */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -565,16 +577,19 @@
     .modal-grid {
       padding: 20px 24px 24px;
       overflow-y: auto;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-      gap: 14px;
+      column-count: 3;
+      column-gap: 14px;
     }
 
     .grid-item {
+      break-inside: avoid;
+      -webkit-column-break-inside: avoid;
+      display: block;
+      width: 100%;
+      margin-bottom: 14px;
       border-radius: 14px;
       overflow: hidden;
       background: #111827;
-      aspect-ratio: 4 / 3;
       cursor: pointer;
       position: relative;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -582,14 +597,13 @@
 
     .grid-item:hover {
       transform: translateY(-2px);
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
     }
 
     .grid-item img,
     .grid-item video {
       width: 100%;
-      height: 100%;
-      object-fit: cover;
+      height: auto;
       display: block;
     }
 
@@ -655,7 +669,14 @@
       .event-title { font-size: 24px; }
       .carousel { height: 300px; }
       .carousel-slide { width: 74%; }
-      .modal-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 14px; }
+      .modal-grid {
+        column-count: 2;
+        column-gap: 10px;
+        padding: 14px;
+      }
+      .grid-item {
+        margin-bottom: 10px;
+      }
     }
   </style>
 </head>
@@ -791,7 +812,7 @@
     {% endif %}
   </div>
 
-  <!-- Модальное окно: Все фото сеткой -->
+  <!-- Модальное окно: Все фото плиткой (Masonry) -->
   {% if media_items %}
     <div class="modal-backdrop" id="allPhotosModal" onclick="closeAllPhotosModal()">
       <div class="modal-box" onclick="event.stopPropagation()">
@@ -905,8 +926,7 @@
         updateSlides();
       }
 
-      // Клик по слайду: боковые листают, центральное фото открывается на весь экран
-      slides.forEach((slide, i) => {
+      slides.forEach((slide) => {
         slide.addEventListener("click", () => {
           if (dragged) return;
           if (slide.classList.contains("is-prev")) {
