@@ -2,11 +2,12 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#5c0613">
   <title>ДоброЗАУ — Волонтёрский центр</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --primary: #5c0613;
@@ -25,13 +26,30 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Inter', sans-serif;
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    html, body {
+      overflow-x: hidden;
+      max-width: 100%;
+      background-color: var(--bg-page);
     }
 
     body {
       background-color: var(--bg-page);
       color: var(--text-main);
       line-height: 1.5;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    main {
+      flex: 1;
+    }
+
+    h1, h2, h3, .logo span, .section-title, .stat-value {
+      font-family: 'Unbounded', 'Manrope', sans-serif;
     }
 
     /* Навигация */
@@ -55,35 +73,48 @@
     .logo {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 1.1rem;
+      gap: 10px;
+      font-size: 1.05rem;
       font-weight: 700;
       color: var(--primary);
       text-decoration: none;
       min-width: 0;
     }
 
-    /* Главный баннер */
+    /* Главный фото-баннер */
     .hero {
       max-width: 1200px;
-      margin: 36px auto 26px;
+      width: 100%;
+      margin: 24px auto 26px;
       padding: 0 24px;
-      text-align: center;
     }
 
-    .hero h1 {
-      font-size: 2.35rem;
-      font-weight: 800;
-      color: #FFFFF0;
-      letter-spacing: -0.02em;
-      margin-bottom: 10px;
+    .hero-banner {
+      position: relative;
+      width: 100%;
+      height: 330px;
+      border-radius: 20px;
+      overflow: hidden;
+      background: linear-gradient(135deg, #3b0813, #7a1026);
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.14);
     }
 
-    .hero p {
-      color: rgba(255, 255, 255, 0.85);
-      font-size: 1.05rem;
-      max-width: 620px;
-      margin: 0 auto 20px;
+    .hero-banner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .hero-banner-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(20, 2, 6, 0.72) 0%, rgba(20, 2, 6, 0.12) 45%, transparent 100%);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 22px;
     }
 
     .hero-actions {
@@ -97,12 +128,12 @@
       background: #ffffff;
       color: #5c0613;
       border: none;
-      padding: 10px 20px;
-      border-radius: 10px;
+      padding: 11px 22px;
+      border-radius: 12px;
       font-size: 0.92rem;
       font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.22);
       transition: transform 0.15s ease, background 0.15s ease;
     }
 
@@ -114,6 +145,7 @@
     /* Живые счётчики статистики */
     .stats-wrapper {
       max-width: 1200px;
+      width: 100%;
       margin: 0 auto 30px;
       padding: 0 24px;
     }
@@ -189,27 +221,28 @@
     }
 
     .stat-value {
-      font-size: 1.6rem;
-      font-weight: 800;
+      font-size: 1.45rem;
+      font-weight: 700;
       color: #5c0613;
-      line-height: 1.1;
+      line-height: 1.15;
     }
 
     .stat-label {
       font-size: 0.82rem;
       color: #73595d;
-      margin-top: 2px;
+      margin-top: 3px;
     }
 
     /* Контейнер мероприятий */
     .container {
       max-width: 1200px;
-      margin: 0 auto 60px;
+      width: 100%;
+      margin: 0 auto 48px;
       padding: 0 24px;
     }
 
     .section-title {
-      font-size: 1.45rem;
+      font-size: 1.3rem;
       font-weight: 700;
       color: #ffffff;
       margin-bottom: 18px;
@@ -255,7 +288,7 @@
       background: rgba(255, 255, 255, 0.12);
       color: #ffffff;
       font-size: 0.84rem;
-      font-weight: 500;
+      font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
     }
@@ -274,7 +307,7 @@
     /* Сетка карточек */
     .cards-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 24px;
     }
 
@@ -307,14 +340,14 @@
       background: var(--badge-bg);
       color: var(--badge-text);
       font-size: 0.78rem;
-      font-weight: 600;
+      font-weight: 700;
       padding: 4px 12px;
       border-radius: 20px;
       border: 1px solid #f3cfd4;
     }
 
     .event-card h3 {
-      font-size: 1.25rem;
+      font-size: 1.08rem;
       font-weight: 700;
       color: var(--text-main);
       margin-bottom: 8px;
@@ -409,8 +442,8 @@
       color: #ffffff;
       text-decoration: none;
       padding: 12px 28px;
-      border-radius: 8px;
-      font-weight: 600;
+      border-radius: 10px;
+      font-weight: 700;
       font-size: 0.95rem;
       transition: opacity 0.2s ease, transform 0.2s ease;
     }
@@ -420,17 +453,20 @@
       transform: scale(1.02);
     }
 
+    /* Футер в основной цвет сайта */
     footer {
-  background-color: #5d0c1d;
-  color: rgba(255, 255, 255, 0.85);
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-  text-align: center;
-  padding: 20px 16px;
-}
+      background-color: #5c0613;
+      color: rgba(255, 255, 255, 0.85);
+      border-top: 1px solid rgba(255, 255, 255, 0.14);
+      text-align: center;
+      font-size: 0.88rem;
+      padding: 22px 16px calc(22px + env(safe-area-inset-bottom));
+      width: 100%;
+    }
 
-footer a {
-  color: #ffffff;
-}
+    footer a {
+      color: #ffffff;
+    }
 
     /* Модальное окно «Предложить акцию» */
     .modal-overlay {
@@ -467,7 +503,7 @@ footer a {
 
     .modal-header h3 {
       color: #5c0613;
-      font-size: 1.2rem;
+      font-size: 1.05rem;
     }
 
     .modal-close {
@@ -524,8 +560,11 @@ footer a {
 
     /* Адаптив для телефонов */
     @media (max-width: 768px) {
-      .hero h1 {
-        font-size: 1.75rem;
+      .hero-banner {
+        height: 220px;
+      }
+      .section-title {
+        font-size: 1.1rem;
       }
       .stats-grid {
         grid-template-columns: 1fr;
@@ -563,12 +602,15 @@ footer a {
     </div>
   </header>
 
-  <!-- Главный баннер -->
+  <!-- Главный фото-баннер -->
   <section class="hero">
-    <h1>Волонтёрский центр ДоброЗАУ</h1>
-    <p>Помогаем вместе. Список актуальных мероприятий и добрых дел, в которых нужна помощь волонтёров.</p>
-    <div class="hero-actions">
-      <button type="button" class="btn-suggest" onclick="openSuggestModal()">💡 Предложить акцию</button>
+    <div class="hero-banner">
+      <img src="/static/hero.jpg" alt="Волонтёрский центр ДоброЗАУ">
+      <div class="hero-banner-overlay">
+        <div class="hero-actions">
+          <button type="button" class="btn-suggest" onclick="openSuggestModal()">💡 Предложить акцию</button>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -725,7 +767,7 @@ footer a {
     {% if past_events %}
     <div id="pastEventsSection">
       <div style="margin-top: 45px; margin-bottom: 18px;">
-        <h3 style="color: rgba(255, 255, 255, 0.9); font-size: 1.2rem; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px;">
+        <h3 style="color: rgba(255, 255, 255, 0.9); font-size: 1.15rem; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px;">
           <span>✅ Завершённые акции</span>
           <span style="font-size: 0.8rem; font-weight: normal; background: rgba(255,255,255,0.15); padding: 2px 8px; border-radius: 12px; color: #fff;">{{ past_events|length }}</span>
         </h3>
