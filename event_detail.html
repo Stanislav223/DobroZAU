@@ -68,7 +68,6 @@
       transform: translateX(-2px);
     }
 
-    /* Двухколоночная сетка: слева обложка/инфо, справа прозрачная галерея */
     .main-grid {
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
@@ -705,7 +704,7 @@
             <div class="badges">
               <span class="badge badge-cat">{{ event.category or 'Волонтёрство' }}</span>
               <span class="badge badge-status">
-                {% if is_past %}✅ Завершена{% else %}🟢 Активна{% endif %}
+                {% if is_past %}Завершена{% else %}Активна{% endif %}
               </span>
             </div>
             <h1 class="event-title">{{ event.title }}</h1>
@@ -716,11 +715,11 @@
           <div class="meta-box">
             <div>
               <div class="meta-label">Дата проведения</div>
-              <div class="meta-value">📅 {{ event.date }}</div>
+              <div class="meta-value">{{ event.date }}</div>
             </div>
             <div>
               <div class="meta-label">Место проведения</div>
-              <div class="meta-value">📍 {{ event.location or 'По договорённости' }}</div>
+              <div class="meta-value">{{ event.location or 'По договорённости' }}</div>
             </div>
           </div>
 
@@ -735,11 +734,11 @@
 
       <div class="gallery-section">
         <div class="gallery-header">
-          <h2 class="gallery-title">🖼️ Галерея акции</h2>
+          <h2 class="gallery-title">Галерея акции</h2>
           <div class="gallery-actions">
             <span class="count-pill">Материалов: {{ media_items | length }}</span>
             {% if media_items %}
-              <button class="all-photos-btn" type="button" onclick="openAllPhotosModal()">⊞ Все фото</button>
+              <button class="all-photos-btn" type="button" onclick="openAllPhotosModal()">Все фото</button>
             {% endif %}
           </div>
         </div>
@@ -767,7 +766,7 @@
 
           {% if media_items | length > 1 %}
             <div class="carousel-footer">
-              <button class="autoplay-btn" id="autoplayToggle" type="button">⏸ Авто</button>
+              <button class="autoplay-btn" id="autoplayToggle" type="button">Пауза</button>
 
               <div class="carousel-dots" id="carouselDots">
                 {% for item in media_items %}
@@ -818,7 +817,7 @@
     <div class="modal-backdrop" id="allPhotosModal" onclick="closeAllPhotosModal()">
       <div class="modal-box" onclick="event.stopPropagation()">
         <div class="modal-header">
-          <div class="modal-title">🖼️ Все материалы акции ({{ media_items | length }})</div>
+          <div class="modal-title">Все материалы акции ({{ media_items | length }})</div>
           <button class="modal-close" type="button" onclick="closeAllPhotosModal()" aria-label="Закрыть">×</button>
         </div>
         <div class="modal-grid">
@@ -963,7 +962,7 @@
         autoplayToggle.addEventListener("click", (e) => {
           e.stopPropagation();
           autoplayEnabled = !autoplayEnabled;
-          autoplayToggle.textContent = autoplayEnabled ? "⏸ Авто" : "▶ Авто";
+          autoplayToggle.textContent = autoplayEnabled ? "Пауза" : "Авто";
           if (autoplayEnabled) startAutoplay();
           else stopAutoplay();
         });
