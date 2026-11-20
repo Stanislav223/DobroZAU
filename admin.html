@@ -2,9 +2,13 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#5c0613">
   <title>Панель управления штабом — ДоброЗАУ</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@600;700;800&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
       theme: {
@@ -21,8 +25,22 @@
       }
     }
   </script>
+  <style>
+    html, body {
+      background-color: #5c0613;
+      overflow-x: hidden;
+      max-width: 100%;
+    }
+    body {
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      padding-bottom: calc(2rem + env(safe-area-inset-bottom));
+    }
+    h1, h2 {
+      font-family: 'Unbounded', 'Manrope', sans-serif;
+    }
+  </style>
 </head>
-<body style="background-color: #5c0613;" class="min-h-screen text-slate-800 p-4 sm:p-8">
+<body class="min-h-screen text-slate-800 p-4 sm:p-8">
   <div class="max-w-5xl mx-auto space-y-6">
 
     <!-- Шапка с логотипом -->
@@ -30,11 +48,11 @@
       <div class="flex items-center gap-4">
         <img src="/static/static/logo.png.jpg" alt="Логотип" class="h-12 w-auto object-contain rounded-lg">
         <div>
-          <h1 class="text-xl sm:text-2xl font-bold text-[#5c0613]">Панель администратора</h1>
-          <p class="text-sm text-slate-500">Управление мероприятиями, галереей, отчётами и волонтёрами</p>
+          <h1 class="text-lg sm:text-xl font-bold text-[#5c0613]">Панель администратора</h1>
+          <p class="text-sm text-slate-500 mt-0.5">Управление мероприятиями, галереей, отчётами и волонтёрами</p>
         </div>
       </div>
-      <a href="/" class="text-sm bg-[#faf7f7] border border-[#ecdfe1] text-[#5c0613] hover:bg-[#5c0613] hover:text-white px-4 py-2 rounded-lg font-medium transition whitespace-nowrap self-start sm:self-auto">
+      <a href="/" class="text-sm bg-[#faf7f7] border border-[#ecdfe1] text-[#5c0613] hover:bg-[#5c0613] hover:text-white px-4 py-2 rounded-lg font-semibold transition whitespace-nowrap self-start sm:self-auto">
         ← К общему рейтингу
       </a>
     </div>
@@ -42,18 +60,18 @@
     <!-- Экспорт отчёта в Excel -->
     <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
       <div>
-        <h2 class="text-base font-bold text-[#5c0613]">📊 Выгрузка отчёта в Excel (.xlsx)</h2>
-        <p class="text-xs text-slate-500 mt-0.5">Сводка по волонтёрам и список проведённых акций за выбранный период</p>
+        <h2 class="text-sm sm:text-base font-bold text-[#5c0613]">Выгрузка отчёта в Excel (.xlsx)</h2>
+        <p class="text-xs text-slate-500 mt-1">Сводка по волонтёрам и список проведённых акций за выбранный период</p>
       </div>
       <div class="flex flex-wrap gap-2">
         <a href="/admin/export-excel?period=month" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3.5 py-2 rounded-lg transition shadow-sm">
-          📅 За месяц
+          За месяц
         </a>
         <a href="/admin/export-excel?period=semester" class="text-xs bg-[#5c0613] hover:bg-[#3f030b] text-white font-semibold px-3.5 py-2 rounded-lg transition shadow-sm">
-          🎓 За семестр
+          За семестр
         </a>
         <a href="/admin/export-excel?period=all" class="text-xs bg-slate-700 hover:bg-slate-800 text-white font-semibold px-3.5 py-2 rounded-lg transition shadow-sm">
-          📁 За всё время
+          За всё время
         </a>
       </div>
     </div>
@@ -63,7 +81,7 @@
 
       <!-- Блок 1: Создание акции -->
       <div id="createEventCard" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <h2 class="text-lg font-bold mb-4 text-[#5c0613]">1. Добавить акцию</h2>
+        <h2 class="text-base font-bold mb-4 text-[#5c0613]">1. Добавить акцию</h2>
         <form action="/admin/add-event" method="post" enctype="multipart/form-data" class="space-y-3.5">
           <div>
             <label class="block text-xs font-semibold text-slate-600 mb-1">Название акции *</label>
@@ -75,12 +93,12 @@
             <div>
               <label class="block text-xs font-semibold text-slate-600 mb-1">Категория *</label>
               <select name="category" class="w-full px-3 py-2 border rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
-                <option value="Эко волонтёрство">🌱 Эко волонтёрство</option>
-                <option value="Событийное волонтёрство">🎉 Событийное волонтёрство</option>
-                <option value="Спорт и ЗОЖ">🏃 Спорт и ЗОЖ</option>
-                <option value="Адресная помощь">🤝 Адресная помощь</option>
-                <option value="Культурное волонтёрство">🎭 Культурное волонтёрство</option>
-                <option value="Прочее">📌 Прочее</option>
+                <option value="Эко волонтёрство">Эко волонтёрство</option>
+                <option value="Событийное волонтёрство">Событийное волонтёрство</option>
+                <option value="Спорт и ЗОЖ">Спорт и ЗОЖ</option>
+                <option value="Адресная помощь">Адресная помощь</option>
+                <option value="Культурное волонтёрство">Культурное волонтёрство</option>
+                <option value="Прочее">Прочее</option>
               </select>
             </div>
             <div>
@@ -118,7 +136,7 @@
                    class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
           </div>
 
-          <button type="submit" class="w-full bg-[#5c0613] hover:bg-[#3f030b] text-white font-medium py-2.5 rounded-lg transition shadow-sm">
+          <button type="submit" class="w-full bg-[#5c0613] hover:bg-[#3f030b] text-white font-semibold py-2.5 rounded-lg transition shadow-sm">
             Создать акцию
           </button>
         </form>
@@ -127,7 +145,7 @@
       <!-- Блок 2: Начисление часов -->
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
         <div>
-          <h2 class="text-lg font-bold mb-4 text-[#5c0613]">2. Записать часы волонтёру</h2>
+          <h2 class="text-base font-bold mb-4 text-[#5c0613]">2. Записать часы волонтёру</h2>
           <form action="/admin/add-hours" method="post" class="space-y-4">
             <div>
               <label class="block text-xs font-semibold text-slate-600 mb-1">Выберите акцию</label>
@@ -175,7 +193,7 @@
                 <span class="font-bold text-[#5c0613] ml-1 bg-red-50 px-1.5 py-0.5 rounded border border-red-100">+{{ h.hours }} ч.</span>
               </div>
               <form action="/admin/delete-hours/{{ h.id }}" method="post" onsubmit="return confirm('Отменить это начисление часов?');" class="m-0">
-                <button type="submit" class="text-slate-400 hover:text-red-600 font-bold px-1.5 py-0.5 rounded hover:bg-red-50 transition" title="Отменить начисление">✕</button>
+                <button type="submit" class="text-slate-400 hover:text-red-600 font-bold px-1.5 py-0.5 rounded hover:bg-red-50 transition" title="Отменить начисление">×</button>
               </form>
             </div>
             {% else %}
@@ -189,7 +207,7 @@
     <!-- Блок 3: Управление акциями (Редактирование и Галерея) -->
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
       <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg font-bold text-[#5c0613]">3. Управление акциями, редактирование и галерея</h2>
+        <h2 class="text-base font-bold text-[#5c0613]">3. Управление акциями и галереей</h2>
         <span class="text-xs font-semibold bg-[#fce8eb] text-[#5c0613] px-2.5 py-1 rounded-full">Всего: {{ events|length }}</span>
       </div>
 
@@ -208,9 +226,9 @@
                 </span>
               </div>
               <div class="text-xs text-slate-500 mt-1 flex flex-wrap gap-3">
-                <span>📅 {{ ev.date }}</span>
-                <span>📍 {{ ev.location or "По договорённости" }}</span>
-                <span>🖼️ В галерее: {{ media_list|length }}</span>
+                <span>Дата: {{ ev.date }}</span>
+                <span>Место: {{ ev.location or "По договорённости" }}</span>
+                <span>В галерее: {{ media_list|length }}</span>
               </div>
             </div>
 
@@ -232,7 +250,7 @@
             <!-- Редактирование акции -->
             <details class="bg-white border border-slate-200 rounded-lg p-3">
               <summary class="cursor-pointer text-xs font-bold text-[#5c0613] select-none">
-                ✏️ Редактировать акцию
+                Редактировать акцию
               </summary>
               <form action="/admin/edit-event/{{ ev.id }}" method="post" enctype="multipart/form-data" class="mt-3 space-y-2.5">
                 <div>
@@ -286,7 +304,7 @@
             <!-- Галерея акции -->
             <details class="bg-white border border-slate-200 rounded-lg p-3">
               <summary class="cursor-pointer text-xs font-bold text-[#5c0613] select-none">
-                🖼️ Галерея акции ({{ media_list|length }})
+                Галерея акции ({{ media_list|length }})
               </summary>
               <div class="mt-3 space-y-3">
                 <form action="/admin/event/{{ ev.id }}/add-media" method="post" enctype="multipart/form-data" class="space-y-2">
@@ -294,7 +312,7 @@
                   <input type="file" name="files" multiple required accept="image/*,video/*"
                          class="w-full text-[11px] text-slate-500 border rounded-lg p-1 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-[#fce8eb] file:text-[#5c0613] file:font-semibold">
                   <button type="submit" class="w-full bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold py-1.5 rounded-lg transition">
-                    ⬆️ Добавить в галерею
+                    Добавить в галерею
                   </button>
                 </form>
 
@@ -305,12 +323,12 @@
                   <div class="relative group rounded-lg overflow-hidden border border-slate-200 bg-slate-900 h-20">
                     {% if is_vid %}
                       <video src="{{ m.media_url }}#t=0.001" muted preload="metadata" class="w-full h-full object-cover"></video>
-                      <span class="absolute bottom-1 left-1 text-[10px] bg-black/70 text-white px-1 rounded">🎬</span>
+                      <span class="absolute bottom-1 left-1 text-[10px] bg-black/70 text-white px-1.5 rounded">Видео</span>
                     {% else %}
                       <img src="{{ m.media_url }}" alt="Медиа" class="w-full h-full object-cover">
                     {% endif %}
                     <form action="/admin/delete-media/{{ m.id }}" method="post" onsubmit="return confirm('Удалить этот файл из галереи?');" class="absolute top-1 right-1 m-0">
-                      <button type="submit" class="bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow" title="Удалить">✕</button>
+                      <button type="submit" class="bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow" title="Удалить">×</button>
                     </form>
                   </div>
                   {% endfor %}
@@ -331,7 +349,7 @@
     <!-- Блок 4: Предложенные акции от волонтёров -->
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
       <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg font-bold text-[#5c0613]">4. Предложенные идеи акций</h2>
+        <h2 class="text-base font-bold text-[#5c0613]">4. Предложенные идеи акций</h2>
         <span class="text-xs font-semibold bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full">Заявок: {{ suggestions|length if suggestions else 0 }}</span>
       </div>
 
@@ -344,9 +362,9 @@
             <p class="text-xs text-slate-600 mt-1">{{ s.description }}</p>
             {% endif %}
             <div class="text-[11px] text-slate-500 mt-2 flex flex-wrap gap-3">
-              <span>👤 <strong>{{ s.author_name }}</strong></span>
-              {% if s.contact %}<span>📞 {{ s.contact }}</span>{% endif %}
-              <span>📅 {{ s.created_at }}</span>
+              <span>Автор: <strong>{{ s.author_name }}</strong></span>
+              {% if s.contact %}<span>Контакт: {{ s.contact }}</span>{% endif %}
+              <span>Дата: {{ s.created_at }}</span>
             </div>
           </div>
           <div class="flex items-start gap-2 shrink-0">
@@ -355,7 +373,7 @@
                     data-desc="{{ s.description or '' }}"
                     onclick="useSuggestion(this)"
                     class="text-xs bg-[#5c0613] hover:bg-[#3f030b] text-white font-semibold px-3 py-1.5 rounded-lg transition">
-              ✨ Взять в работу
+              Взять в работу
             </button>
             <form action="/admin/delete-suggestion/{{ s.id }}" method="post" onsubmit="return confirm('Удалить это предложение?');" class="m-0">
               <button type="submit" class="text-xs bg-white border border-slate-200 hover:bg-red-50 hover:text-red-600 text-slate-500 px-2.5 py-1.5 rounded-lg transition">
@@ -372,9 +390,8 @@
 
     <!-- Блок 5: Волонтёры (Добавление + База) -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <!-- Добавление волонтёра вручную -->
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <h2 class="text-lg font-bold mb-4 text-[#5c0613]">5. Добавить волонтёра (вручную)</h2>
+        <h2 class="text-base font-bold mb-4 text-[#5c0613]">5. Добавить волонтёра (вручную)</h2>
         <form action="/admin/add-user" method="post" class="space-y-4">
           <div>
             <label class="block text-xs font-semibold text-slate-600 mb-1">ФИО волонтёра</label>
@@ -383,7 +400,7 @@
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-600 mb-1">Логин для входа</label>
-            <input type="text" name="username" required placeholder="Например: ivanov или ник TG без @"
+            <input type="text" name="username" required placeholder="Например: ivanov"
                    class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
           </div>
           <div>
@@ -392,15 +409,14 @@
                    class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
             <span class="text-[11px] text-slate-400 mt-1 block">Волонтёр сможет сменить этот пароль в личном кабинете.</span>
           </div>
-          <button type="submit" class="w-full bg-[#5c0613] hover:bg-[#3f030b] text-white font-medium py-2 rounded-lg transition shadow-sm">
+          <button type="submit" class="w-full bg-[#5c0613] hover:bg-[#3f030b] text-white font-semibold py-2 rounded-lg transition shadow-sm">
             Сохранить волонтёра
           </button>
         </form>
       </div>
 
-      <!-- Список волонтёров -->
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <h2 class="text-lg font-bold mb-4 text-[#5c0613]">6. Зарегистрированные волонтёры ({{ users|length }})</h2>
+        <h2 class="text-base font-bold mb-4 text-[#5c0613]">6. Зарегистрированные волонтёры ({{ users|length }})</h2>
         <div class="overflow-x-auto max-h-80 overflow-y-auto">
           <table class="w-full text-left border-collapse text-sm">
             <thead>
