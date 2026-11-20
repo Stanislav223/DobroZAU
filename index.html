@@ -110,26 +110,16 @@
     .hero-banner-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(to top, rgba(20, 2, 6, 0.72) 0%, rgba(20, 2, 6, 0.12) 45%, transparent 100%);
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      padding: 22px;
-    }
-
-    .hero-actions {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      flex-wrap: wrap;
+      background: linear-gradient(to top, rgba(20, 2, 6, 0.45) 0%, transparent 45%);
+      pointer-events: none;
     }
 
     .btn-suggest {
       background: #ffffff;
       color: #5c0613;
       border: none;
-      padding: 11px 22px;
-      border-radius: 12px;
+      padding: 12px 24px;
+      border-radius: 10px;
       font-size: 0.92rem;
       font-weight: 700;
       cursor: pointer;
@@ -142,7 +132,7 @@
       background: #fce8eb;
     }
 
-    /* Живые счётчики статистики */
+    /* Счётчики статистики */
     .stats-wrapper {
       max-width: 1200px;
       width: 100%;
@@ -200,37 +190,23 @@
     .stat-card {
       background: rgba(255, 255, 255, 0.96);
       border-radius: 14px;
-      padding: 18px 20px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
+      padding: 20px 22px;
+      border-left: 4px solid #e63946;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
-    .stat-icon {
-      width: 46px;
-      height: 46px;
-      border-radius: 12px;
-      background: #fce8eb;
-      color: #5c0613;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.4rem;
-      flex-shrink: 0;
-    }
-
     .stat-value {
-      font-size: 1.45rem;
+      font-size: 1.55rem;
       font-weight: 700;
       color: #5c0613;
       line-height: 1.15;
     }
 
     .stat-label {
-      font-size: 0.82rem;
+      font-size: 0.84rem;
       color: #73595d;
-      margin-top: 3px;
+      font-weight: 600;
+      margin-top: 4px;
     }
 
     /* Контейнер мероприятий */
@@ -242,7 +218,7 @@
     }
 
     .section-title {
-      font-size: 1.3rem;
+      font-size: 1.25rem;
       font-weight: 700;
       color: #ffffff;
       margin-bottom: 18px;
@@ -347,7 +323,7 @@
     }
 
     .event-card h3 {
-      font-size: 1.08rem;
+      font-size: 1.05rem;
       font-weight: 700;
       color: var(--text-main);
       margin-bottom: 8px;
@@ -444,7 +420,7 @@
       padding: 12px 28px;
       border-radius: 10px;
       font-weight: 700;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       transition: opacity 0.2s ease, transform 0.2s ease;
     }
 
@@ -558,13 +534,12 @@
       background: #42040d;
     }
 
-    /* Адаптив для телефонов */
     @media (max-width: 768px) {
       .hero-banner {
         height: 220px;
       }
       .section-title {
-        font-size: 1.1rem;
+        font-size: 1.05rem;
       }
       .stats-grid {
         grid-template-columns: 1fr;
@@ -592,11 +567,11 @@
       </a>
 
       <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-end; flex-shrink: 0;">
-        <a href="/profile" style="display: inline-flex; align-items: center; justify-content: center; background-color: #5c0613; color: #ffffff; text-decoration: none; font-size: 11px; font-weight: 600; padding: 5px 10px; border-radius: 6px; white-space: nowrap; line-height: 1.2;">
-          👤 Личный кабинет
+        <a href="/profile" style="display: inline-flex; align-items: center; justify-content: center; background-color: #5c0613; color: #ffffff; text-decoration: none; font-size: 11px; font-weight: 600; padding: 5px 11px; border-radius: 6px; white-space: nowrap; line-height: 1.2;">
+          Личный кабинет
         </a>
-        <a href="/admin" style="display: inline-flex; align-items: center; justify-content: center; background-color: #ffffff; color: #5c0613; border: 1px solid #5c0613; text-decoration: none; font-size: 11px; font-weight: 600; padding: 4px 9px; border-radius: 6px; white-space: nowrap; line-height: 1.2;">
-          ⚙️ Координатор
+        <a href="/admin" style="display: inline-flex; align-items: center; justify-content: center; background-color: #ffffff; color: #5c0613; border: 1px solid #5c0613; text-decoration: none; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 6px; white-space: nowrap; line-height: 1.2;">
+          Координатор
         </a>
       </div>
     </div>
@@ -606,11 +581,7 @@
   <section class="hero">
     <div class="hero-banner">
       <img src="/static/hero.jpg" alt="Волонтёрский центр ДоброЗАУ">
-      <div class="hero-banner-overlay">
-        <div class="hero-actions">
-          <button type="button" class="btn-suggest" onclick="openSuggestModal()">💡 Предложить акцию</button>
-        </div>
-      </div>
+      <div class="hero-banner-overlay"></div>
     </div>
   </section>
 
@@ -627,31 +598,22 @@
 
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-icon">🤝</div>
-        <div>
-          <div class="stat-value">{{ stats.volunteers_total }}</div>
-          <div class="stat-label">Волонтёров в штабе</div>
-        </div>
+        <div class="stat-value">{{ stats.volunteers_total }}</div>
+        <div class="stat-label">Волонтёров в штабе</div>
       </div>
 
       <div class="stat-card">
-        <div class="stat-icon">📅</div>
-        <div>
-          <div class="stat-value" id="statEventsValue"
-               data-month="{{ stats.month_events }}"
-               data-semester="{{ stats.semester_events }}">{{ stats.month_events }}</div>
-          <div class="stat-label" id="statEventsLabel">Акций за месяц</div>
-        </div>
+        <div class="stat-value" id="statEventsValue"
+             data-month="{{ stats.month_events }}"
+             data-semester="{{ stats.semester_events }}">{{ stats.month_events }}</div>
+        <div class="stat-label" id="statEventsLabel">Акций за месяц</div>
       </div>
 
       <div class="stat-card">
-        <div class="stat-icon">⏱️</div>
-        <div>
-          <div class="stat-value" id="statHoursValue"
-               data-month="{{ stats.month_hours }}"
-               data-semester="{{ stats.semester_hours }}">{{ stats.month_hours }}</div>
-          <div class="stat-label" id="statHoursLabel">Часов добра за месяц</div>
-        </div>
+        <div class="stat-value" id="statHoursValue"
+             data-month="{{ stats.month_hours }}"
+             data-semester="{{ stats.semester_hours }}">{{ stats.month_hours }}</div>
+        <div class="stat-label" id="statHoursLabel">Часов добра за месяц</div>
       </div>
     </div>
   </section>
@@ -660,28 +622,28 @@
   <!-- Основной контент -->
   <main class="container">
     <div class="section-title">
-      🔥 Актуальные мероприятия
+      Актуальные мероприятия
     </div>
 
     <!-- Панель поиска и фильтрации -->
     <div class="search-filter-box">
       <input type="text" id="eventSearch" class="search-input"
-             placeholder="🔍 Поиск акции по названию...">
+             placeholder="Поиск акции по названию...">
 
       <div class="filter-pills" id="categoryFilters">
         <button type="button" class="filter-btn active" data-filter="all">Все</button>
-        <button type="button" class="filter-btn" data-filter="эко волонтёрство">🌱 Эко волонтёрство</button>
-        <button type="button" class="filter-btn" data-filter="событийное волонтёрство">🎉 Событийное волонтёрство</button>
-        <button type="button" class="filter-btn" data-filter="спорт и зож">🏃 Спорт и ЗОЖ</button>
-        <button type="button" class="filter-btn" data-filter="адресная помощь">🤝 Адресная помощь</button>
-        <button type="button" class="filter-btn" data-filter="культурное волонтёрство">🎭 Культурное волонтёрство</button>
-        <button type="button" class="filter-btn" data-filter="прочее">📌 Прочее</button>
+        <button type="button" class="filter-btn" data-filter="эко волонтёрство">Эко волонтёрство</button>
+        <button type="button" class="filter-btn" data-filter="событийное волонтёрство">Событийное волонтёрство</button>
+        <button type="button" class="filter-btn" data-filter="спорт и зож">Спорт и ЗОЖ</button>
+        <button type="button" class="filter-btn" data-filter="адресная помощь">Адресная помощь</button>
+        <button type="button" class="filter-btn" data-filter="культурное волонтёрство">Культурное волонтёрство</button>
+        <button type="button" class="filter-btn" data-filter="прочее">Прочее</button>
       </div>
     </div>
 
     <!-- Заглушка, если поиск ничего не нашёл -->
     <div id="noSearchResults" style="display: none; text-align: center; padding: 30px; background: rgba(255,255,255,0.96); border-radius: 14px; color: #475569; margin-bottom: 24px; font-weight: 500;">
-      По вашему запросу акций не найдено 😕
+      По вашему запросу акций не найдено.
     </div>
 
     <!-- Активные акции -->
@@ -692,7 +654,7 @@
            data-category="{{ (event.category or 'Волонтёрство')|lower }}"
            style="padding: 0; overflow: hidden;">
 
-        <!-- Шапка: затемнённое фото/видео + статус и название -->
+        <!-- Шапка: затемнённое фото/видео + категория и название -->
         <div class="card-media-header {% if event.video_url %}has-media{% endif %}"
              style="position: relative; overflow: hidden; {% if event.video_url %}padding: 24px; min-height: 145px; background: #1a0206; color: #ffffff;{% else %}padding: 24px 24px 0 24px;{% endif %}">
 
@@ -722,17 +684,17 @@
         <!-- Нижняя часть: всегда белая -->
         <div class="card-body" style="padding: 18px 24px 22px 24px; background: #ffffff;">
           <div class="event-details">
-            <span>📅 <strong>Дата:</strong> {{ event.date or "Уточняется" }}</span>
-            <span>📍 <strong>Место:</strong> {{ event.location or "По договорённости" }}</span>
+            <span><strong>Дата:</strong> {{ event.date or "Уточняется" }}</span>
+            <span><strong>Место:</strong> {{ event.location or "По договорённости" }}</span>
           </div>
 
-          <a href="/event/{{ event.id }}" class="btn-event-detail">📸 Подробнее и галерея →</a>
+          <a href="/event/{{ event.id }}" class="btn-event-detail">Подробнее и галерея →</a>
 
           <!-- Раскрывающийся список участников -->
           <details style="margin-top: 14px; border-top: 1px solid #f1f5f9; padding-top: 10px;">
             <summary style="cursor: pointer; font-size: 0.85rem; font-weight: 600; color: #5c0613; list-style: none; display: flex; justify-content: space-between; align-items: center;">
-              <span>👥 Участники ({{ event.participants|length }})</span>
-              <span style="font-size: 0.75rem; color: #94a3b8;">нажмите чтобы открыть ▾</span>
+              <span>Участники ({{ event.participants|length }})</span>
+              <span style="font-size: 0.75rem; color: #94a3b8;">открыть список ▾</span>
             </summary>
             <div style="margin-top: 10px; background: #fafafa; border-radius: 8px; padding: 8px 10px; max-height: 160px; overflow-y: auto; border: 1px solid #f1f5f9;">
               {% for p in event.participants %}
@@ -767,9 +729,9 @@
     {% if past_events %}
     <div id="pastEventsSection">
       <div style="margin-top: 45px; margin-bottom: 18px;">
-        <h3 style="color: rgba(255, 255, 255, 0.9); font-size: 1.15rem; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px;">
-          <span>✅ Завершённые акции</span>
-          <span style="font-size: 0.8rem; font-weight: normal; background: rgba(255,255,255,0.15); padding: 2px 8px; border-radius: 12px; color: #fff;">{{ past_events|length }}</span>
+        <h3 style="color: rgba(255, 255, 255, 0.9); font-size: 1.1rem; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 10px;">
+          <span>Завершённые акции</span>
+          <span style="font-size: 0.8rem; font-weight: normal; background: rgba(255,255,255,0.15); padding: 2px 10px; border-radius: 12px; color: #fff;">{{ past_events|length }}</span>
         </h3>
       </div>
 
@@ -780,7 +742,6 @@
              data-category="{{ (event.category or 'Волонтёрство')|lower }}"
              style="padding: 0; overflow: hidden; border-left: 4px solid #94a3b8;">
 
-          <!-- Шапка: затемнённое фото/видео + бейдж «Завершена» и название -->
           <div class="card-media-header {% if event.video_url %}has-media{% endif %}"
                style="position: relative; overflow: hidden; {% if event.video_url %}padding: 24px; min-height: 145px; background: #1a0206; color: #ffffff;{% else %}padding: 24px 24px 0 24px;{% endif %}">
 
@@ -812,19 +773,17 @@
             </div>
           </div>
 
-          <!-- Нижняя часть: всегда белая -->
           <div class="card-body" style="padding: 18px 24px 22px 24px; background: #ffffff;">
             <div class="event-details">
-              <span>📅 <strong>Дата:</strong> {{ event.date or "Проведена" }}</span>
-              <span>📍 <strong>Место:</strong> {{ event.location or "По договорённости" }}</span>
+              <span><strong>Дата:</strong> {{ event.date or "Проведена" }}</span>
+              <span><strong>Место:</strong> {{ event.location or "По договорённости" }}</span>
             </div>
 
-            <a href="/event/{{ event.id }}" class="btn-event-detail" style="background: #f1f5f9; color: #334155;">📸 Подробнее и галерея →</a>
+            <a href="/event/{{ event.id }}" class="btn-event-detail" style="background: #f1f5f9; color: #334155;">Подробнее и галерея →</a>
 
-            <!-- Раскрывающийся список участников прошедшей акции -->
             <details style="margin-top: 14px; border-top: 1px solid #f1f5f9; padding-top: 10px;">
               <summary style="cursor: pointer; font-size: 0.85rem; font-weight: 600; color: #475569; list-style: none; display: flex; justify-content: space-between; align-items: center; user-select: none;">
-                <span>👥 Участники ({{ event.participants|length }})</span>
+                <span>Участники ({{ event.participants|length }})</span>
                 <span style="font-size: 0.75rem; color: #94a3b8;">посмотреть ▾</span>
               </summary>
 
@@ -857,14 +816,14 @@
 
     <!-- Блок рейтинга волонтёров -->
     <div class="section-title" style="margin-top: 50px;">
-      🏆 Рейтинг волонтёров штаба
+      Рейтинг волонтёров штаба
     </div>
 
     <div style="background: white; border-radius: 16px; border: 1px solid var(--border-color); overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08);">
       <table style="width: 100%; border-collapse: collapse; text-align: left;">
         <thead>
           <tr style="background: #fdf8f8; border-bottom: 2px solid var(--border-color); color: var(--primary); font-size: 0.9rem;">
-            <th style="padding: 16px 20px; width: 80px;">Место</th>
+            <th style="padding: 16px 20px; width: 90px;">Место</th>
             <th style="padding: 16px 20px;">Волонтёр</th>
             <th style="padding: 16px 20px; text-align: right;">Отработано часов</th>
           </tr>
@@ -872,12 +831,8 @@
         <tbody style="font-size: 0.95rem;">
           {% for u in leaderboard %}
           <tr style="border-bottom: 1px solid var(--border-color);">
-            <td style="padding: 16px 20px; font-weight: 700;">
-              {% if loop.index == 1 %}🥇 1
-              {% elif loop.index == 2 %}🥈 2
-              {% elif loop.index == 3 %}🥉 3
-              {% else %}#{{ loop.index }}
-              {% endif %}
+            <td style="padding: 16px 20px; font-weight: 800; color: #5c0613;">
+              {{ loop.index }}
             </td>
             <td style="padding: 16px 20px;">
               <strong style="color: var(--text-main);">{{ u.name or "Волонтёр" }}</strong>
@@ -902,12 +857,12 @@
       </table>
     </div>
 
-    <!-- Информационный блок координатора -->
+    <!-- Информационный блок координатора (кнопка «Предложить акцию» только здесь) -->
     <div class="join-box">
       <p>Возникли вопросы или есть идея для нового доброго дела? Напишите нам!</p>
       <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
         <a href="mailto:dobrozau.admin@gmail.com" class="join-btn">Связаться с координатором</a>
-        <button type="button" class="btn-suggest" onclick="openSuggestModal()">💡 Предложить акцию</button>
+        <button type="button" class="btn-suggest" onclick="openSuggestModal()">Предложить акцию</button>
       </div>
     </div>
   </main>
@@ -920,7 +875,7 @@
   <div class="modal-overlay" id="suggestModal" onclick="if(event.target === this) closeSuggestModal()">
     <div class="modal-box">
       <div class="modal-header">
-        <h3>💡 Предложить акцию</h3>
+        <h3>Предложить акцию</h3>
         <button type="button" class="modal-close" onclick="closeSuggestModal()">&times;</button>
       </div>
       <form action="/suggest-event" method="post">
@@ -946,7 +901,6 @@
   </div>
 
   <script>
-    // 1. Переключатель живых счётчиков (Месяц / Семестр)
     function setStatsPeriod(period) {
       const btnMonth = document.getElementById('btnPeriodMonth');
       const btnSem = document.getElementById('btnPeriodSemester');
@@ -977,7 +931,6 @@
       }
     }
 
-    // 2. Модальное окно «Предложить акцию»
     function openSuggestModal() {
       document.getElementById('suggestModal').classList.add('open');
     }
@@ -985,7 +938,6 @@
       document.getElementById('suggestModal').classList.remove('open');
     }
 
-    // 3. Поиск и фильтрация карточек + воспроизведение видео
     document.addEventListener("DOMContentLoaded", () => {
       const searchInput = document.getElementById('eventSearch');
       const filterButtons = document.querySelectorAll('.filter-btn');
@@ -1036,7 +988,6 @@
         });
       });
 
-      // Воспроизведение фоновых видео (ПК: наведение, телефон: центр экрана)
       const cards = document.querySelectorAll(".event-card");
       const isDesktop = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
