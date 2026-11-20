@@ -26,7 +26,7 @@
     }
 
     .container {
-      max-width: 1240px;
+      max-width: 1260px;
       margin: 0 auto;
     }
 
@@ -54,12 +54,12 @@
       transform: translateX(-2px);
     }
 
-    /* Двухколоночная сетка: слева обложка/инфо, справа галерея */
+    /* Двухколоночная сетка: слева обложка/инфо, справа прозрачная галерея */
     .main-grid {
       display: grid;
-      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-      gap: 24px;
-      align-items: start;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+      gap: 28px;
+      align-items: center;
     }
 
     .card {
@@ -72,7 +72,7 @@
     /* --- ЛЕВАЯ КОЛОНКА --- */
     .cover-wrap {
       position: relative;
-      height: 300px;
+      height: 290px;
       background: linear-gradient(135deg, #3b0813, #7a1026);
       overflow: hidden;
     }
@@ -125,7 +125,7 @@
 
     .event-title {
       color: #fff;
-      font-size: 30px;
+      font-size: 28px;
       font-weight: 800;
       line-height: 1.15;
       text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
@@ -179,9 +179,10 @@
       color: #9ca3af;
     }
 
-    /* --- ПРАВАЯ КОЛОНКА: КАРУСЕЛЬ --- */
-    .gallery-card {
-      padding: 24px;
+    /* --- ПРАВАЯ КОЛОНКА: ПРОЗРАЧНАЯ КАРУСЕЛЬ С БОКОВЫМИ ПРЕВЬЮ --- */
+    .gallery-section {
+      background: transparent;
+      padding: 4px 0;
     }
 
     .gallery-header {
@@ -190,13 +191,13 @@
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 10px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
 
     .gallery-title {
-      font-size: 20px;
+      font-size: 21px;
       font-weight: 800;
-      color: var(--accent);
+      color: #ffffff;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -209,18 +210,19 @@
     }
 
     .count-pill {
-      background: var(--accent-soft);
-      color: var(--accent);
+      background: rgba(255, 255, 255, 0.14);
+      color: #ffffff;
       font-size: 13px;
       font-weight: 700;
       padding: 6px 12px;
       border-radius: 999px;
+      backdrop-filter: blur(4px);
       white-space: nowrap;
     }
 
     .all-photos-btn {
-      border: none;
-      background: var(--accent);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.18);
       color: #fff;
       font-size: 13px;
       font-weight: 700;
@@ -230,47 +232,55 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      backdrop-filter: blur(4px);
       transition: background 0.2s ease, transform 0.15s ease;
     }
 
     .all-photos-btn:hover {
-      background: #5d0c1d;
+      background: rgba(255, 255, 255, 0.3);
       transform: translateY(-1px);
     }
 
+    /* Сцена карусели на прозрачном фоне */
     .carousel {
       position: relative;
-      border-radius: 18px;
+      height: 360px;
+      background: transparent;
       overflow: hidden;
-      background: #111827;
-      aspect-ratio: 4 / 3;
       user-select: none;
       cursor: grab;
+      border-radius: 20px;
     }
 
     .carousel.is-dragging {
       cursor: grabbing;
     }
 
-    .carousel-track {
-      display: flex;
+    .carousel-stage {
+      position: relative;
+      width: 100%;
       height: 100%;
-      transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-      will-change: transform;
-    }
-
-    .carousel.is-dragging .carousel-track {
-      transition: none;
     }
 
     .carousel-slide {
-      min-width: 100%;
-      height: 100%;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 68%;
+      height: 92%;
+      border-radius: 18px;
+      overflow: hidden;
       background: #0f172a;
+      transform: translate(-50%, -50%) scale(0.7);
+      opacity: 0;
+      z-index: 1;
+      pointer-events: none;
+      transition:
+        transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.55s ease,
+        filter 0.55s ease,
+        box-shadow 0.55s ease;
+      will-change: transform, opacity, filter;
     }
 
     .carousel-slide img,
@@ -280,16 +290,47 @@
       object-fit: cover;
       display: block;
       -webkit-user-drag: none;
-      transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
     }
 
-    .carousel-slide img {
+    /* Активное (центральное) фото */
+    .carousel-slide.is-active {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+      filter: brightness(1);
+      z-index: 3;
+      pointer-events: auto;
+      box-shadow: 0 20px 44px rgba(0, 0, 0, 0.45);
+    }
+
+    .carousel-slide.is-active img {
       cursor: zoom-in;
     }
 
-    .carousel-slide:not(.is-active) img {
-      transform: scale(0.96);
-      opacity: 0.7;
+    /* Предыдущее фото (слева, меньше на 18% и затемнено) */
+    .carousel-slide.is-prev {
+      transform: translate(-105%, -50%) scale(0.82);
+      opacity: 0.92;
+      filter: brightness(0.45);
+      z-index: 2;
+      pointer-events: auto;
+      cursor: pointer;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+    }
+
+    /* Следующее фото (справа, меньше на 18% и затемнено) */
+    .carousel-slide.is-next {
+      transform: translate(5%, -50%) scale(0.82);
+      opacity: 0.92;
+      filter: brightness(0.45);
+      z-index: 2;
+      pointer-events: auto;
+      cursor: pointer;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+    }
+
+    .carousel-slide.is-prev:hover,
+    .carousel-slide.is-next:hover {
+      filter: brightness(0.62);
     }
 
     .carousel-btn {
@@ -300,7 +341,7 @@
       height: 42px;
       border: none;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.88);
+      background: rgba(255, 255, 255, 0.9);
       color: var(--accent);
       font-size: 20px;
       font-weight: 700;
@@ -308,9 +349,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
       transition: transform 0.2s ease, background 0.2s ease;
-      z-index: 5;
+      z-index: 6;
     }
 
     .carousel-btn:hover {
@@ -318,29 +359,25 @@
       transform: translateY(-50%) scale(1.08);
     }
 
-    .carousel-btn.prev { left: 12px; }
-    .carousel-btn.next { right: 12px; }
+    .carousel-btn.prev { left: 10px; }
+    .carousel-btn.next { right: 10px; }
 
-    .carousel-controls-bottom {
-      position: absolute;
-      bottom: 12px;
-      left: 12px;
-      right: 12px;
+    /* Панель управления под каруселью */
+    .carousel-footer {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      pointer-events: none;
-      z-index: 5;
+      gap: 12px;
+      margin-top: 14px;
     }
 
     .autoplay-btn,
     .carousel-counter {
-      pointer-events: auto;
-      background: rgba(0, 0, 0, 0.62);
+      background: rgba(255, 255, 255, 0.14);
       color: #fff;
       font-size: 12px;
       font-weight: 700;
-      padding: 6px 11px;
+      padding: 6px 12px;
       border-radius: 999px;
       backdrop-filter: blur(4px);
       border: none;
@@ -355,14 +392,14 @@
     }
 
     .autoplay-btn:hover {
-      background: rgba(0, 0, 0, 0.85);
+      background: rgba(255, 255, 255, 0.25);
     }
 
     .carousel-dots {
       display: flex;
       justify-content: center;
       gap: 7px;
-      margin-top: 14px;
+      flex: 1;
     }
 
     .carousel-dot {
@@ -370,7 +407,7 @@
       height: 8px;
       border-radius: 999px;
       border: none;
-      background: #d1d5db;
+      background: rgba(255, 255, 255, 0.35);
       cursor: pointer;
       padding: 0;
       transition: width 0.3s ease, background 0.3s ease;
@@ -378,7 +415,7 @@
 
     .carousel-dot.is-active {
       width: 24px;
-      background: var(--accent);
+      background: #ffffff;
     }
 
     .thumbs {
@@ -388,26 +425,27 @@
       overflow-x: auto;
       padding-bottom: 4px;
       scrollbar-width: thin;
+      justify-content: center;
     }
 
     .thumb-btn {
-      flex: 0 0 68px;
-      height: 52px;
+      flex: 0 0 64px;
+      height: 48px;
       border-radius: 10px;
       overflow: hidden;
       border: 2px solid transparent;
       padding: 0;
       cursor: pointer;
       background: #111827;
-      opacity: 0.6;
+      opacity: 0.5;
       transition: opacity 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
     }
 
     .thumb-btn.is-active,
     .thumb-btn:hover {
       opacity: 1;
-      border-color: var(--accent);
-      transform: translateY(-1px);
+      border-color: #ffffff;
+      transform: translateY(-2px);
     }
 
     .thumb-btn img,
@@ -421,15 +459,15 @@
     .gallery-empty {
       text-align: center;
       padding: 48px 16px;
-      color: var(--muted);
-      background: #f9fafb;
-      border-radius: 16px;
-      border: 1px dashed var(--border);
+      color: rgba(255, 255, 255, 0.78);
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      border: 1px dashed rgba(255, 255, 255, 0.25);
     }
 
     /* --- УЧАСТНИКИ --- */
     .participants-card {
-      margin-top: 24px;
+      margin-top: 28px;
       padding: 24px;
     }
 
@@ -461,7 +499,7 @@
       font-weight: 700;
     }
 
-    /* --- МОДАЛЬНОЕ ОКНО «ВСЕ ФОТО» (СЕТКА) --- */
+    /* --- МОДАЛЬНОЕ ОКНО «ВСЕ ФОТО» --- */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -611,10 +649,12 @@
     .lightbox-nav.prev { left: 18px; }
     .lightbox-nav.next { right: 18px; }
 
-    @media (max-width: 900px) {
+    @media (max-width: 960px) {
       .main-grid { grid-template-columns: 1fr; }
       .cover-wrap { height: 240px; }
       .event-title { font-size: 24px; }
+      .carousel { height: 300px; }
+      .carousel-slide { width: 74%; }
       .modal-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 14px; }
     }
   </style>
@@ -669,8 +709,8 @@
         </div>
       </div>
 
-      <!-- ПРАВАЯ КОЛОНКА: Карусель + кнопка «Все фото» -->
-      <div class="card gallery-card">
+      <!-- ПРАВАЯ КОЛОНКА: Прозрачная карусель с боковыми превью -->
+      <div class="gallery-section">
         <div class="gallery-header">
           <h2 class="gallery-title">🖼️ Галерея акции</h2>
           <div class="gallery-actions">
@@ -683,10 +723,10 @@
 
         {% if media_items %}
           <div class="carousel" id="galleryCarousel">
-            <div class="carousel-track" id="carouselTrack">
+            <div class="carousel-stage" id="carouselStage">
               {% for item in media_items %}
                 {% set u = item.media_url.lower() %}
-                <div class="carousel-slide {% if loop.first %}is-active{% endif %}">
+                <div class="carousel-slide" data-index="{{ loop.index0 }}">
                   {% if u.endswith('.mp4') or u.endswith('.webm') or u.endswith('.mov') or '/video/upload/' in u %}
                     <video src="{{ item.media_url }}" controls playsinline preload="metadata"></video>
                   {% else %}
@@ -699,18 +739,20 @@
             {% if media_items | length > 1 %}
               <button class="carousel-btn prev" id="prevBtn" type="button" aria-label="Предыдущее фото">‹</button>
               <button class="carousel-btn next" id="nextBtn" type="button" aria-label="Следующее фото">›</button>
-              <div class="carousel-controls-bottom">
-                <button class="autoplay-btn" id="autoplayToggle" type="button">⏸ Авто</button>
-                <div class="carousel-counter" id="carouselCounter">1 / {{ media_items | length }}</div>
-              </div>
             {% endif %}
           </div>
 
           {% if media_items | length > 1 %}
-            <div class="carousel-dots" id="carouselDots">
-              {% for item in media_items %}
-                <button class="carousel-dot {% if loop.first %}is-active{% endif %}" type="button" data-index="{{ loop.index0 }}" aria-label="Слайд {{ loop.index }}"></button>
-              {% endfor %}
+            <div class="carousel-footer">
+              <button class="autoplay-btn" id="autoplayToggle" type="button">⏸ Авто</button>
+
+              <div class="carousel-dots" id="carouselDots">
+                {% for item in media_items %}
+                  <button class="carousel-dot {% if loop.first %}is-active{% endif %}" type="button" data-index="{{ loop.index0 }}" aria-label="Слайд {{ loop.index }}"></button>
+                {% endfor %}
+              </div>
+
+              <div class="carousel-counter" id="carouselCounter">1 / {{ media_items | length }}</div>
             </div>
 
             <div class="thumbs" id="carouselThumbs">
@@ -814,26 +856,12 @@
     }
 
     (function () {
-      const track = document.getElementById("carouselTrack");
-      if (!track) return;
+      const stage = document.getElementById("carouselStage");
+      if (!stage) return;
 
-      const slides = Array.from(track.children);
+      const slides = Array.from(stage.children);
       const total = slides.length;
       const carousel = document.getElementById("galleryCarousel");
-
-      // Клик по фото в карусели открывает Lightbox (если не было перетаскивания)
-      let dragged = false;
-      slides.forEach((slide) => {
-        const img = slide.querySelector("img[data-photo-src]");
-        if (img) {
-          img.addEventListener("click", () => {
-            if (!dragged) openLightboxBySrc(img.getAttribute("data-photo-src"));
-          });
-        }
-      });
-
-      if (total <= 1) return;
-
       const prevBtn = document.getElementById("prevBtn");
       const nextBtn = document.getElementById("nextBtn");
       const counter = document.getElementById("carouselCounter");
@@ -844,15 +872,23 @@
       let current = 0;
       let autoplayEnabled = true;
       let autoplayTimer = null;
+      let dragged = false;
 
-      function goTo(index) {
-        const prevVideo = slides[current].querySelector("video");
-        if (prevVideo) prevVideo.pause();
+      function updateSlides() {
+        const prevIdx = (current - 1 + total) % total;
+        const nextIdx = (current + 1) % total;
 
-        current = (index + total) % total;
-        track.style.transform = `translateX(-${current * 100}%)`;
+        slides.forEach((slide, i) => {
+          slide.classList.remove("is-active", "is-prev", "is-next");
+          if (i === current) {
+            slide.classList.add("is-active");
+          } else if (total > 2 && i === prevIdx) {
+            slide.classList.add("is-prev");
+          } else if (total > 1 && i === nextIdx) {
+            slide.classList.add("is-next");
+          }
+        });
 
-        slides.forEach((s, i) => s.classList.toggle("is-active", i === current));
         dots.forEach((d, i) => d.classList.toggle("is-active", i === current));
         thumbs.forEach((t, i) => t.classList.toggle("is-active", i === current));
 
@@ -861,6 +897,33 @@
           thumbs[current].scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
         }
       }
+
+      function goTo(index) {
+        const prevVideo = slides[current].querySelector("video");
+        if (prevVideo) prevVideo.pause();
+        current = (index + total) % total;
+        updateSlides();
+      }
+
+      // Клик по слайду: боковые листают, центральное фото открывается на весь экран
+      slides.forEach((slide, i) => {
+        slide.addEventListener("click", () => {
+          if (dragged) return;
+          if (slide.classList.contains("is-prev")) {
+            goTo(current - 1);
+            startAutoplay();
+          } else if (slide.classList.contains("is-next")) {
+            goTo(current + 1);
+            startAutoplay();
+          } else if (slide.classList.contains("is-active")) {
+            const img = slide.querySelector("img[data-photo-src]");
+            if (img) openLightboxBySrc(img.getAttribute("data-photo-src"));
+          }
+        });
+      });
+
+      updateSlides();
+      if (total <= 1) return;
 
       function startAutoplay() {
         stopAutoplay();
@@ -876,16 +939,18 @@
         if (autoplayTimer) clearInterval(autoplayTimer);
       }
 
-      autoplayToggle.addEventListener("click", (e) => {
-        e.stopPropagation();
-        autoplayEnabled = !autoplayEnabled;
-        autoplayToggle.textContent = autoplayEnabled ? "⏸ Авто" : "▶ Авто";
-        if (autoplayEnabled) startAutoplay();
-        else stopAutoplay();
-      });
+      if (autoplayToggle) {
+        autoplayToggle.addEventListener("click", (e) => {
+          e.stopPropagation();
+          autoplayEnabled = !autoplayEnabled;
+          autoplayToggle.textContent = autoplayEnabled ? "⏸ Авто" : "▶ Авто";
+          if (autoplayEnabled) startAutoplay();
+          else stopAutoplay();
+        });
+      }
 
-      prevBtn.addEventListener("click", () => { goTo(current - 1); startAutoplay(); });
-      nextBtn.addEventListener("click", () => { goTo(current + 1); startAutoplay(); });
+      prevBtn.addEventListener("click", (e) => { e.stopPropagation(); goTo(current - 1); startAutoplay(); });
+      nextBtn.addEventListener("click", (e) => { e.stopPropagation(); goTo(current + 1); startAutoplay(); });
 
       dots.forEach((dot) => dot.addEventListener("click", () => {
         goTo(Number(dot.dataset.index));
@@ -900,7 +965,7 @@
       carousel.addEventListener("mouseenter", stopAutoplay);
       carousel.addEventListener("mouseleave", startAutoplay);
 
-      // Ручное перетаскивание мышкой (drag)
+      // Перетаскивание мышкой
       let isPointerDown = false;
       let startX = 0;
       let deltaX = 0;
@@ -918,19 +983,15 @@
       window.addEventListener("mousemove", (e) => {
         if (!isPointerDown) return;
         deltaX = e.clientX - startX;
-        if (Math.abs(deltaX) > 6) dragged = true;
-        const offsetPercent = (deltaX / carousel.offsetWidth) * 100;
-        track.style.transform = `translateX(calc(-${current * 100}% + ${offsetPercent}%))`;
+        if (Math.abs(deltaX) > 8) dragged = true;
       });
 
       window.addEventListener("mouseup", () => {
         if (!isPointerDown) return;
         isPointerDown = false;
         carousel.classList.remove("is-dragging");
-        if (Math.abs(deltaX) > 50) {
+        if (Math.abs(deltaX) > 45) {
           goTo(deltaX < 0 ? current + 1 : current - 1);
-        } else {
-          goTo(current);
         }
         startAutoplay();
         setTimeout(() => { dragged = false; }, 50);
