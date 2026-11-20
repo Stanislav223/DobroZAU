@@ -2,40 +2,57 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#5c0613">
   <title>Личный кабинет волонтёра — ДоброЗАУ</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="/static/static/logo.png.jpg">
-  <style>body { background-color: #5c0613; font-family: sans-serif; }</style>
+  <style>
+    html, body {
+      background-color: #5c0613;
+      overflow-x: hidden;
+      max-width: 100%;
+    }
+    body {
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      padding-bottom: calc(2rem + env(safe-area-inset-bottom));
+    }
+    h1, h2, .font-display {
+      font-family: 'Unbounded', 'Manrope', sans-serif;
+    }
+  </style>
 </head>
 <body class="min-h-screen p-4 sm:p-8">
   <div class="max-w-3xl mx-auto space-y-6">
 
     <!-- Верхняя шапка -->
     <div class="flex justify-between items-center text-white">
-      <a href="/" class="text-sm text-white/80 hover:text-white">← На главную</a>
-      <a href="/logout" class="text-sm bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg border border-white/20 transition">Выйти из кабинета</a>
+      <a href="/" class="text-sm font-semibold text-white/80 hover:text-white transition">← На главную</a>
+      <a href="/logout" class="text-sm font-semibold bg-white/10 hover:bg-white/20 px-3.5 py-1.5 rounded-lg border border-white/20 transition">Выйти из кабинета</a>
     </div>
 
     <!-- Визитка волонтёра -->
-    <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl flex flex-col sm:flex-row justify-between items-center gap-6">
+    <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
       <div>
-        <span class="text-xs bg-[#fce8eb] text-[#5c0613] font-bold px-3 py-1 rounded-full uppercase">Волонтёр ДоброЗАУ</span>
-        <h1 class="text-2xl font-bold text-slate-800 mt-2">{{ user.name }}</h1>
-        <p class="text-sm text-slate-500">Логин: @{{ user.username }}</p>
+        <span class="text-xs bg-[#fce8eb] text-[#5c0613] font-bold px-3 py-1 rounded-full uppercase tracking-wide">Волонтёр ДоброЗАУ</span>
+        <h1 class="text-xl sm:text-2xl font-bold text-slate-800 mt-2.5">{{ user.name }}</h1>
+        <p class="text-sm text-slate-500 mt-1">Логин: @{{ user.username }}</p>
       </div>
-      <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl text-center min-w-[160px]">
-        <div class="text-xs text-slate-500 font-semibold uppercase">Ваши часы</div>
-        <div class="text-3xl font-extrabold text-[#5c0613] mt-1">{{ total_hours }} ч.</div>
+      <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl text-center min-w-[160px] self-stretch sm:self-auto">
+        <div class="text-xs text-slate-500 font-bold uppercase tracking-wider">Ваши часы</div>
+        <div class="font-display text-2xl sm:text-3xl font-bold text-[#5c0613] mt-1">{{ total_hours }} ч.</div>
       </div>
     </div>
 
-    <!-- Достижения (ачивки) -->
+    <!-- Достижения -->
     {% if achievements %}
     {% set unlocked_count = achievements | selectattr("unlocked") | list | length %}
     <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg font-bold text-slate-800">🏅 Ваши достижения</h2>
+      <div class="flex flex-wrap justify-between items-center gap-2 mb-5">
+        <h2 class="text-base sm:text-lg font-bold text-slate-800">Достижения</h2>
         <span class="text-xs font-bold bg-[#fce8eb] text-[#5c0613] px-3 py-1 rounded-full">
           Открыто: {{ unlocked_count }} / {{ achievements|length }}
         </span>
@@ -43,10 +60,10 @@
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
         {% for a in achievements %}
-        <div class="p-4 rounded-xl border transition {% if a.unlocked %}bg-[#fdf7f8] border-[#f3cfd4] shadow-sm{% else %}bg-slate-50/70 border-slate-200 opacity-70{% endif %}">
+        <div class="p-4 rounded-xl border transition {% if a.unlocked %}bg-[#fdf7f8] border-[#f3cfd4] shadow-sm{% else %}bg-slate-50/70 border-slate-200 opacity-75{% endif %}">
           <div class="flex items-start gap-3">
-            <div class="w-11 h-11 rounded-xl flex items-center justify-center text-2xl shrink-0 {% if a.unlocked %}bg-[#fce8eb]{% else %}bg-slate-200 grayscale{% endif %}">
-              {{ a.icon }}
+            <div class="w-9 h-9 rounded-lg flex items-center justify-center text-xs font-extrabold shrink-0 {% if a.unlocked %}bg-[#5c0613] text-white{% else %}bg-slate-200 text-slate-500{% endif %}">
+              {{ loop.index }}
             </div>
             <div class="min-w-0 flex-1">
               <div class="flex items-center justify-between gap-2">
@@ -80,7 +97,7 @@
 
     <!-- Список посещённых акций -->
     <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl">
-      <h2 class="text-lg font-bold text-slate-800 mb-4">📋 Ваши посещённые акции и начисления</h2>
+      <h2 class="text-base sm:text-lg font-bold text-slate-800 mb-4">Посещённые акции и начисления</h2>
       <div class="divide-y divide-slate-100">
         {% for item in history %}
         <div class="py-3 flex justify-between items-center gap-3">
@@ -92,7 +109,7 @@
             {% else %}
               <div class="font-semibold text-slate-800">{{ item.event_title }}</div>
             {% endif %}
-            <div class="text-xs text-slate-400">📅 {{ item.event_date }}</div>
+            <div class="text-xs text-slate-400 mt-0.5">Дата: {{ item.event_date }}</div>
           </div>
           <span class="bg-[#fce8eb] text-[#5c0613] font-bold text-sm px-3 py-1 rounded-lg shrink-0">
             +{{ item.hours }} ч.
@@ -108,21 +125,21 @@
 
     <!-- Изменение логина и пароля -->
     <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl">
-      <h2 class="text-lg font-bold text-slate-800 mb-4">🔒 Безопасность профиля</h2>
+      <h2 class="text-base sm:text-lg font-bold text-slate-800 mb-4">Безопасность профиля</h2>
       <form action="/profile/update" method="post" class="space-y-4 max-w-md">
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">Ваш логин</label>
-          <input type="text" name="new_login" value="{{ user.username }}" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
+          <input type="text" name="new_login" value="{{ user.username }}" required class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">Новый пароль (оставьте пустым, если не меняете)</label>
-          <input type="password" name="new_password" placeholder="••••••••" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
+          <input type="password" name="new_password" placeholder="Минимум 6 символов" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">Текущий пароль (для подтверждения изменений)</label>
-          <input type="password" name="old_password" required placeholder="Введите старый пароль" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
+          <input type="password" name="old_password" required placeholder="Введите текущий пароль" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
         </div>
-        <button type="submit" class="bg-[#5c0613] text-white px-5 py-2 rounded-lg font-medium text-sm hover:bg-[#3f030b] transition">
+        <button type="submit" class="bg-[#5c0613] text-white px-5 py-2.5 rounded-lg font-semibold text-sm hover:bg-[#3f030b] transition">
           Сохранить изменения
         </button>
       </form>
