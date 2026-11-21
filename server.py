@@ -16,7 +16,7 @@ from fastapi import (
     FastAPI, Form, HTTPException, Request, Depends, status, Response, UploadFile, File
 )
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from fastapi.responses import HTMLResponse, RedirectResponse, StreamingResponse
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from jinja2 import Template
 from openpyxl import Workbook
@@ -429,7 +429,9 @@ def build_achievements(user_events: list, total_hours: float) -> list:
 # --- ПРИЛОЖЕНИЕ И MIDDLEWARE БЕЗОПАСНОСТИ ---
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 app.mount("/static", StaticFiles(directory="static"), name="static")
-
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon():
+    return FileResponse("static/static/logo.png.jpg", media_type="image/jpeg")
 
 @app.middleware("http")
 async def security_middleware(request: Request, call_next):
