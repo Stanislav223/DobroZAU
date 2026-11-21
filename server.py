@@ -512,20 +512,6 @@ def home():
         for ev in all_events:
             ev_logs = logs_by_event.get(ev.id, [])
             participants = []
-            ev_hours = 0.0
-            for log in ev_logs:
-                ev_hours += (log.hours or 0.0)
-                u = users_map.get(log.user_id)
-                if u:
-                    participants.append({
-                        "name": u.name,
-                        "username": u.username,
-                        "hours": log.hours
-                    })
-
-            for ev in all_events:
-                ev_logs = logs_by_event.get(ev.id, [])
-                participants = []
             for log in ev_logs:
                 u = users_map.get(log.user_id)
                 if u:
