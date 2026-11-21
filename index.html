@@ -412,11 +412,48 @@
       box-shadow: 0 18px 34px rgba(0, 0, 0, 0.26);
     }
 
+    /* Шапка карточки: контент прижат к нижней части медийного превью */
+    .card-media-header {
+      position: relative;
+      overflow: hidden;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 24px 24px 0 24px;
+    }
+
+    .card-media-header.has-media {
+      min-height: 230px;
+      padding: 64px 22px 20px 22px;
+      background: #1a0206;
+      color: #ffffff;
+    }
+
+    .card-media-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(35, 6, 12, 0.92) 0%,
+        rgba(35, 6, 12, 0.52) 52%,
+        rgba(35, 6, 12, 0.08) 100%
+      );
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .card-media-content {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+    }
+
     .card-meta {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       gap: 8px;
       flex-wrap: wrap;
     }
@@ -440,15 +477,16 @@
     .badge-glass {
       background: rgba(255, 255, 255, 0.14);
       backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.22);
     }
 
     .event-card h3 {
       font-size: 1.05rem;
       font-weight: 700;
       color: var(--text-main);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       line-height: 1.35;
     }
 
@@ -463,12 +501,21 @@
 
     .event-card p {
       color: var(--text-muted);
-      font-size: 0.92rem;
-      margin-bottom: 6px;
+      font-size: 0.9rem;
+      margin-bottom: 0;
       display: -webkit-box;
-      -webkit-line-clamp: 3;
+      -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
+    }
+
+    .card-media-header.has-media h3 {
+      color: #ffffff;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+    }
+
+    .card-media-header.has-media p {
+      color: rgba(255, 255, 255, 0.86);
     }
 
     .event-details {
@@ -489,15 +536,6 @@
 
     .detail-row .icon-svg {
       color: var(--amber-deep);
-    }
-
-    .card-media-header {
-      flex-grow: 1;
-    }
-
-    .card-media-header.has-media h3,
-    .card-media-header.has-media p {
-      color: #ffffff;
     }
 
     .card-media-header.has-media + .card-body .event-details {
@@ -896,9 +934,8 @@
            data-category="{{ (event.category or 'Волонтёрство')|lower }}"
            style="padding: 0; overflow: hidden;">
 
-        <div class="card-media-header {% if event.video_url %}has-media{% endif %}"
-             style="position: relative; overflow: hidden; {% if event.video_url %}padding: 24px; min-height: 155px; background: #1a0206; color: #ffffff;{% else %}padding: 24px 24px 0 24px;{% endif %}">
-
+        <!-- Шапка: категория, статус и название прижаты к низу фото/видео превью -->
+        <div class="card-media-header {% if event.video_url %}has-media{% endif %}">
           {% if event.video_url %}
             {% set is_video = event.video_url.lower().endswith(('.mp4', '.webm', '.mov')) or '/video/upload/' in event.video_url %}
             {% if is_video %}
@@ -910,12 +947,13 @@
               <img src="{{ event.video_url }}" alt="{{ event.title }}"
                    style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
             {% endif %}
-            <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(45, 8, 15, 0.86) 0%, rgba(20, 2, 6, 0.35) 100%); z-index: 1;"></div>
+            <div class="card-media-overlay"></div>
           {% endif %}
 
-          <div style="position: relative; z-index: 2;">
+          <div class="card-media-content">
             <div class="card-meta">
               <span class="badge {% if event.video_url %}badge-on-media{% endif %}">{{ event.category or "Волонтёрство" }}</span>
+              <span class="badge {% if event.video_url %}badge-glass{% endif %}">Активна</span>
             </div>
             <h3><a href="/event/{{ event.id }}">{{ event.title }}</a></h3>
             {% if event.description %}<p>{{ event.description }}</p>{% endif %}
@@ -987,9 +1025,8 @@
              data-category="{{ (event.category or 'Волонтёрство')|lower }}"
              style="padding: 0; overflow: hidden;">
 
-          <div class="card-media-header {% if event.video_url %}has-media{% endif %}"
-               style="position: relative; overflow: hidden; {% if event.video_url %}padding: 24px; min-height: 155px; background: #1a0206; color: #ffffff;{% else %}padding: 24px 24px 0 24px;{% endif %}">
-
+          <!-- Шапка: категория, статус и название прижаты к низу фото/видео превью -->
+          <div class="card-media-header {% if event.video_url %}has-media{% endif %}">
             {% if event.video_url %}
               {% set is_video = event.video_url.lower().endswith(('.mp4', '.webm', '.mov')) or '/video/upload/' in event.video_url %}
               {% if is_video %}
@@ -1001,19 +1038,17 @@
                 <img src="{{ event.video_url }}" alt="{{ event.title }}"
                      style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
               {% endif %}
-              <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(45, 8, 15, 0.86) 0%, rgba(20, 2, 6, 0.35) 100%); z-index: 1;"></div>
+              <div class="card-media-overlay"></div>
             {% endif %}
 
-            <div style="position: relative; z-index: 2;">
+            <div class="card-media-content">
               <div class="card-meta">
                 <span class="badge {% if event.video_url %}badge-on-media{% endif %}">{{ event.category or "Волонтёрство" }}</span>
                 <span class="badge {% if event.video_url %}badge-glass{% else %}bg-slate-200 text-slate-600 border-slate-300{% endif %}">Завершена</span>
               </div>
-              <h3 style="color: {% if event.video_url %}#ffffff{% else %}var(--text-main){% endif %};">
-                <a href="/event/{{ event.id }}">{{ event.title }}</a>
-              </h3>
+              <h3><a href="/event/{{ event.id }}">{{ event.title }}</a></h3>
               {% if event.description %}
-                <p style="color: {% if event.video_url %}rgba(255,255,255,0.88){% else %}var(--text-muted){% endif %};">{{ event.description }}</p>
+                <p>{{ event.description }}</p>
               {% endif %}
             </div>
           </div>
