@@ -523,14 +523,29 @@ def home():
                         "hours": log.hours
                     })
 
+           for ev in all_events:
+            ev_logs = logs_by_event.get(ev.id, [])
+            participants = []
+            for log in ev_logs:
+                u = users_map.get(log.user_id)
+                if u:
+                    participants.append({
+                        "name": u.name,
+                        "username": u.username,
+                        "hours": log.hours
+                    })
+
+            # Длительность самой акции (максимум часов среди её участников, а не сумма)
+            ev_duration = max(((log.hours or 0.0) for log in ev_logs), default=0.0)
+
             ev_date = parse_event_date(ev.date)
             if ev_date:
                 if ev_date.year == today.year and ev_date.month == today.month:
                     month_events_count += 1
-                    month_hours_sum += ev_hours
+                    month_hours_sum += ev_duration
                 if sem_start <= ev_date <= sem_end:
                     semester_events_count += 1
-                    semester_hours_sum += ev_hours
+                    semester_hours_sum += ev_duration
 
             events_data.append({
                 "id": ev.id,
