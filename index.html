@@ -12,14 +12,16 @@
     :root {
       --primary: #5c0613;
       --primary-hover: #42040d;
-      --accent: #e63946;
-      --bg-page: #5c0613;
-      --card-bg: #ffffff;
-      --text-main: #2b0b10;
-      --text-muted: #73595d;
-      --border-color: #ecdfe1;
-      --badge-bg: #fce8eb;
-      --badge-text: #5c0613;
+      --amber: #f59e0b;
+      --amber-deep: #b45309;
+      --amber-soft: rgba(245, 158, 11, 0.14);
+      --bg-top: #6b0c1c;
+      --bg-mid: #4a0510;
+      --bg-bottom: #260208;
+      --card-bg: #faf7f5;
+      --text-main: #23090e;
+      --text-muted: #6e585c;
+      --border-color: #ebe2de;
     }
 
     * {
@@ -32,16 +34,37 @@
     html, body {
       overflow-x: hidden;
       max-width: 100%;
-      background-color: var(--bg-page);
+      background-color: var(--bg-bottom);
     }
 
     body {
-      background-color: var(--bg-page);
+      background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-mid) 48%, var(--bg-bottom) 100%);
+      background-attachment: fixed;
       color: var(--text-main);
       line-height: 1.5;
       min-height: 100dvh;
       display: flex;
       flex-direction: column;
+      position: relative;
+    }
+
+    /* Мягкие фоновые янтарные свечения */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 18%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 780px;
+      height: 420px;
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.14) 0%, rgba(245, 158, 11, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    header, section, main, footer {
+      position: relative;
+      z-index: 1;
     }
 
     main {
@@ -52,22 +75,36 @@
       font-family: 'Unbounded', 'Manrope', sans-serif;
     }
 
-    /* Навигация */
+    .icon-svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    /* Плавающая полупрозрачная шапка (Glassmorphism) */
     header {
-      background: #ffffff;
-      border-bottom: 2px solid var(--border-color);
+      background: rgba(42, 4, 11, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
       position: sticky;
       top: 0;
-      z-index: 20;
+      z-index: 30;
     }
 
     .nav-container {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 10px 16px;
+      padding: 12px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 12px;
     }
 
     .logo {
@@ -76,16 +113,66 @@
       gap: 10px;
       font-size: 1.05rem;
       font-weight: 700;
-      color: var(--primary);
+      color: #faf7f5;
       text-decoration: none;
       min-width: 0;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .nav-btn-profile {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #23090e;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 8px 14px;
+      border-radius: 999px;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.25);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .nav-btn-profile:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(245, 158, 11, 0.36);
+    }
+
+    .nav-btn-admin {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: 999px;
+      transition: background 0.15s ease, color 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .nav-btn-admin:hover {
+      background: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
     }
 
     /* Главный фото-баннер */
     .hero {
       max-width: 1200px;
       width: 100%;
-      margin: 24px auto 26px;
+      margin: 24px auto 28px;
       padding: 0 24px;
     }
 
@@ -93,11 +180,11 @@
       position: relative;
       width: 100%;
       height: 330px;
-      border-radius: 20px;
+      border-radius: 22px;
       overflow: hidden;
       background: linear-gradient(135deg, #3b0813, #7a1026);
-      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.25);
-      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.32);
+      border: 1px solid rgba(255, 255, 255, 0.15);
     }
 
     .hero-banner img {
@@ -110,33 +197,15 @@
     .hero-banner-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(to top, rgba(20, 2, 6, 0.45) 0%, transparent 45%);
+      background: linear-gradient(to top, rgba(38, 2, 8, 0.65) 0%, transparent 55%);
       pointer-events: none;
-    }
-
-    .btn-suggest {
-      background: #ffffff;
-      color: #5c0613;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 10px;
-      font-size: 0.92rem;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.22);
-      transition: transform 0.15s ease, background 0.15s ease;
-    }
-
-    .btn-suggest:hover {
-      transform: translateY(-2px);
-      background: #fce8eb;
     }
 
     /* Счётчики статистики */
     .stats-wrapper {
       max-width: 1200px;
       width: 100%;
-      margin: 0 auto 30px;
+      margin: 0 auto 34px;
       padding: 0 24px;
     }
 
@@ -146,29 +215,31 @@
       align-items: center;
       flex-wrap: wrap;
       gap: 10px;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
 
     .stats-period-label {
-      color: rgba(255, 255, 255, 0.85);
+      color: rgba(250, 247, 245, 0.85);
       font-size: 0.88rem;
       font-weight: 500;
     }
 
     .period-toggle {
       display: inline-flex;
-      background: rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
       padding: 4px;
-      border-radius: 10px;
+      border-radius: 12px;
       gap: 4px;
     }
 
     .period-btn {
       background: transparent;
       border: none;
-      color: rgba(255, 255, 255, 0.85);
+      color: rgba(255, 255, 255, 0.8);
       padding: 6px 14px;
-      border-radius: 7px;
+      border-radius: 8px;
       font-size: 0.82rem;
       font-weight: 600;
       cursor: pointer;
@@ -176,9 +247,9 @@
     }
 
     .period-btn.active {
-      background: #ffffff;
-      color: #5c0613;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+      background: var(--card-bg);
+      color: var(--primary);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
     }
 
     .stats-grid {
@@ -188,25 +259,45 @@
     }
 
     .stat-card {
-      background: rgba(255, 255, 255, 0.96);
-      border-radius: 14px;
+      background: var(--card-bg);
+      border-radius: 16px;
       padding: 20px 22px;
-      border-left: 4px solid #e63946;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.18);
+    }
+
+    .stat-icon-box {
+      width: 46px;
+      height: 46px;
+      border-radius: 13px;
+      background: var(--amber-soft);
+      color: var(--amber-deep);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .stat-icon-box .icon-svg {
+      width: 22px;
+      height: 22px;
     }
 
     .stat-value {
-      font-size: 1.55rem;
+      font-size: 1.5rem;
       font-weight: 700;
-      color: #5c0613;
+      color: var(--primary);
       line-height: 1.15;
     }
 
     .stat-label {
-      font-size: 0.84rem;
-      color: #73595d;
+      font-size: 0.82rem;
+      color: var(--text-muted);
       font-weight: 600;
-      margin-top: 4px;
+      margin-top: 3px;
     }
 
     /* Контейнер мероприятий */
@@ -220,7 +311,7 @@
     .section-title {
       font-size: 1.25rem;
       font-weight: 700;
-      color: #ffffff;
+      color: #faf7f5;
       margin-bottom: 18px;
       display: flex;
       align-items: center;
@@ -235,20 +326,36 @@
       gap: 12px;
     }
 
+    .search-wrap {
+      position: relative;
+      width: 100%;
+    }
+
+    .search-wrap .icon-svg {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      width: 18px;
+      height: 18px;
+    }
+
     .search-input {
       width: 100%;
-      padding: 13px 16px;
-      border-radius: 12px;
+      padding: 13px 16px 13px 44px;
+      border-radius: 14px;
       border: 1px solid rgba(255, 255, 255, 0.25);
-      background: rgba(255, 255, 255, 0.96);
+      background: var(--card-bg);
       font-size: 0.95rem;
-      color: #1e293b;
+      color: var(--text-main);
       outline: none;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.14);
       transition: box-shadow 0.2s;
     }
 
     .search-input:focus {
-      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35);
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.35);
     }
 
     .filter-pills {
@@ -259,25 +366,27 @@
 
     .filter-btn {
       padding: 7px 14px;
-      border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      background: rgba(255, 255, 255, 0.12);
-      color: #ffffff;
-      font-size: 0.84rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.83rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
     }
 
     .filter-btn:hover {
-      background: rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.16);
     }
 
     .filter-btn.active {
-      background: #ffffff;
-      color: #5c0613;
-      border-color: #ffffff;
+      background: var(--card-bg);
+      color: var(--primary);
+      border-color: var(--card-bg);
       font-weight: 700;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
     }
 
     /* Сетка карточек */
@@ -290,17 +399,17 @@
     .event-card {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
-      border-radius: 14px;
+      border-radius: 16px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     .event-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 20px -4px rgba(0, 0, 0, 0.18);
-      border-color: #d8b7bc;
+      transform: translateY(-4px);
+      box-shadow: 0 18px 34px rgba(0, 0, 0, 0.26);
     }
 
     .card-meta {
@@ -313,13 +422,26 @@
     }
 
     .badge {
-      background: var(--badge-bg);
-      color: var(--badge-text);
-      font-size: 0.78rem;
+      background: var(--amber-soft);
+      color: var(--amber-deep);
+      font-size: 0.76rem;
       font-weight: 700;
       padding: 4px 12px;
-      border-radius: 20px;
-      border: 1px solid #f3cfd4;
+      border-radius: 999px;
+      border: 1px solid rgba(245, 158, 11, 0.25);
+    }
+
+    .badge-on-media {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #23090e;
+      border: none;
+    }
+
+    .badge-glass {
+      background: rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(10px);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .event-card h3 {
@@ -354,9 +476,19 @@
       padding-top: 14px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      font-size: 0.88rem;
+      gap: 8px;
+      font-size: 0.87rem;
       color: var(--text-muted);
+    }
+
+    .detail-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .detail-row .icon-svg {
+      color: var(--amber-deep);
     }
 
     .card-media-header {
@@ -377,12 +509,13 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      gap: 6px;
       width: 100%;
-      margin-top: 12px;
-      padding: 9px 14px;
-      border-radius: 9px;
-      background: #fce8eb;
-      color: #5c0613;
+      margin-top: 14px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: #f1eae6;
+      color: var(--primary);
       text-decoration: none;
       font-size: 0.85rem;
       font-weight: 700;
@@ -390,58 +523,140 @@
     }
 
     .btn-event-detail:hover {
-      background: #5c0613;
+      background: var(--primary);
       color: #ffffff;
     }
 
-    /* Информационный блок */
+    /* Рейтинг: бейджи мест и янтарные плашки часов */
+    .rank-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      font-weight: 800;
+      font-size: 0.85rem;
+    }
+    .rank-1 {
+      background: linear-gradient(135deg, #fde68a 0%, #f59e0b 100%);
+      color: #451a03;
+      box-shadow: 0 3px 10px rgba(245, 158, 11, 0.35);
+    }
+    .rank-2 {
+      background: linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%);
+      color: #1e293b;
+    }
+    .rank-3 {
+      background: linear-gradient(135deg, #fed7aa 0%, #d97706 100%);
+      color: #431407;
+    }
+    .rank-other {
+      background: #f1eae6;
+      color: var(--primary);
+    }
+
+    .hours-pill {
+      display: inline-block;
+      background: var(--amber-soft);
+      color: var(--amber-deep);
+      font-weight: 800;
+      font-size: 0.85rem;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(245, 158, 11, 0.28);
+    }
+
+    /* Информационный блок обратной связи (Glassmorphism + янтарное свечение) */
+    .join-box-wrap {
+      position: relative;
+      margin-top: 54px;
+    }
+
+    .join-box-wrap::before {
+      content: "";
+      position: absolute;
+      inset: -24px 10%;
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.22) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
     .join-box {
-      background: linear-gradient(135deg, #42040d 0%, #260106 100%);
-      color: #ffffff;
-      border-radius: 16px;
+      position: relative;
+      z-index: 1;
+      background: rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      color: #faf7f5;
+      border-radius: 20px;
       padding: 40px 28px;
       text-align: center;
-      margin-top: 50px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
     }
 
     .join-box p {
-      color: #ffd8dc;
-      max-width: 560px;
-      margin: 0 auto 20px;
-      font-size: 1rem;
+      color: rgba(250, 247, 245, 0.9);
+      max-width: 540px;
+      margin: 0 auto 22px;
+      font-size: 1.02rem;
+      font-weight: 500;
     }
 
     .join-btn {
-      display: inline-block;
-      background: var(--accent);
-      color: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+      color: #23090e;
       text-decoration: none;
-      padding: 12px 28px;
-      border-radius: 10px;
-      font-weight: 700;
-      font-size: 0.92rem;
-      transition: opacity 0.2s ease, transform 0.2s ease;
+      padding: 13px 28px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 0.94rem;
+      box-shadow: 0 8px 24px rgba(245, 158, 11, 0.28);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     .join-btn:hover {
-      opacity: 0.92;
-      transform: scale(1.02);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(245, 158, 11, 0.4);
+    }
+
+    .btn-suggest {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      padding: 13px 24px;
+      border-radius: 12px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+
+    .btn-suggest:hover {
+      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.18);
     }
 
     /* Футер в основной цвет сайта */
     footer {
-      background-color: #5c0613;
-      color: rgba(255, 255, 255, 0.85);
-      border-top: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(26, 2, 6, 0.65);
+      backdrop-filter: blur(12px);
+      color: rgba(250, 247, 245, 0.75);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
       text-align: center;
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       padding: 22px 16px calc(22px + env(safe-area-inset-bottom));
       width: 100%;
-    }
-
-    footer a {
-      color: #ffffff;
     }
 
     /* Модальное окно «Предложить акцию» */
@@ -449,7 +664,8 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(15, 2, 5, 0.72);
+      background: rgba(15, 2, 5, 0.76);
+      backdrop-filter: blur(6px);
       z-index: 100;
       align-items: center;
       justify-content: center;
@@ -461,12 +677,12 @@
     }
 
     .modal-box {
-      background: #ffffff;
-      border-radius: 16px;
+      background: var(--card-bg);
+      border-radius: 18px;
       width: 100%;
       max-width: 480px;
       padding: 24px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
       position: relative;
     }
 
@@ -478,7 +694,7 @@
     }
 
     .modal-header h3 {
-      color: #5c0613;
+      color: var(--primary);
       font-size: 1.05rem;
     }
 
@@ -507,20 +723,21 @@
     .form-group textarea {
       width: 100%;
       padding: 10px 12px;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
+      border: 1px solid #d6ccc8;
+      background: #ffffff;
+      border-radius: 10px;
       font-size: 0.92rem;
       outline: none;
     }
 
     .form-group input:focus,
     .form-group textarea:focus {
-      border-color: #5c0613;
+      border-color: var(--amber-deep);
     }
 
     .btn-submit-modal {
       width: 100%;
-      background: #5c0613;
+      background: linear-gradient(135deg, #6b0c1c 0%, #42040d 100%);
       color: #ffffff;
       border: none;
       padding: 12px;
@@ -531,7 +748,7 @@
     }
 
     .btn-submit-modal:hover {
-      background: #42040d;
+      opacity: 0.95;
     }
 
     @media (max-width: 768px) {
@@ -550,6 +767,12 @@
       .container, .stats-wrapper, .hero {
         padding: 0 16px;
       }
+      .nav-btn-admin span {
+        display: none;
+      }
+      .nav-btn-admin {
+        padding: 8px 10px;
+      }
     }
   </style>
   <link rel="icon" type="image/png" href="/static/static/logo.png.jpg">
@@ -558,20 +781,22 @@
 </head>
 <body>
 
-  <!-- Навигация -->
+  <!-- Навигация (компактная однострочная) -->
   <header>
     <div class="nav-container">
       <a href="/" class="logo">
-        <img src="/static/static/logo.png.jpg" alt="ДоброЗАУ" style="height: 38px; width: auto; object-fit: contain; border-radius: 6px; flex-shrink: 0;">
+        <img src="/static/static/logo.png.jpg" alt="ДоброЗАУ" style="height: 36px; width: auto; object-fit: contain; border-radius: 8px; flex-shrink: 0;">
         <span style="white-space: nowrap;">ДоброЗАУ</span>
       </a>
 
-      <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-end; flex-shrink: 0;">
-        <a href="/profile" style="display: inline-flex; align-items: center; justify-content: center; background-color: #5c0613; color: #ffffff; text-decoration: none; font-size: 11px; font-weight: 600; padding: 5px 11px; border-radius: 6px; white-space: nowrap; line-height: 1.2;">
-          Личный кабинет
+      <div class="nav-actions">
+        <a href="/profile" class="nav-btn-profile">
+          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>Кабинет</span>
         </a>
-        <a href="/admin" style="display: inline-flex; align-items: center; justify-content: center; background-color: #ffffff; color: #5c0613; border: 1px solid #5c0613; text-decoration: none; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 6px; white-space: nowrap; line-height: 1.2;">
-          Координатор
+        <a href="/admin" class="nav-btn-admin" title="Панель координатора">
+          <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>Координатор</span>
         </a>
       </div>
     </div>
@@ -585,7 +810,7 @@
     </div>
   </section>
 
-  <!-- Живые счётчики статистики -->
+  <!-- Счётчики статистики -->
   {% if stats %}
   <section class="stats-wrapper">
     <div class="stats-header">
@@ -598,22 +823,37 @@
 
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-value">{{ stats.volunteers_total }}</div>
-        <div class="stat-label">Волонтёров в штабе</div>
+        <div class="stat-icon-box">
+          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div>
+          <div class="stat-value">{{ stats.volunteers_total }}</div>
+          <div class="stat-label">Волонтёров в штабе</div>
+        </div>
       </div>
 
       <div class="stat-card">
-        <div class="stat-value" id="statEventsValue"
-             data-month="{{ stats.month_events }}"
-             data-semester="{{ stats.semester_events }}">{{ stats.month_events }}</div>
-        <div class="stat-label" id="statEventsLabel">Акций за месяц</div>
+        <div class="stat-icon-box">
+          <svg class="icon-svg" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div>
+          <div class="stat-value" id="statEventsValue"
+               data-month="{{ stats.month_events }}"
+               data-semester="{{ stats.semester_events }}">{{ stats.month_events }}</div>
+          <div class="stat-label" id="statEventsLabel">Акций за месяц</div>
+        </div>
       </div>
 
       <div class="stat-card">
-        <div class="stat-value" id="statHoursValue"
-             data-month="{{ stats.month_hours }}"
-             data-semester="{{ stats.semester_hours }}">{{ stats.month_hours }}</div>
-        <div class="stat-label" id="statHoursLabel">Часов добра за месяц</div>
+        <div class="stat-icon-box">
+          <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div>
+          <div class="stat-value" id="statHoursValue"
+               data-month="{{ stats.month_hours }}"
+               data-semester="{{ stats.semester_hours }}">{{ stats.month_hours }}</div>
+          <div class="stat-label" id="statHoursLabel">Часов добра за месяц</div>
+        </div>
       </div>
     </div>
   </section>
@@ -627,8 +867,10 @@
 
     <!-- Панель поиска и фильтрации -->
     <div class="search-filter-box">
-      <input type="text" id="eventSearch" class="search-input"
-             placeholder="Поиск акции по названию...">
+      <div class="search-wrap">
+        <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="eventSearch" class="search-input" placeholder="Поиск акции по названию...">
+      </div>
 
       <div class="filter-pills" id="categoryFilters">
         <button type="button" class="filter-btn active" data-filter="all">Все</button>
@@ -641,8 +883,8 @@
       </div>
     </div>
 
-    <!-- Заглушка, если поиск ничего не нашёл -->
-    <div id="noSearchResults" style="display: none; text-align: center; padding: 30px; background: rgba(255,255,255,0.96); border-radius: 14px; color: #475569; margin-bottom: 24px; font-weight: 500;">
+    <!-- Заглушка при пустом поиске -->
+    <div id="noSearchResults" style="display: none; text-align: center; padding: 30px; background: var(--card-bg); border-radius: 14px; color: var(--text-muted); margin-bottom: 24px; font-weight: 600;">
       По вашему запросу акций не найдено.
     </div>
 
@@ -654,9 +896,8 @@
            data-category="{{ (event.category or 'Волонтёрство')|lower }}"
            style="padding: 0; overflow: hidden;">
 
-        <!-- Шапка: затемнённое фото/видео + категория и название -->
         <div class="card-media-header {% if event.video_url %}has-media{% endif %}"
-             style="position: relative; overflow: hidden; {% if event.video_url %}padding: 24px; min-height: 145px; background: #1a0206; color: #ffffff;{% else %}padding: 24px 24px 0 24px;{% endif %}">
+             style="position: relative; overflow: hidden; {% if event.video_url %}padding: 24px; min-height: 155px; background: #1a0206; color: #ffffff;{% else %}padding: 24px 24px 0 24px;{% endif %}">
 
           {% if event.video_url %}
             {% set is_video = event.video_url.lower().endswith(('.mp4', '.webm', '.mov')) or '/video/upload/' in event.video_url %}
@@ -669,48 +910,52 @@
               <img src="{{ event.video_url }}" alt="{{ event.title }}"
                    style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
             {% endif %}
-            <div style="position: absolute; inset: 0; background: rgba(20, 2, 6, 0.55); z-index: 1;"></div>
+            <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(45, 8, 15, 0.86) 0%, rgba(20, 2, 6, 0.35) 100%); z-index: 1;"></div>
           {% endif %}
 
           <div style="position: relative; z-index: 2;">
             <div class="card-meta">
-              <span class="badge">{{ event.category or "Волонтёрство" }}</span>
+              <span class="badge {% if event.video_url %}badge-on-media{% endif %}">{{ event.category or "Волонтёрство" }}</span>
             </div>
             <h3><a href="/event/{{ event.id }}">{{ event.title }}</a></h3>
             {% if event.description %}<p>{{ event.description }}</p>{% endif %}
           </div>
         </div>
 
-        <!-- Нижняя часть: всегда белая -->
-        <div class="card-body" style="padding: 18px 24px 22px 24px; background: #ffffff;">
+        <div class="card-body" style="padding: 18px 24px 22px 24px; background: var(--card-bg);">
           <div class="event-details">
-            <span><strong>Дата:</strong> {{ event.date or "Уточняется" }}</span>
-            <span><strong>Место:</strong> {{ event.location or "По договорённости" }}</span>
+            <div class="detail-row">
+              <svg class="icon-svg" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <span><strong>Дата:</strong> {{ event.date or "Уточняется" }}</span>
+            </div>
+            <div class="detail-row">
+              <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span><strong>Место:</strong> {{ event.location or "По договорённости" }}</span>
+            </div>
           </div>
 
           <a href="/event/{{ event.id }}" class="btn-event-detail">Подробнее и галерея →</a>
 
-          <!-- Раскрывающийся список участников -->
-          <details style="margin-top: 14px; border-top: 1px solid #f1f5f9; padding-top: 10px;">
-            <summary style="cursor: pointer; font-size: 0.85rem; font-weight: 600; color: #5c0613; list-style: none; display: flex; justify-content: space-between; align-items: center;">
+          <details style="margin-top: 14px; border-top: 1px solid var(--border-color); padding-top: 10px;">
+            <summary style="cursor: pointer; font-size: 0.84rem; font-weight: 600; color: var(--primary); list-style: none; display: flex; justify-content: space-between; align-items: center;">
               <span>Участники ({{ event.participants|length }})</span>
-              <span style="font-size: 0.75rem; color: #94a3b8;">открыть список ▾</span>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">открыть список ▾</span>
             </summary>
-            <div style="margin-top: 10px; background: #fafafa; border-radius: 8px; padding: 8px 10px; max-height: 160px; overflow-y: auto; border: 1px solid #f1f5f9;">
+            <div style="margin-top: 10px; background: #ffffff; border-radius: 10px; padding: 8px 10px; max-height: 160px; overflow-y: auto; border: 1px solid var(--border-color);">
               {% for p in event.participants %}
-              <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #edf2f7; font-size: 0.85rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #f1ece9; font-size: 0.85rem;">
                 <div>
-                  <strong style="color: #334155;">{{ p.name }}</strong>
+                  <strong style="color: var(--text-main);">{{ p.name }}</strong>
                   {% if p.username %}
-                  <span style="color: #94a3b8; font-size: 0.75rem;">@{{ p.username }}</span>
+                  <span style="color: var(--text-muted); font-size: 0.75rem;">@{{ p.username }}</span>
                   {% endif %}
                 </div>
-                <span style="background: #fce8eb; color: #5c0613; font-weight: bold; font-size: 0.75rem; padding: 2px 6px; border-radius: 6px;">
+                <span style="background: var(--amber-soft); color: var(--amber-deep); font-weight: 700; font-size: 0.75rem; padding: 2px 8px; border-radius: 999px;">
                   +{{ p.hours }} ч.
                 </span>
               </div>
               {% else %}
-              <div style="font-size: 0.8rem; color: #94a3b8; text-align: center; padding: 6px 0; font-style: italic;">
+              <div style="font-size: 0.8rem; color: var(--text-muted); text-align: center; padding: 6px 0; font-style: italic;">
                 Участники пока не добавлены
               </div>
               {% endfor %}
@@ -719,7 +964,7 @@
         </div>
       </div>
       {% else %}
-      <div style="grid-column: 1 / -1; text-align: center; padding: 40px; background: white; border-radius: 12px; color: #475569;">
+      <div style="grid-column: 1 / -1; text-align: center; padding: 40px; background: var(--card-bg); border-radius: 14px; color: var(--text-muted);">
         На данный момент активных мероприятий нет. Следите за обновлениями!
       </div>
       {% endfor %}
@@ -729,21 +974,21 @@
     {% if past_events %}
     <div id="pastEventsSection">
       <div style="margin-top: 45px; margin-bottom: 18px;">
-        <h3 style="color: rgba(255, 255, 255, 0.9); font-size: 1.1rem; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 10px;">
+        <h3 style="color: rgba(250, 247, 245, 0.92); font-size: 1.1rem; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 10px;">
           <span>Завершённые акции</span>
-          <span style="font-size: 0.8rem; font-weight: normal; background: rgba(255,255,255,0.15); padding: 2px 10px; border-radius: 12px; color: #fff;">{{ past_events|length }}</span>
+          <span style="font-size: 0.8rem; font-weight: 600; background: rgba(255,255,255,0.12); padding: 2px 10px; border-radius: 999px; color: #fff;">{{ past_events|length }}</span>
         </h3>
       </div>
 
-      <div class="cards-grid" style="opacity: 0.94;">
+      <div class="cards-grid" style="opacity: 0.95;">
         {% for event in past_events %}
         <div class="event-card"
              data-title="{{ event.title|lower }}"
              data-category="{{ (event.category or 'Волонтёрство')|lower }}"
-             style="padding: 0; overflow: hidden; border-left: 4px solid #94a3b8;">
+             style="padding: 0; overflow: hidden;">
 
           <div class="card-media-header {% if event.video_url %}has-media{% endif %}"
-               style="position: relative; overflow: hidden; {% if event.video_url %}padding: 24px; min-height: 145px; background: #1a0206; color: #ffffff;{% else %}padding: 24px 24px 0 24px;{% endif %}">
+               style="position: relative; overflow: hidden; {% if event.video_url %}padding: 24px; min-height: 155px; background: #1a0206; color: #ffffff;{% else %}padding: 24px 24px 0 24px;{% endif %}">
 
             {% if event.video_url %}
               {% set is_video = event.video_url.lower().endswith(('.mp4', '.webm', '.mov')) or '/video/upload/' in event.video_url %}
@@ -756,52 +1001,58 @@
                 <img src="{{ event.video_url }}" alt="{{ event.title }}"
                      style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
               {% endif %}
-              <div style="position: absolute; inset: 0; background: rgba(20, 2, 6, 0.55); z-index: 1;"></div>
+              <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(45, 8, 15, 0.86) 0%, rgba(20, 2, 6, 0.35) 100%); z-index: 1;"></div>
             {% endif %}
 
             <div style="position: relative; z-index: 2;">
               <div class="card-meta">
-                <span class="badge" style="background: #e2e8f0; color: #475569; border-color: #cbd5e1;">Завершена</span>
-                <span class="badge" style="background: rgba(255,255,255,0.88); color: #5c0613; border: none;">{{ event.category or "Волонтёрство" }}</span>
+                <span class="badge {% if event.video_url %}badge-on-media{% endif %}">{{ event.category or "Волонтёрство" }}</span>
+                <span class="badge {% if event.video_url %}badge-glass{% else %}bg-slate-200 text-slate-600 border-slate-300{% endif %}">Завершена</span>
               </div>
-              <h3 style="color: {% if event.video_url %}#ffffff{% else %}#334155{% endif %};">
+              <h3 style="color: {% if event.video_url %}#ffffff{% else %}var(--text-main){% endif %};">
                 <a href="/event/{{ event.id }}">{{ event.title }}</a>
               </h3>
               {% if event.description %}
-                <p style="color: {% if event.video_url %}#f1f5f9{% else %}#64748b{% endif %};">{{ event.description }}</p>
+                <p style="color: {% if event.video_url %}rgba(255,255,255,0.88){% else %}var(--text-muted){% endif %};">{{ event.description }}</p>
               {% endif %}
             </div>
           </div>
 
-          <div class="card-body" style="padding: 18px 24px 22px 24px; background: #ffffff;">
+          <div class="card-body" style="padding: 18px 24px 22px 24px; background: var(--card-bg);">
             <div class="event-details">
-              <span><strong>Дата:</strong> {{ event.date or "Проведена" }}</span>
-              <span><strong>Место:</strong> {{ event.location or "По договорённости" }}</span>
+              <div class="detail-row">
+                <svg class="icon-svg" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span><strong>Дата:</strong> {{ event.date or "Проведена" }}</span>
+              </div>
+              <div class="detail-row">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span><strong>Место:</strong> {{ event.location or "По договорённости" }}</span>
+              </div>
             </div>
 
-            <a href="/event/{{ event.id }}" class="btn-event-detail" style="background: #f1f5f9; color: #334155;">Подробнее и галерея →</a>
+            <a href="/event/{{ event.id }}" class="btn-event-detail">Подробнее и галерея →</a>
 
-            <details style="margin-top: 14px; border-top: 1px solid #f1f5f9; padding-top: 10px;">
-              <summary style="cursor: pointer; font-size: 0.85rem; font-weight: 600; color: #475569; list-style: none; display: flex; justify-content: space-between; align-items: center; user-select: none;">
+            <details style="margin-top: 14px; border-top: 1px solid var(--border-color); padding-top: 10px;">
+              <summary style="cursor: pointer; font-size: 0.84rem; font-weight: 600; color: var(--text-muted); list-style: none; display: flex; justify-content: space-between; align-items: center; user-select: none;">
                 <span>Участники ({{ event.participants|length }})</span>
-                <span style="font-size: 0.75rem; color: #94a3b8;">посмотреть ▾</span>
+                <span style="font-size: 0.75rem;">посмотреть ▾</span>
               </summary>
 
-              <div style="margin-top: 10px; background: #f8fafc; border-radius: 8px; padding: 8px 10px; max-height: 160px; overflow-y: auto; border: 1px solid #e2e8f0;">
+              <div style="margin-top: 10px; background: #ffffff; border-radius: 10px; padding: 8px 10px; max-height: 160px; overflow-y: auto; border: 1px solid var(--border-color);">
                 {% for p in event.participants %}
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #e2e8f0; font-size: 0.85rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #f1ece9; font-size: 0.85rem;">
                   <div>
-                    <strong style="color: #334155;">{{ p.name }}</strong>
+                    <strong style="color: var(--text-main);">{{ p.name }}</strong>
                     {% if p.username %}
-                    <span style="color: #94a3b8; font-size: 0.75rem;">@{{ p.username }}</span>
+                    <span style="color: var(--text-muted); font-size: 0.75rem;">@{{ p.username }}</span>
                     {% endif %}
                   </div>
-                  <span style="background: #e2e8f0; color: #334155; font-weight: bold; font-size: 0.75rem; padding: 2px 6px; border-radius: 6px;">
+                  <span style="background: var(--amber-soft); color: var(--amber-deep); font-weight: 700; font-size: 0.75rem; padding: 2px 8px; border-radius: 999px;">
                     +{{ p.hours }} ч.
                   </span>
                 </div>
                 {% else %}
-                <div style="font-size: 0.8rem; color: #94a3b8; text-align: center; padding: 6px 0; font-style: italic;">
+                <div style="font-size: 0.8rem; color: var(--text-muted); text-align: center; padding: 6px 0; font-style: italic;">
                   В этой акции не было отмеченных участников
                 </div>
                 {% endfor %}
@@ -819,31 +1070,37 @@
       Рейтинг волонтёров штаба
     </div>
 
-    <div style="background: white; border-radius: 16px; border: 1px solid var(--border-color); overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08);">
+    <div style="background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border-color); overflow: hidden; box-shadow: 0 12px 28px rgba(0,0,0,0.18);">
       <table style="width: 100%; border-collapse: collapse; text-align: left;">
         <thead>
-          <tr style="background: #fdf8f8; border-bottom: 2px solid var(--border-color); color: var(--primary); font-size: 0.9rem;">
-            <th style="padding: 16px 20px; width: 90px;">Место</th>
-            <th style="padding: 16px 20px;">Волонтёр</th>
-            <th style="padding: 16px 20px; text-align: right;">Отработано часов</th>
+          <tr style="background: #f3edea; border-bottom: 1px solid var(--border-color); color: var(--primary); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em;">
+            <th style="padding: 15px 20px; width: 84px;">Место</th>
+            <th style="padding: 15px 20px;">Волонтёр</th>
+            <th style="padding: 15px 20px; text-align: right;">Отработано часов</th>
           </tr>
         </thead>
         <tbody style="font-size: 0.95rem;">
           {% for u in leaderboard %}
           <tr style="border-bottom: 1px solid var(--border-color);">
-            <td style="padding: 16px 20px; font-weight: 800; color: #5c0613;">
-              {{ loop.index }}
+            <td style="padding: 15px 20px;">
+              {% if loop.index == 1 %}
+                <span class="rank-badge rank-1">1</span>
+              {% elif loop.index == 2 %}
+                <span class="rank-badge rank-2">2</span>
+              {% elif loop.index == 3 %}
+                <span class="rank-badge rank-3">3</span>
+              {% else %}
+                <span class="rank-badge rank-other">{{ loop.index }}</span>
+              {% endif %}
             </td>
-            <td style="padding: 16px 20px;">
+            <td style="padding: 15px 20px;">
               <strong style="color: var(--text-main);">{{ u.name or "Волонтёр" }}</strong>
               {% if u.username %}
                 <span style="color: var(--text-muted); font-size: 0.85rem; margin-left: 6px;">@{{ u.username }}</span>
               {% endif %}
             </td>
-            <td style="padding: 16px 20px; text-align: right;">
-              <span style="background: #fce8eb; color: #5c0613; font-weight: 700; padding: 6px 14px; border-radius: 20px; border: 1px solid #f3cfd4;">
-                {{ u.hours or 0 }} ч.
-              </span>
+            <td style="padding: 15px 20px; text-align: right;">
+              <span class="hours-pill">{{ u.hours or 0 }} ч.</span>
             </td>
           </tr>
           {% else %}
@@ -857,12 +1114,20 @@
       </table>
     </div>
 
-    <!-- Информационный блок координатора (кнопка «Предложить акцию» только здесь) -->
-    <div class="join-box">
-      <p>Возникли вопросы или есть идея для нового доброго дела? Напишите нам!</p>
-      <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
-        <a href="mailto:dobrozau.admin@gmail.com" class="join-btn">Связаться с координатором</a>
-        <button type="button" class="btn-suggest" onclick="openSuggestModal()">Предложить акцию</button>
+    <!-- Блок обратной связи с янтарным свечением -->
+    <div class="join-box-wrap">
+      <div class="join-box">
+        <p>Возникли вопросы или есть идея для нового доброго дела? Напишите нам!</p>
+        <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+          <a href="mailto:dobrozau.admin@gmail.com" class="join-btn">
+            <svg class="icon-svg" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            <span>Связаться с координатором</span>
+          </a>
+          <button type="button" class="btn-suggest" onclick="openSuggestModal()">
+            <svg class="icon-svg" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Предложить акцию</span>
+          </button>
+        </div>
       </div>
     </div>
   </main>
