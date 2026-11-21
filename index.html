@@ -973,3 +973,382 @@
           {% endif %}
 
           <div class="card-media-content">
+            <div class="card-meta">
+              <span class="badge {% if event.video_url %}badge-on-media{% endif %}">{{ event.category or "Волонтёрство" }}</span>
+            </div>
+            <div class="card-title-row">
+              <h3><a href="/event/{{ event.id }}">{{ event.title }}</a></h3>
+              <span class="badge {% if event.video_url %}badge-glass{% endif %}">Активна</span>
+            </div>
+            {% if event.description %}<p>{{ event.description }}</p>{% endif %}
+          </div>
+        </div>
+
+        <div class="card-body" style="padding: 18px 24px 22px 24px; background: var(--card-bg);">
+          <div class="event-details">
+            <div class="detail-row">
+              <svg class="icon-svg" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <span><strong>Дата:</strong> {{ event.date or "Уточняется" }}</span>
+            </div>
+            <div class="detail-row">
+              <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span><strong>Место:</strong> {{ event.location or "По договорённости" }}</span>
+            </div>
+          </div>
+
+          <a href="/event/{{ event.id }}" class="btn-event-detail">Подробнее и галерея →</a>
+
+          <details style="margin-top: 14px; border-top: 1px solid var(--border-color); padding-top: 10px;">
+            <summary style="cursor: pointer; font-size: 0.84rem; font-weight: 600; color: var(--primary); list-style: none; display: flex; justify-content: space-between; align-items: center;">
+              <span>Участники ({{ event.participants|length }})</span>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">открыть список ▾</span>
+            </summary>
+            <div style="margin-top: 10px; background: #ffffff; border-radius: 10px; padding: 8px 10px; max-height: 160px; overflow-y: auto; border: 1px solid var(--border-color);">
+              {% for p in event.participants %}
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #f1ece9; font-size: 0.85rem;">
+                <div>
+                  <strong style="color: var(--text-main);">{{ p.name }}</strong>
+                  {% if p.username %}
+                  <span style="color: var(--text-muted); font-size: 0.75rem;">@{{ p.username }}</span>
+                  {% endif %}
+                </div>
+                <span style="background: var(--amber-soft); color: var(--amber-deep); font-weight: 700; font-size: 0.75rem; padding: 2px 8px; border-radius: 999px;">
+                  +{{ p.hours }} ч.
+                </span>
+              </div>
+              {% else %}
+              <div style="font-size: 0.8rem; color: var(--text-muted); text-align: center; padding: 6px 0; font-style: italic;">
+                Участники пока не добавлены
+              </div>
+              {% endfor %}
+            </div>
+          </details>
+        </div>
+      </div>
+      {% else %}
+      <div style="grid-column: 1 / -1; text-align: center; padding: 40px; background: var(--card-bg); border-radius: 14px; color: var(--text-muted);">
+        На данный момент активных мероприятий нет. Следите за обновлениями!
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Блок: Завершённые акции -->
+    {% if past_events %}
+    <div id="pastEventsSection">
+      <div style="margin-top: 45px; margin-bottom: 18px;">
+        <h3 style="color: rgba(250, 247, 245, 0.92); font-size: 1.1rem; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 10px;">
+          <span>Завершённые акции</span>
+          <span style="font-size: 0.8rem; font-weight: 600; background: rgba(255,255,255,0.12); padding: 2px 10px; border-radius: 999px; color: #fff;">{{ past_events|length }}</span>
+        </h3>
+      </div>
+
+      <div class="cards-grid" style="opacity: 0.95;">
+        {% for event in past_events %}
+        <div class="event-card"
+             data-title="{{ event.title|lower }}"
+             data-category="{{ (event.category or 'Волонтёрство')|lower }}"
+             style="padding: 0; overflow: hidden;">
+
+          <!-- Шапка: категория над заголовком, статус на уровне названия -->
+          <div class="card-media-header {% if event.video_url %}has-media{% endif %}">
+            {% if event.video_url %}
+              {% set is_video = event.video_url.lower().endswith(('.mp4', '.webm', '.mov')) or '/video/upload/' in event.video_url %}
+              {% if is_video %}
+                <video class="card-bg-video" loop muted playsinline preload="metadata"
+                       style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
+                  <source src="{{ event.video_url }}#t=0.001" type="video/mp4">
+                </video>
+              {% else %}
+                <img src="{{ event.video_url }}" alt="{{ event.title }}"
+                     style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
+              {% endif %}
+              <div class="card-media-overlay"></div>
+            {% endif %}
+
+            <div class="card-media-content">
+              <div class="card-meta">
+                <span class="badge {% if event.video_url %}badge-on-media{% endif %}">{{ event.category or "Волонтёрство" }}</span>
+              </div>
+              <div class="card-title-row">
+                <h3 style="color: {% if event.video_url %}#ffffff{% else %}var(--text-main){% endif %};">
+                  <a href="/event/{{ event.id }}">{{ event.title }}</a>
+                </h3>
+                <span class="badge {% if event.video_url %}badge-glass{% else %}badge-muted{% endif %}">Завершена</span>
+              </div>
+              {% if event.description %}
+                <p style="color: {% if event.video_url %}rgba(255,255,255,0.88){% else %}var(--text-muted){% endif %};">{{ event.description }}</p>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="card-body" style="padding: 18px 24px 22px 24px; background: var(--card-bg);">
+            <div class="event-details">
+              <div class="detail-row">
+                <svg class="icon-svg" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span><strong>Дата:</strong> {{ event.date or "Проведена" }}</span>
+              </div>
+              <div class="detail-row">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span><strong>Место:</strong> {{ event.location or "По договорённости" }}</span>
+              </div>
+            </div>
+
+            <a href="/event/{{ event.id }}" class="btn-event-detail">Подробнее и галерея →</a>
+
+            <details style="margin-top: 14px; border-top: 1px solid var(--border-color); padding-top: 10px;">
+              <summary style="cursor: pointer; font-size: 0.84rem; font-weight: 600; color: var(--text-muted); list-style: none; display: flex; justify-content: space-between; align-items: center; user-select: none;">
+                <span>Участники ({{ event.participants|length }})</span>
+                <span style="font-size: 0.75rem;">посмотреть ▾</span>
+              </summary>
+
+              <div style="margin-top: 10px; background: #ffffff; border-radius: 10px; padding: 8px 10px; max-height: 160px; overflow-y: auto; border: 1px solid var(--border-color);">
+                {% for p in event.participants %}
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #f1ece9; font-size: 0.85rem;">
+                  <div>
+                    <strong style="color: var(--text-main);">{{ p.name }}</strong>
+                    {% if p.username %}
+                    <span style="color: var(--text-muted); font-size: 0.75rem;">@{{ p.username }}</span>
+                    {% endif %}
+                  </div>
+                  <span style="background: var(--amber-soft); color: var(--amber-deep); font-weight: 700; font-size: 0.75rem; padding: 2px 8px; border-radius: 999px;">
+                    +{{ p.hours }} ч.
+                  </span>
+                </div>
+                {% else %}
+                <div style="font-size: 0.8rem; color: var(--text-muted); text-align: center; padding: 6px 0; font-style: italic;">
+                  В этой акции не было отмеченных участников
+                </div>
+                {% endfor %}
+              </div>
+            </details>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Блок рейтинга волонтёров -->
+    <div class="section-title" style="margin-top: 50px;">
+      Рейтинг волонтёров штаба
+    </div>
+
+    <div style="background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border-color); overflow: hidden; box-shadow: 0 12px 28px rgba(0,0,0,0.18);">
+      <table style="width: 100%; border-collapse: collapse; text-align: left;">
+        <thead>
+          <tr style="background: #f3edea; border-bottom: 1px solid var(--border-color); color: var(--primary); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em;">
+            <th style="padding: 15px 20px; width: 84px;">Место</th>
+            <th style="padding: 15px 20px;">Волонтёр</th>
+            <th style="padding: 15px 20px; text-align: right;">Отработано часов</th>
+          </tr>
+        </thead>
+        <tbody style="font-size: 0.95rem;">
+          {% for u in leaderboard %}
+          <tr style="border-bottom: 1px solid var(--border-color);">
+            <td style="padding: 15px 20px;">
+              {% if loop.index == 1 %}
+                <span class="rank-badge rank-1">1</span>
+              {% elif loop.index == 2 %}
+                <span class="rank-badge rank-2">2</span>
+              {% elif loop.index == 3 %}
+                <span class="rank-badge rank-3">3</span>
+              {% else %}
+                <span class="rank-badge rank-other">{{ loop.index }}</span>
+              {% endif %}
+            </td>
+            <td style="padding: 15px 20px;">
+              <strong style="color: var(--text-main);">{{ u.name or "Волонтёр" }}</strong>
+              {% if u.username %}
+                <span style="color: var(--text-muted); font-size: 0.85rem; margin-left: 6px;">@{{ u.username }}</span>
+              {% endif %}
+            </td>
+            <td style="padding: 15px 20px; text-align: right;">
+              <span class="hours-pill">{{ u.hours or 0 }} ч.</span>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="3" style="text-align: center; padding: 35px; color: var(--text-muted);">
+              Список волонтёров пока пуст.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Блок обратной связи с янтарным свечением -->
+    <div class="join-box-wrap">
+      <div class="join-box">
+        <p>Возникли вопросы или есть идея для нового доброго дела? Напишите нам!</p>
+        <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+          <a href="mailto:dobrozau.admin@gmail.com" class="join-btn">
+            <svg class="icon-svg" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            <span>Связаться с координатором</span>
+          </a>
+          <button type="button" class="btn-suggest" onclick="openSuggestModal()">
+            <svg class="icon-svg" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Предложить акцию</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    © 2026 ДоброЗАУ. Волонтёрская деятельность и социальные проекты.
+  </footer>
+
+  <!-- Модальное окно «Предложить акцию» -->
+  <div class="modal-overlay" id="suggestModal" onclick="if(event.target === this) closeSuggestModal()">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Предложить акцию</h3>
+        <button type="button" class="modal-close" onclick="closeSuggestModal()">&times;</button>
+      </div>
+      <form action="/suggest-event" method="post">
+        <div class="form-group">
+          <label>Ваше имя *</label>
+          <input type="text" name="author_name" required placeholder="Например, Иван Иванов">
+        </div>
+        <div class="form-group">
+          <label>Контакт для связи (Telegram или телефон)</label>
+          <input type="text" name="contact" placeholder="@username или +7...">
+        </div>
+        <div class="form-group">
+          <label>Название акции / идея *</label>
+          <input type="text" name="title" required placeholder="Например, Сбор корма для приюта">
+        </div>
+        <div class="form-group">
+          <label>Подробности (где, когда, что нужно сделать)</label>
+          <textarea name="description" rows="4" placeholder="Кратко опишите вашу идею..."></textarea>
+        </div>
+        <button type="submit" class="btn-submit-modal">Отправить координаторам</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function setStatsPeriod(period) {
+      const btnMonth = document.getElementById('btnPeriodMonth');
+      const btnSem = document.getElementById('btnPeriodSemester');
+      const eventsVal = document.getElementById('statEventsValue');
+      const hoursVal = document.getElementById('statHoursValue');
+      const eventsLbl = document.getElementById('statEventsLabel');
+      const hoursLbl = document.getElementById('statHoursLabel');
+      const periodLbl = document.getElementById('statsPeriodLabel');
+
+      if (!eventsVal || !hoursVal) return;
+
+      if (period === 'semester') {
+        btnMonth.classList.remove('active');
+        btnSem.classList.add('active');
+        eventsVal.textContent = eventsVal.dataset.semester;
+        hoursVal.textContent = hoursVal.dataset.semester;
+        eventsLbl.textContent = 'Акций за семестр';
+        hoursLbl.textContent = 'Часов добра за семестр';
+        periodLbl.textContent = 'Статистика: {{ stats.semester_label if stats else "Текущий семестр" }}';
+      } else {
+        btnSem.classList.remove('active');
+        btnMonth.classList.add('active');
+        eventsVal.textContent = eventsVal.dataset.month;
+        hoursVal.textContent = hoursVal.dataset.month;
+        eventsLbl.textContent = 'Акций за месяц';
+        hoursLbl.textContent = 'Часов добра за месяц';
+        periodLbl.textContent = 'Статистика за текущий месяц';
+      }
+    }
+
+    function openSuggestModal() {
+      document.getElementById('suggestModal').classList.add('open');
+    }
+    function closeSuggestModal() {
+      document.getElementById('suggestModal').classList.remove('open');
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const searchInput = document.getElementById('eventSearch');
+      const filterButtons = document.querySelectorAll('.filter-btn');
+      const allCards = document.querySelectorAll('.event-card[data-title]');
+      const noResultsBox = document.getElementById('noSearchResults');
+      const pastSection = document.getElementById('pastEventsSection');
+
+      let currentCategory = 'all';
+
+      function applyFilters() {
+        const query = searchInput.value.trim().toLowerCase();
+        let visibleTotal = 0;
+        let visiblePast = 0;
+
+        allCards.forEach(card => {
+          const title = card.dataset.title || '';
+          const category = card.dataset.category || '';
+          const matchesSearch = title.includes(query);
+          const matchesCategory = (currentCategory === 'all') || (category === currentCategory);
+
+          if (matchesSearch && matchesCategory) {
+            card.style.display = '';
+            visibleTotal++;
+            if (pastSection && pastSection.contains(card)) {
+              visiblePast++;
+            }
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        if (pastSection) {
+          pastSection.style.display = (visiblePast === 0 && (query !== '' || currentCategory !== 'all')) ? 'none' : '';
+        }
+        noResultsBox.style.display = (allCards.length > 0 && visibleTotal === 0) ? 'block' : 'none';
+      }
+
+      if (searchInput) {
+        searchInput.addEventListener('input', applyFilters);
+      }
+
+      filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentCategory = btn.dataset.filter;
+          applyFilters();
+        });
+      });
+
+      const cards = document.querySelectorAll(".event-card");
+      const isDesktop = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+      if (isDesktop) {
+        cards.forEach(card => {
+          const video = card.querySelector(".card-bg-video");
+          if (!video) return;
+          card.addEventListener("mouseenter", () => video.play().catch(() => {}));
+          card.addEventListener("mouseleave", () => video.pause());
+        });
+      } else {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            const video = entry.target.querySelector(".card-bg-video");
+            if (!video) return;
+            if (entry.isIntersecting) {
+              video.play().catch(() => {});
+            } else {
+              video.pause();
+            }
+          });
+        }, {
+          rootMargin: "-35% 0px -35% 0px",
+          threshold: 0
+        });
+
+        cards.forEach(card => {
+          if (card.querySelector(".card-bg-video")) {
+            observer.observe(card);
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
