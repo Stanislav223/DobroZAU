@@ -523,9 +523,9 @@ def home():
                         "hours": log.hours
                     })
 
-           for ev in all_events:
-            ev_logs = logs_by_event.get(ev.id, [])
-            participants = []
+            for ev in all_events:
+                ev_logs = logs_by_event.get(ev.id, [])
+                participants = []
             for log in ev_logs:
                 u = users_map.get(log.user_id)
                 if u:
