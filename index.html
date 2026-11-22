@@ -812,6 +812,79 @@
       opacity: 0.95;
     }
 
+    /* =========================================================
+       ПЕРЕХОДЫ МЕЖДУ СТРАНИЦАМИ (View Transitions: Идеи 1, 4, 5)
+       ========================================================= */
+    @view-transition {
+      navigation: auto;
+    }
+
+    /* Идея №1: «Перелёт» обложки карточки акции (event-morph) */
+    html:active-view-transition-type(event-morph)::view-transition-group(*) {
+      animation-duration: 0.4s;
+      animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    html:active-view-transition-type(event-morph)::view-transition-old(root) {
+      animation: 0.25s ease both fadeOutRoot;
+    }
+    html:active-view-transition-type(event-morph)::view-transition-new(root) {
+      animation: 0.32s ease both fadeInRoot;
+    }
+
+    /* Идея №4: Раскрытие кругом из точки клика (circle-wipe) */
+    html:active-view-transition-type(circle-wipe)::view-transition-old(root) {
+      animation: none;
+      z-index: 1;
+    }
+    html:active-view-transition-type(circle-wipe)::view-transition-new(root) {
+      z-index: 2;
+      animation: 0.52s cubic-bezier(0.22, 1, 0.36, 1) both circleReveal;
+    }
+    @keyframes circleReveal {
+      from { clip-path: circle(0px at var(--click-x, 85%) var(--click-y, 32px)); }
+      to   { clip-path: circle(150vmax at var(--click-x, 85%) var(--click-y, 32px)); }
+    }
+
+    /* Идея №5: Бордовая шторка с янтарным бликом (curtain-wipe) */
+    html:active-view-transition-type(curtain-wipe)::view-transition-old(root) {
+      animation: 0.42s cubic-bezier(0.65, 0, 0.35, 1) both curtainCover;
+      z-index: 1;
+    }
+    html:active-view-transition-type(curtain-wipe)::view-transition-new(root) {
+      animation: 0.46s cubic-bezier(0.65, 0, 0.35, 1) both curtainUncover;
+      z-index: 2;
+    }
+    @keyframes curtainCover {
+      from { opacity: 1; filter: brightness(1); transform: scale(1); }
+      to   { opacity: 0.35; filter: brightness(0.45); transform: scale(0.985); }
+    }
+    @keyframes curtainUncover {
+      from { clip-path: inset(100% 0 0 0); box-shadow: 0 -4px 24px rgba(245, 158, 11, 0.65); }
+      to   { clip-path: inset(0 0 0 0); box-shadow: 0 0 0 rgba(245, 158, 11, 0); }
+    }
+    @keyframes fadeOutRoot { from { opacity: 1; } to { opacity: 0; } }
+    @keyframes fadeInRoot  { from { opacity: 0; } to { opacity: 1; } }
+
+    #amberCurtainLine {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #b45309, #fbbf24, #f59e0b, #fbbf24, #b45309);
+      box-shadow: 0 0 22px 4px rgba(245, 158, 11, 0.7);
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    #amberCurtainLine.active {
+      animation: amberSweep 0.46s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+    }
+    @keyframes amberSweep {
+      0%   { opacity: 1; transform: translateY(0vh); }
+      85%  { opacity: 1; transform: translateY(-98vh); }
+      100% { opacity: 0; transform: translateY(-102vh); }
+    }
+
     @media (max-width: 768px) {
       .hero-banner {
         height: 220px;
@@ -836,8 +909,8 @@
       }
     }
   </style>
-  <link rel="icon" type="image/png" href="/static/static/logo.png.jpg">
-  <link rel="shortcut icon" href="/static/static/logo.png.jpg">
+  <link rel="icon" type="image/jpeg" sizes="48x48" href="/static/static/logo.png.jpg">
+  <link rel="icon" type="image/jpeg" sizes="192x192" href="/static/static/logo.png.jpg">
   <link rel="apple-touch-icon" href="/static/static/logo.png.jpg">
 </head>
 <body>
@@ -957,8 +1030,9 @@
            data-category="{{ (event.category or 'Волонтёрство')|lower }}"
            style="padding: 0; overflow: hidden;">
 
-        <!-- Шапка: категория над заголовком, статус на уровне названия -->
-        <div class="card-media-header {% if event.video_url %}has-media{% endif %}">
+        <!-- Шапка: категория над заголовком, статус на уровне названия, view-transition для морфинга -->
+        <div class="card-media-header {% if event.video_url %}has-media{% endif %}"
+             style="view-transition-name: event-hero-{{ event.id }};">
           {% if event.video_url %}
             {% set is_video = event.video_url.lower().endswith(('.mp4', '.webm', '.mov')) or '/video/upload/' in event.video_url %}
             {% if is_video %}
@@ -1050,8 +1124,9 @@
              data-category="{{ (event.category or 'Волонтёрство')|lower }}"
              style="padding: 0; overflow: hidden;">
 
-          <!-- Шапка: категория над заголовком, статус на уровне названия -->
-          <div class="card-media-header {% if event.video_url %}has-media{% endif %}">
+          <!-- Шапка: категория над заголовком, статус на уровне названия, view-transition для морфинга -->
+          <div class="card-media-header {% if event.video_url %}has-media{% endif %}"
+               style="view-transition-name: event-hero-{{ event.id }};">
             {% if event.video_url %}
               {% set is_video = event.video_url.lower().endswith(('.mp4', '.webm', '.mov')) or '/video/upload/' in event.video_url %}
               {% if is_video %}
@@ -1229,6 +1304,9 @@
     </div>
   </div>
 
+  <!-- Янтарная кромка для анимации шторки -->
+  <div id="amberCurtainLine"></div>
+
   <script>
     function setStatsPeriod(period) {
       const btnMonth = document.getElementById('btnPeriodMonth');
@@ -1349,6 +1427,57 @@
           }
         });
       }
+    });
+
+    // --- Управление переходами между страницами (View Transitions) ---
+    document.addEventListener('pointerdown', (e) => {
+      const x = Math.round(e.clientX) + 'px';
+      const y = Math.round(e.clientY) + 'px';
+      document.documentElement.style.setProperty('--click-x', x);
+      document.documentElement.style.setProperty('--click-y', y);
+      sessionStorage.setItem('vt_click_x', x);
+      sessionStorage.setItem('vt_click_y', y);
+    }, { passive: true });
+
+    const savedX = sessionStorage.getItem('vt_click_x');
+    const savedY = sessionStorage.getItem('vt_click_y');
+    if (savedX && savedY) {
+      document.documentElement.style.setProperty('--click-x', savedX);
+      document.documentElement.style.setProperty('--click-y', savedY);
+    }
+
+    function getTransitionType(fromUrl, toUrl) {
+      if (!fromUrl || !toUrl) return 'curtain-wipe';
+      const fromPath = new URL(fromUrl).pathname;
+      const toPath = new URL(toUrl).pathname;
+
+      if (toPath.startsWith('/event/') || fromPath.startsWith('/event/')) {
+        return 'event-morph';
+      }
+      if (toPath === '/profile' || toPath === '/login') {
+        return 'circle-wipe';
+      }
+      return 'curtain-wipe';
+    }
+
+    window.addEventListener('pageswap', (e) => {
+      if (!e.viewTransition) return;
+      const type = getTransitionType(window.location.href, e.activation?.entry?.url);
+      e.viewTransition.types.add(type);
+      if (type === 'curtain-wipe') {
+        const line = document.getElementById('amberCurtainLine');
+        if (line) {
+          line.classList.remove('active');
+          void line.offsetWidth;
+          line.classList.add('active');
+        }
+      }
+    });
+
+    window.addEventListener('pagereveal', (e) => {
+      if (!e.viewTransition) return;
+      const type = getTransitionType(e.activation?.from?.url, window.location.href);
+      e.viewTransition.types.add(type);
     });
   </script>
 </body>
