@@ -38,6 +38,45 @@
     h1, h2 {
       font-family: 'Unbounded', 'Manrope', sans-serif;
     }
+
+    @view-transition { navigation: auto; }
+
+    html:active-view-transition-type(curtain-wipe)::view-transition-old(root) {
+      animation: 0.42s cubic-bezier(0.65, 0, 0.35, 1) both curtainCover;
+      z-index: 1;
+    }
+    html:active-view-transition-type(curtain-wipe)::view-transition-new(root) {
+      animation: 0.46s cubic-bezier(0.65, 0, 0.35, 1) both curtainUncover;
+      z-index: 2;
+    }
+    @keyframes curtainCover {
+      from { opacity: 1; filter: brightness(1); transform: scale(1); }
+      to   { opacity: 0.35; filter: brightness(0.45); transform: scale(0.985); }
+    }
+    @keyframes curtainUncover {
+      from { clip-path: inset(100% 0 0 0); box-shadow: 0 -4px 24px rgba(245, 158, 11, 0.65); }
+      to   { clip-path: inset(0 0 0 0); box-shadow: 0 0 0 rgba(245, 158, 11, 0); }
+    }
+
+    #amberCurtainLine {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #b45309, #fbbf24, #f59e0b, #fbbf24, #b45309);
+      box-shadow: 0 0 22px 4px rgba(245, 158, 11, 0.7);
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    #amberCurtainLine.active {
+      animation: amberSweep 0.46s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+    }
+    @keyframes amberSweep {
+      0%   { opacity: 1; transform: translateY(0vh); }
+      85%  { opacity: 1; transform: translateY(-98vh); }
+      100% { opacity: 0; transform: translateY(-102vh); }
+    }
   </style>
 </head>
 <body class="min-h-screen text-slate-800 p-4 sm:p-8">
@@ -452,6 +491,8 @@
 
   </div>
 
+  <div id="amberCurtainLine"></div>
+
   <script>
     function useSuggestion(btn) {
       const titleInput = document.getElementById('createEventTitle');
@@ -461,6 +502,22 @@
       document.getElementById('createEventCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
       if (titleInput) titleInput.focus();
     }
+
+    window.addEventListener('pageswap', (e) => {
+      if (!e.viewTransition) return;
+      e.viewTransition.types.add('curtain-wipe');
+      const line = document.getElementById('amberCurtainLine');
+      if (line) {
+        line.classList.remove('active');
+        void line.offsetWidth;
+        line.classList.add('active');
+      }
+    });
+
+    window.addEventListener('pagereveal', (e) => {
+      if (!e.viewTransition) return;
+      e.viewTransition.types.add('curtain-wipe');
+    });
   </script>
 </body>
 </html>
