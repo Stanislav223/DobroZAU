@@ -4,11 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#5c0613">
+  <script>
+    (function () {
+      const t = sessionStorage.getItem('vt_type');
+      const x = sessionStorage.getItem('vt_click_x');
+      const y = sessionStorage.getItem('vt_click_y');
+      if (t) document.documentElement.dataset.transition = t;
+      if (x) document.documentElement.style.setProperty('--click-x', x);
+      if (y) document.documentElement.style.setProperty('--click-y', y);
+    })();
+  </script>
   <title>Панель управления штабом — ДоброЗАУ</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/jpeg" href="/static/static/logo.png.jpg">
   <script>
     tailwind.config = {
       theme: {
@@ -41,11 +52,11 @@
 
     @view-transition { navigation: auto; }
 
-    html:active-view-transition-type(curtain-wipe)::view-transition-old(root) {
+    html[data-transition="curtain-wipe"]::view-transition-old(root) {
       animation: 0.42s cubic-bezier(0.65, 0, 0.35, 1) both curtainCover;
       z-index: 1;
     }
-    html:active-view-transition-type(curtain-wipe)::view-transition-new(root) {
+    html[data-transition="curtain-wipe"]::view-transition-new(root) {
       animation: 0.46s cubic-bezier(0.65, 0, 0.35, 1) both curtainUncover;
       z-index: 2;
     }
@@ -54,8 +65,8 @@
       to   { opacity: 0.35; filter: brightness(0.45); transform: scale(0.985); }
     }
     @keyframes curtainUncover {
-      from { clip-path: inset(100% 0 0 0); box-shadow: 0 -4px 24px rgba(245, 158, 11, 0.65); }
-      to   { clip-path: inset(0 0 0 0); box-shadow: 0 0 0 rgba(245, 158, 11, 0); }
+      from { clip-path: inset(100% 0 0 0); }
+      to   { clip-path: inset(0 0 0 0); }
     }
 
     #amberCurtainLine {
@@ -503,20 +514,20 @@
       if (titleInput) titleInput.focus();
     }
 
-    window.addEventListener('pageswap', (e) => {
-      if (!e.viewTransition) return;
-      e.viewTransition.types.add('curtain-wipe');
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('a');
+      if (!link || !link.href || link.origin !== window.location.origin) return;
+      if (link.pathname.startsWith('/admin/export-excel')) return;
+
+      document.documentElement.dataset.transition = 'curtain-wipe';
+      sessionStorage.setItem('vt_type', 'curtain-wipe');
+
       const line = document.getElementById('amberCurtainLine');
       if (line) {
         line.classList.remove('active');
         void line.offsetWidth;
         line.classList.add('active');
       }
-    });
-
-    window.addEventListener('pagereveal', (e) => {
-      if (!e.viewTransition) return;
-      e.viewTransition.types.add('curtain-wipe');
     });
   </script>
 </body>
