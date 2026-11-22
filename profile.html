@@ -4,16 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#5c0613">
-  <script>
-    (function () {
-      const t = sessionStorage.getItem('vt_type');
-      const x = sessionStorage.getItem('vt_click_x');
-      const y = sessionStorage.getItem('vt_click_y');
-      if (t) document.documentElement.dataset.transition = t;
-      if (x) document.documentElement.style.setProperty('--click-x', x);
-      if (y) document.documentElement.style.setProperty('--click-y', y);
-    })();
-  </script>
   <title>Личный кабинет волонтёра — ДоброЗАУ</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,72 +24,6 @@
     }
     h1, h2, .font-display {
       font-family: 'Unbounded', 'Manrope', sans-serif;
-    }
-
-    @view-transition { navigation: auto; }
-
-    html[data-transition="event-morph"]::view-transition-group(*) {
-      animation-duration: 0.42s;
-      animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-    }
-    html[data-transition="event-morph"]::view-transition-old(root) {
-      animation: 0.25s ease both fadeOutRoot;
-    }
-    html[data-transition="event-morph"]::view-transition-new(root) {
-      animation: 0.32s ease both fadeInRoot;
-    }
-
-    html[data-transition="circle-wipe"]::view-transition-old(root) {
-      animation: none;
-      z-index: 1;
-    }
-    html[data-transition="circle-wipe"]::view-transition-new(root) {
-      z-index: 2;
-      animation: 0.55s cubic-bezier(0.22, 1, 0.36, 1) both circleReveal;
-    }
-    @keyframes circleReveal {
-      from { clip-path: circle(0px at var(--click-x, 85%) var(--click-y, 32px)); }
-      to   { clip-path: circle(150vmax at var(--click-x, 85%) var(--click-y, 32px)); }
-    }
-
-    html[data-transition="curtain-wipe"]::view-transition-old(root) {
-      animation: 0.42s cubic-bezier(0.65, 0, 0.35, 1) both curtainCover;
-      z-index: 1;
-    }
-    html[data-transition="curtain-wipe"]::view-transition-new(root) {
-      animation: 0.46s cubic-bezier(0.65, 0, 0.35, 1) both curtainUncover;
-      z-index: 2;
-    }
-    @keyframes curtainCover {
-      from { opacity: 1; filter: brightness(1); transform: scale(1); }
-      to   { opacity: 0.35; filter: brightness(0.45); transform: scale(0.985); }
-    }
-    @keyframes curtainUncover {
-      from { clip-path: inset(100% 0 0 0); }
-      to   { clip-path: inset(0 0 0 0); }
-    }
-
-    @keyframes fadeOutRoot { from { opacity: 1; } to { opacity: 0; } }
-    @keyframes fadeInRoot  { from { opacity: 0; } to { opacity: 1; } }
-
-    #amberCurtainLine {
-      position: fixed;
-      left: 0; right: 0; bottom: 0;
-      height: 4px;
-      background: linear-gradient(90deg, #b45309, #fbbf24, #f59e0b, #fbbf24, #b45309);
-      box-shadow: 0 0 22px 4px rgba(245, 158, 11, 0.7);
-      z-index: 9999;
-      pointer-events: none;
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    #amberCurtainLine.active {
-      animation: amberSweep 0.46s cubic-bezier(0.65, 0, 0.35, 1) forwards;
-    }
-    @keyframes amberSweep {
-      0%   { opacity: 1; transform: translateY(0vh); }
-      85%  { opacity: 1; transform: translateY(-98vh); }
-      100% { opacity: 0; transform: translateY(-102vh); }
     }
   </style>
 </head>
@@ -227,43 +151,5 @@
     </div>
 
   </div>
-
-  <div id="amberCurtainLine"></div>
-
-  <script>
-    document.addEventListener('click', (e) => {
-      const link = e.target.closest('a');
-      if (!link || !link.href || link.origin !== window.location.origin) return;
-
-      const x = Math.round(e.clientX) + 'px';
-      const y = Math.round(e.clientY) + 'px';
-      const toPath = new URL(link.href).pathname;
-      const fromPath = window.location.pathname;
-
-      let type = 'curtain-wipe';
-      if (toPath.startsWith('/event/') || fromPath.startsWith('/event/')) {
-        type = 'event-morph';
-      } else if (toPath === '/profile' || toPath === '/login') {
-        type = 'circle-wipe';
-      }
-
-      document.documentElement.dataset.transition = type;
-      document.documentElement.style.setProperty('--click-x', x);
-      document.documentElement.style.setProperty('--click-y', y);
-
-      sessionStorage.setItem('vt_type', type);
-      sessionStorage.setItem('vt_click_x', x);
-      sessionStorage.setItem('vt_click_y', y);
-
-      if (type === 'curtain-wipe') {
-        const line = document.getElementById('amberCurtainLine');
-        if (line) {
-          line.classList.remove('active');
-          void line.offsetWidth;
-          line.classList.add('active');
-        }
-      }
-    });
-  </script>
 </body>
 </html>
