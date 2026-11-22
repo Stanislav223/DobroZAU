@@ -89,11 +89,12 @@
       transform: translateX(-2px);
     }
 
+    /* Карточка слева, галерея справа */
     .main-grid {
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
       gap: 28px;
-      align-items: center;
+      align-items: start;
     }
 
     .card,
@@ -729,7 +730,8 @@
     .lightbox-nav.prev { left: 18px; }
     .lightbox-nav.next { right: 18px; }
 
-    @media (max-width: 960px) {
+    /* В одну колонку только на мобильных экранах (до 768px) */
+    @media (max-width: 768px) {
       .main-grid { grid-template-columns: 1fr; }
       .cover-wrap { height: 240px; }
       .event-title { font-size: 20px; }
@@ -966,6 +968,7 @@
       const counter = document.getElementById("carouselCounter");
       const autoplayToggle = document.getElementById("autoplayToggle");
       const dots = Array.from(document.querySelectorAll(".carousel-dot"));
+      const thumbsContainer = document.getElementById("carouselThumbs");
       const thumbs = Array.from(document.querySelectorAll(".thumb-btn"));
 
       let current = 0;
@@ -992,8 +995,18 @@
         thumbs.forEach((t, i) => t.classList.toggle("is-active", i === current));
 
         if (counter) counter.textContent = `${current + 1} / ${total}`;
-        if (thumbs[current]) {
-          thumbs[current].scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+
+        // Горизонтальная прокрутка только внутри ленты превью без скролла всей страницы
+        if (thumbsContainer && thumbs[current]) {
+          const activeThumb = thumbs[current];
+          const targetScrollLeft =
+            activeThumb.offsetLeft -
+            thumbsContainer.clientWidth / 2 +
+            activeThumb.clientWidth / 2;
+          thumbsContainer.scrollTo({
+            left: targetScrollLeft,
+            behavior: "smooth"
+          });
         }
       }
 
