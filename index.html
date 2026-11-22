@@ -5,6 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#5c0613">
   <meta name="yandex-verification" content="e28a6a692185eca2" />
+  <script>
+    (function () {
+      const t = sessionStorage.getItem('vt_type');
+      const x = sessionStorage.getItem('vt_click_x');
+      const y = sessionStorage.getItem('vt_click_y');
+      if (t) document.documentElement.dataset.transition = t;
+      if (x) document.documentElement.style.setProperty('--click-x', x);
+      if (y) document.documentElement.style.setProperty('--click-y', y);
+    })();
+  </script>
   <title>ДоброЗАУ — Волонтёрский центр</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -819,38 +829,38 @@
       navigation: auto;
     }
 
-    /* Идея №1: «Перелёт» обложки карточки акции (event-morph) */
-    html:active-view-transition-type(event-morph)::view-transition-group(*) {
-      animation-duration: 0.4s;
+    /* Идея №1: «Перелёт» обложки карточки акции */
+    html[data-transition="event-morph"]::view-transition-group(*) {
+      animation-duration: 0.42s;
       animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
     }
-    html:active-view-transition-type(event-morph)::view-transition-old(root) {
+    html[data-transition="event-morph"]::view-transition-old(root) {
       animation: 0.25s ease both fadeOutRoot;
     }
-    html:active-view-transition-type(event-morph)::view-transition-new(root) {
+    html[data-transition="event-morph"]::view-transition-new(root) {
       animation: 0.32s ease both fadeInRoot;
     }
 
-    /* Идея №4: Раскрытие кругом из точки клика (circle-wipe) */
-    html:active-view-transition-type(circle-wipe)::view-transition-old(root) {
+    /* Идея №4: Раскрытие кругом из точки клика */
+    html[data-transition="circle-wipe"]::view-transition-old(root) {
       animation: none;
       z-index: 1;
     }
-    html:active-view-transition-type(circle-wipe)::view-transition-new(root) {
+    html[data-transition="circle-wipe"]::view-transition-new(root) {
       z-index: 2;
-      animation: 0.52s cubic-bezier(0.22, 1, 0.36, 1) both circleReveal;
+      animation: 0.55s cubic-bezier(0.22, 1, 0.36, 1) both circleReveal;
     }
     @keyframes circleReveal {
       from { clip-path: circle(0px at var(--click-x, 85%) var(--click-y, 32px)); }
       to   { clip-path: circle(150vmax at var(--click-x, 85%) var(--click-y, 32px)); }
     }
 
-    /* Идея №5: Бордовая шторка с янтарным бликом (curtain-wipe) */
-    html:active-view-transition-type(curtain-wipe)::view-transition-old(root) {
+    /* Идея №5: Бордовая шторка с янтарным бликом */
+    html[data-transition="curtain-wipe"]::view-transition-old(root) {
       animation: 0.42s cubic-bezier(0.65, 0, 0.35, 1) both curtainCover;
       z-index: 1;
     }
-    html:active-view-transition-type(curtain-wipe)::view-transition-new(root) {
+    html[data-transition="curtain-wipe"]::view-transition-new(root) {
       animation: 0.46s cubic-bezier(0.65, 0, 0.35, 1) both curtainUncover;
       z-index: 2;
     }
@@ -859,9 +869,10 @@
       to   { opacity: 0.35; filter: brightness(0.45); transform: scale(0.985); }
     }
     @keyframes curtainUncover {
-      from { clip-path: inset(100% 0 0 0); box-shadow: 0 -4px 24px rgba(245, 158, 11, 0.65); }
-      to   { clip-path: inset(0 0 0 0); box-shadow: 0 0 0 rgba(245, 158, 11, 0); }
+      from { clip-path: inset(100% 0 0 0); }
+      to   { clip-path: inset(0 0 0 0); }
     }
+
     @keyframes fadeOutRoot { from { opacity: 1; } to { opacity: 0; } }
     @keyframes fadeInRoot  { from { opacity: 0; } to { opacity: 1; } }
 
@@ -1429,41 +1440,31 @@
       }
     });
 
-    // --- Управление переходами между страницами (View Transitions) ---
-    document.addEventListener('pointerdown', (e) => {
+    // --- Управление переходами между страницами ---
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('a');
+      if (!link || !link.href || link.origin !== window.location.origin) return;
+
       const x = Math.round(e.clientX) + 'px';
       const y = Math.round(e.clientY) + 'px';
+      const toPath = new URL(link.href).pathname;
+      const fromPath = window.location.pathname;
+
+      let type = 'curtain-wipe';
+      if (toPath.startsWith('/event/') || fromPath.startsWith('/event/')) {
+        type = 'event-morph';
+      } else if (toPath === '/profile' || toPath === '/login') {
+        type = 'circle-wipe';
+      }
+
+      document.documentElement.dataset.transition = type;
       document.documentElement.style.setProperty('--click-x', x);
       document.documentElement.style.setProperty('--click-y', y);
+
+      sessionStorage.setItem('vt_type', type);
       sessionStorage.setItem('vt_click_x', x);
       sessionStorage.setItem('vt_click_y', y);
-    }, { passive: true });
 
-    const savedX = sessionStorage.getItem('vt_click_x');
-    const savedY = sessionStorage.getItem('vt_click_y');
-    if (savedX && savedY) {
-      document.documentElement.style.setProperty('--click-x', savedX);
-      document.documentElement.style.setProperty('--click-y', savedY);
-    }
-
-    function getTransitionType(fromUrl, toUrl) {
-      if (!fromUrl || !toUrl) return 'curtain-wipe';
-      const fromPath = new URL(fromUrl).pathname;
-      const toPath = new URL(toUrl).pathname;
-
-      if (toPath.startsWith('/event/') || fromPath.startsWith('/event/')) {
-        return 'event-morph';
-      }
-      if (toPath === '/profile' || toPath === '/login') {
-        return 'circle-wipe';
-      }
-      return 'curtain-wipe';
-    }
-
-    window.addEventListener('pageswap', (e) => {
-      if (!e.viewTransition) return;
-      const type = getTransitionType(window.location.href, e.activation?.entry?.url);
-      e.viewTransition.types.add(type);
       if (type === 'curtain-wipe') {
         const line = document.getElementById('amberCurtainLine');
         if (line) {
@@ -1472,12 +1473,6 @@
           line.classList.add('active');
         }
       }
-    });
-
-    window.addEventListener('pagereveal', (e) => {
-      if (!e.viewTransition) return;
-      const type = getTransitionType(e.activation?.from?.url, window.location.href);
-      e.viewTransition.types.add(type);
     });
   </script>
 </body>
