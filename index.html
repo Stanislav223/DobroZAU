@@ -49,6 +49,7 @@
       position: relative;
     }
 
+    /* Мягкое фоновое янтарное свечение */
     body::before {
       content: "";
       position: fixed;
@@ -86,115 +87,7 @@
       flex-shrink: 0;
     }
 
-    /* Плавающая шапка */
-    header {
-      background: rgba(42, 4, 11, 0.72);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-      position: sticky;
-      top: 0;
-      z-index: 30;
-    }
-
-    .nav-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 12px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .nav-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 0;
-    }
-
-    .menu-toggle-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      background: rgba(255, 255, 255, 0.08);
-      color: #faf7f5;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      flex-shrink: 0;
-      transition: background 0.15s ease, transform 0.15s ease;
-    }
-
-    .menu-toggle-btn:hover {
-      background: rgba(255, 255, 255, 0.16);
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: #faf7f5;
-      text-decoration: none;
-      min-width: 0;
-    }
-
-    .nav-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-shrink: 0;
-    }
-
-    .nav-btn-profile {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-      color: #23090e;
-      text-decoration: none;
-      font-size: 12px;
-      font-weight: 700;
-      padding: 8px 14px;
-      border-radius: 999px;
-      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.25);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-      white-space: nowrap;
-    }
-
-    .nav-btn-profile:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 18px rgba(245, 158, 11, 0.36);
-    }
-
-    .nav-btn-admin {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      background: rgba(255, 255, 255, 0.08);
-      color: rgba(255, 255, 255, 0.9);
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      text-decoration: none;
-      font-size: 12px;
-      font-weight: 600;
-      padding: 8px 12px;
-      border-radius: 999px;
-      transition: background 0.15s ease, color 0.15s ease;
-      white-space: nowrap;
-    }
-
-    .nav-btn-admin:hover {
-      background: rgba(255, 255, 255, 0.16);
-      color: #ffffff;
-    }
-
-    /* --- БОКОВОЕ ВЫДВИЖНОЕ МЕНЮ (СЛЕВА НАПРАВО) --- */
+    /* Боковое выдвижное меню (слева направо) */
     .drawer-backdrop {
       position: fixed;
       inset: 0;
@@ -263,9 +156,14 @@
       color: #faf7f5;
       font-size: 20px;
       cursor: pointer;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
+      transition: background 0.15s ease;
+    }
+
+    .drawer-close-btn:hover {
+      background: rgba(255, 255, 255, 0.16);
     }
 
     .drawer-nav {
@@ -303,7 +201,6 @@
     .drawer-link .icon-svg {
       width: 18px;
       height: 18px;
-      color: currentColor;
     }
 
     .drawer-footer {
@@ -311,6 +208,114 @@
       border-top: 1px solid rgba(255, 255, 255, 0.12);
       font-size: 0.78rem;
       color: rgba(250, 247, 245, 0.65);
+    }
+
+    /* Плавающая полупрозрачная шапка (Glassmorphism) */
+    header {
+      background: rgba(42, 4, 11, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .menu-toggle-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.08);
+      color: #faf7f5;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.15s ease;
+    }
+
+    .menu-toggle-btn:hover {
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #faf7f5;
+      text-decoration: none;
+      min-width: 0;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .nav-btn-profile {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #23090e;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 8px 14px;
+      border-radius: 999px;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.25);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .nav-btn-profile:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(245, 158, 11, 0.36);
+    }
+
+    .nav-btn-admin {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: 999px;
+      transition: background 0.15s ease, color 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .nav-btn-admin:hover {
+      background: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
     }
 
     /* Главный фото-баннер */
@@ -455,8 +460,8 @@
 
     .section-header-row {
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       flex-wrap: wrap;
       gap: 12px;
       margin-bottom: 18px;
@@ -475,19 +480,23 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      padding: 7px 14px;
+      border-radius: 999px;
       background: rgba(255, 255, 255, 0.09);
       border: 1px solid rgba(255, 255, 255, 0.16);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       color: #faf7f5;
       text-decoration: none;
       font-size: 0.82rem;
       font-weight: 700;
-      padding: 7px 14px;
-      border-radius: 999px;
-      transition: background 0.15s ease;
+      transition: background 0.2s ease, transform 0.15s ease;
+      white-space: nowrap;
     }
 
     .section-link-pill:hover {
       background: rgba(255, 255, 255, 0.18);
+      transform: translateY(-1px);
     }
 
     /* Сетка карточек */
@@ -687,7 +696,7 @@
       color: #ffffff;
     }
 
-    /* Информационный блок обратной связи */
+    /* Блок обратной связи */
     .join-box-wrap {
       position: relative;
       margin-top: 54px;
@@ -767,6 +776,7 @@
       background: rgba(255, 255, 255, 0.18);
     }
 
+    /* Футер */
     footer {
       background: rgba(26, 2, 6, 0.65);
       backdrop-filter: blur(12px);
@@ -900,9 +910,9 @@
 </head>
 <body>
 
-  <!-- Затемнение и боковое выдвижное меню -->
+  <!-- Выдвижное боковое меню -->
   <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawer()"></div>
-  <aside class="side-drawer" id="sideDrawer" aria-label="Навигация по разделам">
+  <aside class="side-drawer" id="sideDrawer">
     <div class="drawer-header">
       <div class="drawer-brand">
         <img src="/static/static/logo.png.jpg" alt="ДоброЗАУ" style="height: 30px; width: auto; border-radius: 7px;">
