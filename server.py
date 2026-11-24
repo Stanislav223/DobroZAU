@@ -4,6 +4,7 @@ import re
 import hmac
 import time
 import html
+import json
 import hashlib
 import secrets
 import logging
@@ -21,7 +22,7 @@ from fastapi.staticfiles import StaticFiles
 from jinja2 import Template
 from openpyxl import Workbook
 from openpyxl.styles import Font
-from sqlalchemy import Column, Float, ForeignKey, Integer, String, create_engine, text
+from sqlalchemy import Boolean, Column, Float, ForeignKey, Integer, String, create_engine, text
 from sqlalchemy.orm import declarative_base, sessionmaker
 import cloudinary
 import cloudinary.uploader
@@ -120,6 +121,16 @@ class EventSuggestion(Base):
     title = Column(String, nullable=False)
     description = Column(String, nullable=True)
     created_at = Column(String, nullable=False)
+    status = Column(String, default="new")  # new | accepted | rejected
+
+
+class NewsPost(Base):
+    __tablename__ = "news_posts"
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, nullable=False)
+    content = Column(String, nullable=False)
+    created_at = Column(String, nullable=False)
+    is_internal = Column(Boolean, default=False)  # True = только для авторизованных волонтёров
 
 
 class AuditLog(Base):
@@ -140,6 +151,7 @@ migrations = [
     "ALTER TABLE events ADD COLUMN IF NOT EXISTS video_url VARCHAR;",
     "ALTER TABLE events ADD COLUMN IF NOT EXISTS category VARCHAR DEFAULT 'Волонтёрство';",
     "ALTER TABLE events ADD COLUMN IF NOT EXISTS description VARCHAR;",
+    "ALTER TABLE event_suggestions ADD COLUMN IF NOT EXISTS status VARCHAR DEFAULT 'new';",
 ]
 for sql in migrations:
     try:
@@ -175,17 +187,12 @@ def log_audit(db, actor: str, ip: str, action: str, details: str = ""):
 
 
 def hash_password(password: str) -> str:
-    """Надёжное хэширование PBKDF2-HMAC-SHA256 (310 000 итераций + уникальная соль)."""
     salt = secrets.token_hex(16)
     dk = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt.encode("utf-8"), 310_000)
     return f"pbkdf2$310000${salt}${dk.hex()}"
 
 
 def verify_password(password: str, hashed: str) -> tuple[bool, bool]:
-    """
-    Возвращает (is_valid, needs_rehash).
-    Поддерживает старые хэши sha256 и автоматически помечает их для обновления.
-    """
     if not hashed:
         return False, False
 
@@ -206,14 +213,12 @@ def verify_password(password: str, hashed: str) -> tuple[bool, bool]:
         except Exception:
             return False, False
 
-    # Совместимость со старым форматом sha256
     legacy_hash = hashlib.sha256((password + "DobroZAU_Salt_2026").encode("utf-8")).hexdigest()
     valid = secrets.compare_digest(legacy_hash, hashed)
     return valid, valid
 
 
 def _pw_fingerprint(password_hash: Optional[str]) -> str:
-    """Короткий отпечаток хэша пароля: при смене пароля старые сессии мгновенно сгорают."""
     return hashlib.sha256((password_hash or "").encode("utf-8")).hexdigest()[:10]
 
 
@@ -226,7 +231,6 @@ def sign_session(user_id: int, password_hash: Optional[str]) -> str:
 
 
 def verify_session_cookie(cookie_value: Optional[str]) -> Optional[tuple[int, str]]:
-    """Проверяет подпись и срок действия куки. Возвращает (user_id, pw_fingerprint) или None."""
     if not cookie_value:
         return None
     parts = cookie_value.split(".")
@@ -271,7 +275,6 @@ def set_session_cookie(resp: Response, request: Request, user: User):
     )
 
 
-# Rate Limiter с защитой от утечки памяти
 _rate_buckets = defaultdict(list)
 
 
@@ -302,14 +305,12 @@ def sanitize_url(url: str) -> Optional[str]:
 
 
 def safe_excel_cell(value):
-    """Защита от Excel Formula Injection (=, +, -, @ в начале текста)."""
     if isinstance(value, str) and value and value[0] in ("=", "+", "-", "@", "\t", "\r"):
         return "'" + value
     return value
 
 
 def is_valid_media_magic_bytes(data: bytes) -> bool:
-    """Проверка реальной сигнатуры файла (magic bytes), а не только расширения."""
     if len(data) < 12:
         return False
     if data.startswith(b"\xff\xd8\xff"):
@@ -378,6 +379,20 @@ def get_semester_bounds(today: date):
         return date(today.year, 7, 1), date(today.year, 8, 31), "Летний период (июл–авг)"
 
 
+def get_semester_code_for_date(d: date) -> str:
+    """Возвращает код семестра: YYYY-S1 (сен-дек) или YYYY-S2 (янв-авг)."""
+    if 9 <= d.month <= 12:
+        return f"{d.year}-S1"
+    return f"{d.year}-S2"
+
+
+def format_semester_label(code: str) -> str:
+    year_str, sem = code.split("-")
+    if sem == "S1":
+        return f"Осень {year_str} (сен–дек)"
+    return f"Весна/лето {year_str} (янв–авг)"
+
+
 def is_in_period(ev_date, period: str, today: date) -> bool:
     if period == "all":
         return True
@@ -391,6 +406,54 @@ def is_in_period(ev_date, period: str, today: date) -> bool:
     return True
 
 
+def build_events_collections(db):
+    """Формирует списки активных и завершённых акций с участниками."""
+    today = date.today()
+    today_str = today.isoformat()
+
+    all_events = db.query(Event).all()
+    all_logs = db.query(HoursLog).all()
+    users = db.query(User).all()
+    users_map = {u.id: u for u in users}
+
+    logs_by_event = {}
+    for log in all_logs:
+        logs_by_event.setdefault(log.event_id, []).append(log)
+
+    events_data = []
+    for ev in all_events:
+        ev_logs = logs_by_event.get(ev.id, [])
+        participants = []
+        for log in ev_logs:
+            u = users_map.get(log.user_id)
+            if u:
+                participants.append({
+                    "name": u.name,
+                    "username": u.username,
+                    "hours": log.hours
+                })
+
+        events_data.append({
+            "id": ev.id,
+            "title": ev.title,
+            "date": ev.date,
+            "category": ev.category or "Волонтёрство",
+            "description": ev.description,
+            "location": ev.location or "По договорённости",
+            "video_url": ev.video_url,
+            "is_past": str(ev.date) < today_str,
+            "participants": participants
+        })
+
+    active_events = [e for e in events_data if not e["is_past"]]
+    active_events.sort(key=lambda x: str(x["date"]))
+
+    past_events = [e for e in events_data if e["is_past"]]
+    past_events.sort(key=lambda x: str(x["date"]), reverse=True)
+
+    return active_events, past_events
+
+
 def build_achievements(user_events: list, total_hours: float) -> list:
     events_count = len(user_events)
     categories = [(ev.category or "Волонтёрство").strip().lower() for ev in user_events if ev]
@@ -400,14 +463,14 @@ def build_achievements(user_events: list, total_hours: float) -> list:
     help_count = sum(1 for c in categories if "адресн" in c)
 
     rules = [
-        ("🌱", "Первый шаг", "Участие в 1 акции", events_count, 1, "акц."),
-        ("🔥", "Активист", "Участие в 5 акциях", events_count, 5, "акц."),
-        ("⭐", "10 часов добра", "Набрано 10 волонтёрских часов", round(total_hours, 1), 10, "ч."),
-        ("🏆", "25 часов добра", "Набрано 25 волонтёрских часов", round(total_hours, 1), 25, "ч."),
-        ("👑", "50 часов добра", "Набрано 50 волонтёрских часов", round(total_hours, 1), 50, "ч."),
-        ("🌿", "Эко-герой", "Участие в 3 эко-акциях", eco_count, 3, "акц."),
-        ("🏃", "За ЗОЖ", "Участие в 3 акциях ЗОЖ", zozh_count, 3, "акц."),
-        ("🤝", "Доброе сердце", "3 акции адресной помощи", help_count, 3, "акц."),
+        ("1", "Первый шаг", "Участие в 1 акции", events_count, 1, "акц."),
+        ("2", "Активист", "Участие в 5 акциях", events_count, 5, "акц."),
+        ("3", "10 часов добра", "Набрано 10 волонтёрских часов", round(total_hours, 1), 10, "ч."),
+        ("4", "25 часов добра", "Набрано 25 волонтёрских часов", round(total_hours, 1), 25, "ч."),
+        ("5", "50 часов добра", "Набрано 50 волонтёрских часов", round(total_hours, 1), 50, "ч."),
+        ("6", "Эко-герой", "Участие в 3 эко-акциях", eco_count, 3, "акц."),
+        ("7", "За ЗОЖ", "Участие в 3 акциях ЗОЖ", zozh_count, 3, "акц."),
+        ("8", "Доброе сердце", "3 акции адресной помощи", help_count, 3, "акц."),
     ]
 
     result = []
@@ -429,13 +492,15 @@ def build_achievements(user_events: list, total_hours: float) -> list:
 # --- ПРИЛОЖЕНИЕ И MIDDLEWARE БЕЗОПАСНОСТИ ---
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
 @app.get("/favicon.ico", include_in_schema=False)
 def favicon():
     return FileResponse("static/static/logo.png.jpg", media_type="image/jpeg")
 
+
 @app.middleware("http")
 async def security_middleware(request: Request, call_next):
-    # 1. Защита от CSRF на всех изменяющих запросах
     if request.method in ("POST", "PUT", "DELETE", "PATCH"):
         sec_fetch_site = request.headers.get("sec-fetch-site")
         if sec_fetch_site and sec_fetch_site == "cross-site":
@@ -453,14 +518,12 @@ async def security_middleware(request: Request, call_next):
             if host and ref_host and ref_host != host:
                 return HTMLResponse("Forbidden: invalid referer", status_code=403)
 
-    # 2. Обработка запроса без утечки внутренних ошибок
     try:
         response = await call_next(request)
     except Exception as exc:
         logger.exception(f"Внутренняя ошибка на {request.url.path}: {exc}")
         return HTMLResponse("Внутренняя ошибка сервера. Попробуйте позже.", status_code=500)
 
-    # 3. Заголовки безопасности
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
@@ -484,28 +547,23 @@ async def security_middleware(request: Request, call_next):
     return response
 
 
-# --- ГЛАВНАЯ СТРАНИЦА ---
+# --- ГЛАВНАЯ СТРАНИЦА (разгруженная: активные + 3 последние завершённые) ---
 @app.get("/", response_class=HTMLResponse)
-def home():
+def home(request: Request):
     db = SessionLocal()
     try:
         today = date.today()
-        today_str = today.isoformat()
         sem_start, sem_end, sem_label = get_semester_bounds(today)
 
+        current_user = get_current_user(request, db)
         all_events = db.query(Event).all()
         all_logs = db.query(HoursLog).all()
         users = db.query(User).all()
 
-        users_map = {u.id: u for u in users}
-
         logs_by_event = {}
-        logs_by_user = {}
         for log in all_logs:
             logs_by_event.setdefault(log.event_id, []).append(log)
-            logs_by_user.setdefault(log.user_id, []).append(log)
 
-        events_data = []
         month_events_count = 0
         month_hours_sum = 0.0
         semester_events_count = 0
@@ -513,19 +571,7 @@ def home():
 
         for ev in all_events:
             ev_logs = logs_by_event.get(ev.id, [])
-            participants = []
-            for log in ev_logs:
-                u = users_map.get(log.user_id)
-                if u:
-                    participants.append({
-                        "name": u.name,
-                        "username": u.username,
-                        "hours": log.hours
-                    })
-
-            # Длительность самой акции (максимум часов среди её участников, а не сумма)
             ev_duration = max(((log.hours or 0.0) for log in ev_logs), default=0.0)
-
             ev_date = parse_event_date(ev.date)
             if ev_date:
                 if ev_date.year == today.year and ev_date.month == today.month:
@@ -535,37 +581,7 @@ def home():
                     semester_events_count += 1
                     semester_hours_sum += ev_duration
 
-            events_data.append({
-                "id": ev.id,
-                "title": ev.title,
-                "date": ev.date,
-                "category": ev.category or "Волонтёрство",
-                "description": ev.description,
-                "location": ev.location or "По договорённости",
-                "video_url": ev.video_url,
-                "is_past": str(ev.date) < today_str,
-                "participants": participants
-            })
-
-        active_events = [e for e in events_data if not e["is_past"]]
-        active_events.sort(key=lambda x: str(x["date"]))
-
-        past_events = [e for e in events_data if e["is_past"]]
-        past_events.sort(key=lambda x: str(x["date"]), reverse=True)
-
-        leaderboard = []
-        for u in users:
-            u_logs = logs_by_user.get(u.id, [])
-            total_hours = sum((l.hours or 0.0) for l in u_logs)
-            leaderboard.append({
-                "name": u.name,
-                "username": u.username,
-                "hours": round(total_hours, 1),
-                "role": u.role,
-            })
-
-        leaderboard.sort(key=lambda x: x["hours"], reverse=True)
-        top_3 = leaderboard[:3]
+        active_events, past_events = build_events_collections(db)
 
         stats = {
             "volunteers_total": len(users),
@@ -575,23 +591,242 @@ def home():
             "semester_hours": round(semester_hours_sum, 1),
             "semester_label": sem_label,
         }
+
+        return render_html(
+            "index.html",
+            active_events=active_events,
+            past_events=past_events[:3],
+            total_past_count=len(past_events),
+            stats=stats,
+            current_user=current_user,
+            active_page="home"
+        )
     finally:
         db.close()
 
-    return render_html(
-        "index.html",
-        active_events=active_events,
-        past_events=past_events,
-        leaderboard=top_3,
-        stats=stats
-    )
+
+# --- СТРАНИЦА «ВСЕ АКЦИИ» С ПОИСКОМ И ФИЛЬТРАЦИЕЙ ---
+@app.get("/events", response_class=HTMLResponse)
+def all_events_page(request: Request):
+    db = SessionLocal()
+    try:
+        current_user = get_current_user(request, db)
+        active_events, past_events = build_events_collections(db)
+        return render_html(
+            "events.html",
+            active_events=active_events,
+            past_events=past_events,
+            current_user=current_user,
+            active_page="events"
+        )
+    finally:
+        db.close()
+
+
+# --- СТРАНИЦА «СТАТИСТИКА И АНАЛИТИКА» ---
+@app.get("/analytics", response_class=HTMLResponse)
+def analytics_page(request: Request, mode: str = "year", period: str = ""):
+    if mode not in ("year", "semester"):
+        mode = "year"
+
+    db = SessionLocal()
+    try:
+        current_user = get_current_user(request, db)
+        today = date.today()
+        today_str = today.isoformat()
+
+        all_events = db.query(Event).all()
+        all_suggestions = db.query(EventSuggestion).all()
+        users = db.query(User).all()
+        all_logs = db.query(HoursLog).all()
+
+        # Собираем все доступные годы и семестры из дат акций и предложений
+        years_set = {today.year}
+        semesters_set = {get_semester_code_for_date(today)}
+
+        for ev in all_events:
+            d = parse_event_date(ev.date)
+            if d:
+                years_set.add(d.year)
+                semesters_set.add(get_semester_code_for_date(d))
+
+        for s in all_suggestions:
+            d = parse_event_date(s.created_at)
+            if d:
+                years_set.add(d.year)
+                semesters_set.add(get_semester_code_for_date(d))
+
+        available_years = sorted(years_set, reverse=True)
+        available_semesters = [
+            {"code": code, "label": format_semester_label(code)}
+            for code in sorted(semesters_set, reverse=True)
+        ]
+
+        if mode == "year":
+            selected_period = period if (period.isdigit() and int(period) in years_set) else str(today.year)
+        else:
+            valid_sem_codes = {item["code"] for item in available_semesters}
+            selected_period = period if period in valid_sem_codes else get_semester_code_for_date(today)
+
+        def matches_selected(d: Optional[date]) -> bool:
+            if not d:
+                return False
+            if mode == "year":
+                return str(d.year) == selected_period
+            return get_semester_code_for_date(d) == selected_period
+
+        # Завершённые акции за выбранный период
+        completed_events = [
+            ev for ev in all_events
+            if str(ev.date) < today_str and matches_selected(parse_event_date(ev.date))
+        ]
+
+        # Подготовка данных по месяцам для графика
+        month_names_full = [
+            "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
+            "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
+        ]
+        if mode == "year":
+            target_months = list(range(1, 13))
+        else:
+            _, sem_part = selected_period.split("-")
+            target_months = [9, 10, 11, 12] if sem_part == "S1" else [1, 2, 3, 4, 5, 6, 7, 8]
+
+        month_counts = {m: 0 for m in target_months}
+        category_counts = defaultdict(int)
+
+        for ev in completed_events:
+            d = parse_event_date(ev.date)
+            if d and d.month in month_counts:
+                month_counts[d.month] += 1
+            cat = (ev.category or "Волонтёрство").strip()
+            category_counts[cat] += 1
+
+        chart_labels = [month_names_full[m - 1] for m in target_months]
+        chart_values = [month_counts[m] for m in target_months]
+
+        cat_labels = list(category_counts.keys()) if category_counts else ["Нет данных"]
+        cat_values = list(category_counts.values()) if category_counts else [0]
+
+        # Расчёт процента принятых в работу идей (винрейт)
+        period_suggestions = [
+            s for s in all_suggestions if matches_selected(parse_event_date(s.created_at))
+        ]
+        total_sugg = len(period_suggestions)
+        accepted_sugg = sum(1 for s in period_suggestions if (s.status or "new") == "accepted")
+        winrate_percent = round((accepted_sugg / total_sugg) * 100) if total_sugg > 0 else 0
+
+        # Рейтинг волонтёров
+        logs_by_user = defaultdict(list)
+        for l in all_logs:
+            logs_by_user[l.user_id].append(l)
+
+        leaderboard = []
+        for u in users:
+            u_logs = logs_by_user.get(u.id, [])
+            total_hours = sum((l.hours or 0.0) for l in u_logs)
+            events_cnt = len({l.event_id for l in u_logs})
+            leaderboard.append({
+                "name": u.name,
+                "hours": round(total_hours, 1),
+                "events_count": events_cnt
+            })
+        leaderboard.sort(key=lambda x: x["hours"], reverse=True)
+
+        return render_html(
+            "analytics.html",
+            current_user=current_user,
+            active_page="analytics",
+            mode=mode,
+            selected_period=selected_period,
+            available_years=available_years,
+            available_semesters=available_semesters,
+            completed_count=len(completed_events),
+            winrate_percent=winrate_percent,
+            accepted_sugg=accepted_sugg,
+            total_sugg=total_sugg,
+            chart_labels_json=json.dumps(chart_labels, ensure_ascii=False),
+            chart_values_json=json.dumps(chart_values),
+            cat_labels_json=json.dumps(cat_labels, ensure_ascii=False),
+            cat_values_json=json.dumps(cat_values),
+            leaderboard=leaderboard
+        )
+    finally:
+        db.close()
+
+
+# --- СТРАНИЦА «СПИСОК ВСЕХ ВОЛОНТЁРОВ» (без логинов и контактов) ---
+@app.get("/volunteers", response_class=HTMLResponse)
+def volunteers_page(request: Request):
+    db = SessionLocal()
+    try:
+        current_user = get_current_user(request, db)
+        users = db.query(User).order_by(User.name.asc()).all()
+        all_logs = db.query(HoursLog).all()
+
+        logs_by_user = defaultdict(list)
+        for l in all_logs:
+            logs_by_user[l.user_id].append(l)
+
+        volunteers_list = []
+        for u in users:
+            u_logs = logs_by_user.get(u.id, [])
+            total_hours = round(sum((l.hours or 0.0) for l in u_logs), 1)
+            events_count = len({l.event_id for l in u_logs})
+            volunteers_list.append({
+                "name": u.name,
+                "hours": total_hours,
+                "events_count": events_count
+            })
+
+        return render_html(
+            "volunteers.html",
+            volunteers=volunteers_list,
+            current_user=current_user,
+            active_page="volunteers"
+        )
+    finally:
+        db.close()
+
+
+# --- СТРАНИЦА «НОВОСТИ И ИЗМЕНЕНИЯ» ---
+@app.get("/updates", response_class=HTMLResponse)
+def updates_page(request: Request):
+    db = SessionLocal()
+    try:
+        current_user = get_current_user(request, db)
+        public_news = (
+            db.query(NewsPost)
+            .filter(NewsPost.is_internal == False)  # noqa: E712
+            .order_by(NewsPost.id.desc())
+            .all()
+        )
+        internal_changes = []
+        if current_user:
+            internal_changes = (
+                db.query(NewsPost)
+                .filter(NewsPost.is_internal == True)  # noqa: E712
+                .order_by(NewsPost.id.desc())
+                .all()
+            )
+
+        return render_html(
+            "updates.html",
+            public_news=public_news,
+            internal_changes=internal_changes,
+            current_user=current_user,
+            active_page="updates"
+        )
+    finally:
+        db.close()
 
 
 # --- СТРАНИЦА ПОДРОБНОСТЕЙ АКЦИИ И ГАЛЕРЕИ ---
 @app.get("/event/{event_id}", response_class=HTMLResponse)
-def event_detail(event_id: int):
+def event_detail(request: Request, event_id: int):
     db = SessionLocal()
     try:
+        current_user = get_current_user(request, db)
         ev = db.query(Event).filter(Event.id == event_id).first()
         if not ev:
             raise HTTPException(status_code=404, detail="Акция не найдена")
@@ -603,7 +838,6 @@ def event_detail(event_id: int):
             if u:
                 participants.append({
                     "name": u.name,
-                    "username": u.username,
                     "hours": log.hours
                 })
 
@@ -621,7 +855,9 @@ def event_detail(event_id: int):
             event=ev,
             is_past=is_past,
             participants=participants,
-            media_items=media_items
+            media_items=media_items,
+            current_user=current_user,
+            active_page="events"
         )
     finally:
         db.close()
@@ -650,7 +886,8 @@ def suggest_event(
             contact=contact.strip()[:120] if contact.strip() else None,
             title=clean_title,
             description=description.strip()[:2000] if description.strip() else None,
-            created_at=date.today().isoformat()
+            created_at=date.today().isoformat(),
+            status="new"
         )
         db.add(suggestion)
         db.commit()
@@ -691,6 +928,7 @@ def admin_page(admin: str = Depends(check_admin)):
         users = db.query(User).all()
         logs = db.query(HoursLog).order_by(HoursLog.id.desc()).limit(20).all()
         suggestions = db.query(EventSuggestion).order_by(EventSuggestion.id.desc()).all()
+        news_posts = db.query(NewsPost).order_by(NewsPost.id.desc()).all()
         all_media = db.query(EventMedia).order_by(EventMedia.id.desc()).all()
 
         event_media_map = {}
@@ -714,6 +952,7 @@ def admin_page(admin: str = Depends(check_admin)):
             users=users,
             history=history,
             suggestions=suggestions,
+            news_posts=news_posts,
             event_media_map=event_media_map
         )
     finally:
@@ -841,16 +1080,73 @@ def delete_event_media(request: Request, media_id: int, admin: str = Depends(che
     return RedirectResponse(url="/admin", status_code=303)
 
 
-# Удаление предложенной акции
+# Отметка предложенной идеи как принятой в работу (для расчёта винрейта)
+@app.post("/admin/accept-suggestion/{suggestion_id}")
+def accept_suggestion(request: Request, suggestion_id: int, admin: str = Depends(check_admin)):
+    db = SessionLocal()
+    try:
+        s = db.query(EventSuggestion).filter(EventSuggestion.id == suggestion_id).first()
+        if s:
+            s.status = "accepted"
+            db.commit()
+            log_audit(db, admin, get_client_ip(request), "accept_suggestion", f"id={suggestion_id}")
+    finally:
+        db.close()
+    return RedirectResponse(url="/admin", status_code=303)
+
+
+# Отклонение/удаление предложенной акции
 @app.post("/admin/delete-suggestion/{suggestion_id}")
 def delete_suggestion(request: Request, suggestion_id: int, admin: str = Depends(check_admin)):
     db = SessionLocal()
     try:
         s = db.query(EventSuggestion).filter(EventSuggestion.id == suggestion_id).first()
         if s:
-            db.delete(s)
+            if (s.status or "new") == "new":
+                s.status = "rejected"
+            else:
+                db.delete(s)
             db.commit()
-            log_audit(db, admin, get_client_ip(request), "delete_suggestion", f"id={suggestion_id}")
+            log_audit(db, admin, get_client_ip(request), "reject_or_delete_suggestion", f"id={suggestion_id}")
+    finally:
+        db.close()
+    return RedirectResponse(url="/admin", status_code=303)
+
+
+# Публикация новости или внутреннего изменения для волонтёров
+@app.post("/admin/add-news")
+def add_news_post(
+    request: Request,
+    title: str = Form(...),
+    content: str = Form(...),
+    audience: str = Form("public"),
+    admin: str = Depends(check_admin)
+):
+    db = SessionLocal()
+    try:
+        post = NewsPost(
+            title=title.strip()[:200],
+            content=content.strip()[:4000],
+            created_at=date.today().isoformat(),
+            is_internal=(audience == "internal")
+        )
+        db.add(post)
+        db.commit()
+        log_audit(db, admin, get_client_ip(request), "add_news", f"{audience}: {post.title}")
+    finally:
+        db.close()
+    return RedirectResponse(url="/admin", status_code=303)
+
+
+@app.post("/admin/delete-news/{news_id}")
+def delete_news_post(request: Request, news_id: int, admin: str = Depends(check_admin)):
+    db = SessionLocal()
+    try:
+        post = db.query(NewsPost).filter(NewsPost.id == news_id).first()
+        if post:
+            db.delete(post)
+            db.commit()
+            log_audit(db, admin, get_client_ip(request), "delete_news", f"id={news_id}")
     finally:
         db.close()
     return RedirectResponse(url="/admin", status_code=303)
@@ -878,7 +1174,6 @@ def export_excel(request: Request, period: str = "all", admin: str = Depends(che
 
     wb = Workbook()
 
-    # Лист 1: Сводка по волонтёрам
     ws_users = wb.active
     ws_users.title = "Волонтёры"
     ws_users.append(["ФИО", "Логин", "Кол-во акций", "Часы"])
@@ -902,7 +1197,6 @@ def export_excel(request: Request, period: str = "all", admin: str = Depends(che
     for row in user_stats:
         ws_users.append(list(row))
 
-    # Лист 2: Список акций
     ws_events = wb.create_sheet(title="Акции")
     ws_events.append(["Название", "Категория", "Дата", "Место", "Участников", "Всего часов"])
     for cell in ws_events[1]:
