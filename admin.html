@@ -50,11 +50,11 @@
         <img src="/static/static/logo.png.jpg" alt="Логотип" class="h-12 w-auto object-contain rounded-lg">
         <div>
           <h1 class="text-lg sm:text-xl font-bold text-[#5c0613]">Панель администратора</h1>
-          <p class="text-sm text-slate-500 mt-0.5">Управление мероприятиями, галереей, отчётами и волонтёрами</p>
+          <p class="text-sm text-slate-500 mt-0.5">Управление мероприятиями, новостями, галереей, отчётами и волонтёрами</p>
         </div>
       </div>
       <a href="/" class="text-sm bg-[#faf7f7] border border-[#ecdfe1] text-[#5c0613] hover:bg-[#5c0613] hover:text-white px-4 py-2 rounded-lg font-semibold transition whitespace-nowrap self-start sm:self-auto">
-        ← К общему рейтингу
+        ← На главную
       </a>
     </div>
 
@@ -347,18 +347,28 @@
       </div>
     </div>
 
-    <!-- Блок 4: Предложенные акции от волонтёров -->
+    <!-- Блок 4: Предложенные акции от волонтёров (с учётом статуса для винрейта) -->
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-base font-bold text-[#5c0613]">4. Предложенные идеи акций</h2>
-        <span class="text-xs font-semibold bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full">Заявок: {{ suggestions|length if suggestions else 0 }}</span>
+        <span class="text-xs font-semibold bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full">Всего: {{ suggestions|length if suggestions else 0 }}</span>
       </div>
 
       <div class="space-y-3">
         {% for s in suggestions %}
-        <div class="border border-slate-200 rounded-xl p-4 bg-amber-50/40 flex flex-col sm:flex-row justify-between gap-3">
+        {% set st = s.status or 'new' %}
+        <div class="border border-slate-200 rounded-xl p-4 {% if st == 'accepted' %}bg-emerald-50/50 border-emerald-200{% elif st == 'rejected' %}bg-slate-50 opacity-75{% else %}bg-amber-50/40{% endif %} flex flex-col sm:flex-row justify-between gap-3">
           <div>
-            <div class="font-bold text-slate-800">{{ s.title }}</div>
+            <div class="flex flex-wrap items-center gap-2">
+              <div class="font-bold text-slate-800">{{ s.title }}</div>
+              {% if st == 'accepted' %}
+                <span class="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">Принята в работу</span>
+              {% elif st == 'rejected' %}
+                <span class="text-[10px] font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full">Отклонена</span>
+              {% else %}
+                <span class="text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">Новая</span>
+              {% endif %}
+            </div>
             {% if s.description %}
             <p class="text-xs text-slate-600 mt-1">{{ s.description }}</p>
             {% endif %}
@@ -368,17 +378,24 @@
               <span>Дата: {{ s.created_at }}</span>
             </div>
           </div>
-          <div class="flex items-start gap-2 shrink-0">
+          <div class="flex flex-wrap items-start gap-2 shrink-0">
+            {% if st != 'accepted' %}
+            <form action="/admin/accept-suggestion/{{ s.id }}" method="post" class="m-0">
+              <button type="submit" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-1.5 rounded-lg transition">
+                ✓ Принять
+              </button>
+            </form>
+            {% endif %}
             <button type="button"
                     data-title="{{ s.title }}"
                     data-desc="{{ s.description or '' }}"
                     onclick="useSuggestion(this)"
                     class="text-xs bg-[#5c0613] hover:bg-[#3f030b] text-white font-semibold px-3 py-1.5 rounded-lg transition">
-              Взять в работу
+              Заполнить акцию
             </button>
-            <form action="/admin/delete-suggestion/{{ s.id }}" method="post" onsubmit="return confirm('Удалить это предложение?');" class="m-0">
+            <form action="/admin/delete-suggestion/{{ s.id }}" method="post" onsubmit="return confirm('{% if st == 'new' %}Отклонить эту идею?{% else %}Удалить запись из базы?{% endif %}');" class="m-0">
               <button type="submit" class="text-xs bg-white border border-slate-200 hover:bg-red-50 hover:text-red-600 text-slate-500 px-2.5 py-1.5 rounded-lg transition">
-                Удалить
+                {% if st == 'new' %}Отклонить{% else %}Удалить{% endif %}
               </button>
             </form>
           </div>
@@ -389,10 +406,67 @@
       </div>
     </div>
 
-    <!-- Блок 5: Волонтёры (Добавление + База) -->
+    <!-- Блок 5: Новости и внутренние изменения для волонтёров -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-base font-bold text-[#5c0613]">5. Новости и изменения</h2>
+        <span class="text-xs font-semibold bg-[#fce8eb] text-[#5c0613] px-2.5 py-1 rounded-full">Записей: {{ news_posts|length if news_posts else 0 }}</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form action="/admin/add-news" method="post" class="space-y-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Заголовок *</label>
+            <input type="text" name="title" required placeholder="Например: Новый график собраний"
+                   class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Кто увидит запись? *</label>
+            <select name="audience" class="w-full px-3 py-2 border rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
+              <option value="public">Новость штаба (видят все посетители)</option>
+              <option value="internal">Внутреннее изменение (только авторизованные волонтёры)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Текст сообщения *</label>
+            <textarea name="content" rows="4" required placeholder="Подробности новости или изменения..."
+                      class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#5c0613]"></textarea>
+          </div>
+          <button type="submit" class="w-full bg-[#5c0613] hover:bg-[#3f030b] text-white font-semibold py-2.5 rounded-lg transition shadow-sm">
+            Опубликовать
+          </button>
+        </form>
+
+        <div class="space-y-2.5 max-h-80 overflow-y-auto pr-1">
+          {% for post in news_posts %}
+          <div class="border border-slate-200 rounded-xl p-3.5 bg-slate-50 flex justify-between items-start gap-3">
+            <div class="min-w-0">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="font-bold text-xs text-slate-800">{{ post.title }}</span>
+                {% if post.is_internal %}
+                  <span class="text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">Только волонтёры</span>
+                {% else %}
+                  <span class="text-[10px] font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full">Публичная</span>
+                {% endif %}
+              </div>
+              <p class="text-xs text-slate-600 mt-1 line-clamp-2">{{ post.content }}</p>
+              <div class="text-[10px] text-slate-400 mt-1">{{ post.created_at }}</div>
+            </div>
+            <form action="/admin/delete-news/{{ post.id }}" method="post" onsubmit="return confirm('Удалить эту публикацию?');" class="m-0 shrink-0">
+              <button type="submit" class="text-xs text-slate-400 hover:text-red-600 font-bold px-1.5 py-0.5 rounded hover:bg-red-50 transition" title="Удалить">×</button>
+            </form>
+          </div>
+          {% else %}
+          <p class="text-xs text-slate-400 italic">Публикаций пока нет</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Блок 6 и 7: Волонтёры (Добавление + База) -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <h2 class="text-base font-bold mb-4 text-[#5c0613]">5. Добавить волонтёра (вручную)</h2>
+        <h2 class="text-base font-bold mb-4 text-[#5c0613]">6. Добавить волонтёра (вручную)</h2>
         <form action="/admin/add-user" method="post" class="space-y-4">
           <div>
             <label class="block text-xs font-semibold text-slate-600 mb-1">ФИО волонтёра</label>
@@ -417,7 +491,7 @@
       </div>
 
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <h2 class="text-base font-bold mb-4 text-[#5c0613]">6. Зарегистрированные волонтёры ({{ users|length }})</h2>
+        <h2 class="text-base font-bold mb-4 text-[#5c0613]">7. Зарегистрированные волонтёры ({{ users|length }})</h2>
         <div class="overflow-x-auto max-h-80 overflow-y-auto">
           <table class="w-full text-left border-collapse text-sm">
             <thead>
