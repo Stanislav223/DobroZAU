@@ -1,1 +1,405 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#5c0613">
+  <title>Все акции — ДоброЗАУ</title>
+  <link rel="preconnect" href="[https://fonts.googleapis.com](https://fonts.googleapis.com)">
+  <link rel="preconnect" href="[https://fonts.gstatic.com](https://fonts.gstatic.com)" crossorigin>
+  <link href="[https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@600;700;800&display=swap](https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@600;700;800&display=swap)" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #5c0613;
+      --amber: #f59e0b;
+      --amber-deep: #b45309;
+      --amber-soft: rgba(245, 158, 11, 0.14);
+      --bg-top: #6b0c1c;
+      --bg-mid: #4a0510;
+      --bg-bottom: #260208;
+      --card-bg: #faf7f5;
+      --text-main: #23090e;
+      --text-muted: #6e585c;
+      --border-color: #ebe2de;
+    }
 
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    html, body { overflow-x: hidden; max-width: 100%; background-color: var(--bg-bottom); }
+    body {
+      background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-mid) 48%, var(--bg-bottom) 100%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      line-height: 1.5;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+    main { flex: 1; }
+    h1, h2, h3, .logo span, .section-title, .drawer-brand { font-family: 'Unbounded', 'Manrope', sans-serif; }
+    .icon-svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+
+    /* Шапка и боковое меню */
+    header {
+      background: rgba(42, 4, 11, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+    .nav-container { max-width: 1200px; margin: 0 auto; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .nav-left { display: flex; align-items: center; gap: 12px; }
+    .menu-toggle-btn {
+      width: 40px; height: 40px; border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.08);
+      color: #faf7f5;
+      display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+    }
+    .menu-toggle-btn:hover { background: rgba(255, 255, 255, 0.16); }
+    .logo { display: flex; align-items: center; gap: 10px; font-size: 1.05rem; font-weight: 700; color: #faf7f5; text-decoration: none; }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+    .nav-btn-profile {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #23090e; text-decoration: none; font-size: 12px; font-weight: 700;
+      padding: 8px 14px; border-radius: 999px;
+    }
+    .nav-btn-admin {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.16); text-decoration: none;
+      font-size: 12px; font-weight: 600; padding: 8px 12px; border-radius: 999px;
+    }
+
+    .drawer-backdrop {
+      position: fixed; inset: 0; background: rgba(15, 2, 5, 0.65);
+      backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity 0.28s ease; z-index: 60;
+    }
+    .drawer-backdrop.open { opacity: 1; pointer-events: auto; }
+    .side-drawer {
+      position: fixed; top: 0; left: 0; bottom: 0; width: 295px; max-width: 84vw;
+      background: linear-gradient(180deg, rgba(64, 6, 16, 0.96) 0%, rgba(32, 2, 7, 0.98) 100%);
+      backdrop-filter: blur(20px); border-right: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 16px 0 44px rgba(0, 0, 0, 0.48);
+      transform: translateX(-104%); transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+      z-index: 70; display: flex; flex-direction: column; padding: 20px 16px calc(24px + env(safe-area-inset-bottom));
+    }
+    .side-drawer.open { transform: translateX(0); }
+    .drawer-header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 16px; margin-bottom: 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.12); }
+    .drawer-brand { display: flex; align-items: center; gap: 10px; color: #faf7f5; font-size: 0.98rem; font-weight: 700; }
+    .drawer-close-btn { width: 34px; height: 34px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.14); background: rgba(255, 255, 255, 0.08); color: #faf7f5; font-size: 20px; cursor: pointer; }
+    .drawer-nav { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+    .drawer-link { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; color: rgba(250, 247, 245, 0.86); text-decoration: none; font-size: 0.92rem; font-weight: 600; }
+    .drawer-link:hover { background: rgba(255, 255, 255, 0.1); color: #ffffff; }
+    .drawer-link.active { background: linear-gradient(135deg, rgba(245, 158, 11, 0.22) 0%, rgba(217, 119, 6, 0.14) 100%); border: 1px solid rgba(245, 158, 11, 0.35); color: #fbbf24; font-weight: 700; }
+    .drawer-link .icon-svg { width: 18px; height: 18px; }
+    .drawer-footer { padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.12); font-size: 0.78rem; color: rgba(250, 247, 245, 0.65); }
+
+    .container { max-width: 1200px; width: 100%; margin: 28px auto 48px; padding: 0 24px; }
+    .section-title { font-size: 1.35rem; font-weight: 700; color: #faf7f5; margin-bottom: 6px; }
+    .section-subtitle { color: rgba(250, 247, 245, 0.78); font-size: 0.9rem; margin-bottom: 22px; }
+
+    /* Поиск и фильтры */
+    .search-filter-box { margin-bottom: 26px; display: flex; flex-direction: column; gap: 12px; }
+    .search-wrap { position: relative; width: 100%; }
+    .search-wrap .icon-svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); width: 18px; height: 18px; }
+    .search-input {
+      width: 100%; padding: 13px 16px 13px 44px; border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.25); background: var(--card-bg);
+      font-size: 0.95rem; color: var(--text-main); outline: none; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.14);
+    }
+    .search-input:focus { box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.35); }
+    .filter-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+    .filter-btn {
+      padding: 7px 14px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px);
+      color: rgba(255, 255, 255, 0.9); font-size: 0.83rem; font-weight: 600; cursor: pointer;
+    }
+    .filter-btn.active { background: var(--card-bg); color: var(--primary); border-color: var(--card-bg); font-weight: 700; }
+
+    /* Карточки */
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+    .event-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18); transition: transform 0.2s ease; }
+    .event-card:hover { transform: translateY(-4px); }
+    .card-media-header { position: relative; overflow: hidden; flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 24px 24px 0 24px; }
+    .card-media-header.has-media { min-height: 230px; padding: 64px 22px 20px 22px; background: #1a0206; color: #ffffff; }
+    .card-media-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(35, 6, 12, 0.92) 0%, rgba(35, 6, 12, 0.52) 52%, rgba(35, 6, 12, 0.08) 100%); z-index: 1; pointer-events: none; }
+    .card-media-content { position: relative; z-index: 2; width: 100%; }
+    .card-meta { display: flex; justify-content: flex-start; align-items: center; margin-bottom: 10px; gap: 8px; }
+    .card-title-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 6px; }
+    .card-title-row h3 { margin-bottom: 0; font-size: 1.05rem; font-weight: 700; }
+    .card-title-row h3 a { color: inherit; text-decoration: none; }
+    .badge { background: var(--amber-soft); color: var(--amber-deep); font-size: 0.76rem; font-weight: 700; padding: 4px 12px; border-radius: 999px; border: 1px solid rgba(245, 158, 11, 0.25); flex-shrink: 0; }
+    .badge-on-media { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #23090e; border: none; }
+    .badge-glass { background: rgba(255, 255, 255, 0.14); backdrop-filter: blur(10px); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.22); }
+    .badge-muted { background: #e2e8f0; color: #475569; border: 1px solid #cbd5e1; }
+    .event-card p { font-size: 0.9rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .event-details { border-top: 1px solid var(--border-color); padding-top: 14px; display: flex; flex-direction: column; gap: 8px; font-size: 0.87rem; color: var(--text-muted); }
+    .detail-row { display: flex; align-items: center; gap: 8px; }
+    .detail-row .icon-svg { color: var(--amber-deep); }
+    .card-media-header.has-media + .card-body .event-details { border-top: none; padding-top: 0; }
+    .btn-event-detail { display: inline-flex; align-items: center; justify-content: center; width: 100%; margin-top: 14px; padding: 10px 14px; border-radius: 10px; background: #f1eae6; color: var(--primary); text-decoration: none; font-size: 0.85rem; font-weight: 700; transition: background 0.2s, color 0.2s; }
+    .btn-event-detail:hover { background: var(--primary); color: #ffffff; }
+
+    footer { background: rgba(26, 2, 6, 0.65); color: rgba(250, 247, 245, 0.75); border-top: 1px solid rgba(255, 255, 255, 0.1); text-align: center; font-size: 0.86rem; padding: 22px 16px calc(22px + env(safe-area-inset-bottom)); }
+    @media (max-width: 768px) {
+      .container { padding: 0 16px; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .nav-btn-admin span { display: none; }
+    }
+  </style>
+  <link rel="icon" type="image/jpeg" href="/static/static/logo.png.jpg">
+</head>
+<body>
+  <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawer()"></div>
+  <aside class="side-drawer" id="sideDrawer">
+    <div class="drawer-header">
+      <div class="drawer-brand">
+        <img src="/static/static/logo.png.jpg" alt="ДоброЗАУ" style="height: 30px; width: auto; border-radius: 7px;">
+        <span>ДоброЗАУ</span>
+      </div>
+      <button type="button" class="drawer-close-btn" onclick="closeDrawer()">×</button>
+    </div>
+    <nav class="drawer-nav">
+      <a href="/" class="drawer-link {% if active_page == 'home' %}active{% endif %}">
+        <svg class="icon-svg" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Главная</span>
+      </a>
+      <a href="/events" class="drawer-link {% if active_page == 'events' %}active{% endif %}">
+        <svg class="icon-svg" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span>Все акции</span>
+      </a>
+      <a href="/analytics" class="drawer-link {% if active_page == 'analytics' %}active{% endif %}">
+        <svg class="icon-svg" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <span>Статистика и аналитика</span>
+      </a>
+      <a href="/volunteers" class="drawer-link {% if active_page == 'volunteers' %}active{% endif %}">
+        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>Волонтёры штаба</span>
+      </a>
+      <a href="/updates" class="drawer-link {% if active_page == 'updates' %}active{% endif %}">
+        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span>Новости и изменения</span>
+      </a>
+    </nav>
+    <div class="drawer-footer">
+      {% if current_user %}Вы вошли как <strong style="color: #faf7f5;">{{ current_user.name }}</strong>{% else %}Волонтёрский центр ДоброЗАУ{% endif %}
+    </div>
+  </aside>
+
+  <header>
+    <div class="nav-container">
+      <div class="nav-left">
+        <button type="button" class="menu-toggle-btn" onclick="openDrawer()" aria-label="Открыть меню">
+          <svg class="icon-svg" viewBox="0 0 24 24" style="width: 20px; height: 20px;"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <a href="/" class="logo">
+          <img src="/static/static/logo.png.jpg" alt="ДоброЗАУ" style="height: 36px; width: auto; border-radius: 8px;">
+          <span>ДоброЗАУ</span>
+        </a>
+      </div>
+      <div class="nav-actions">
+        <a href="/profile" class="nav-btn-profile">
+          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>Кабинет</span>
+        </a>
+        <a href="/admin" class="nav-btn-admin">
+          <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>Координатор</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 class="section-title">Все акции штаба</h1>
+    <p class="section-subtitle">Полный каталог актуальных и проведённых мероприятий ДоброЗАУ</p>
+
+    <!-- Поиск и фильтры -->
+    <div class="search-filter-box">
+      <div class="search-wrap">
+        <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="eventSearch" class="search-input" placeholder="Поиск акции по названию...">
+      </div>
+
+      <div class="filter-pills" id="categoryFilters">
+        <button type="button" class="filter-btn active" data-filter="all">Все</button>
+        <button type="button" class="filter-btn" data-filter="эко волонтёрство">Эко волонтёрство</button>
+        <button type="button" class="filter-btn" data-filter="событийное волонтёрство">Событийное волонтёрство</button>
+        <button type="button" class="filter-btn" data-filter="спорт и зож">Спорт и ЗОЖ</button>
+        <button type="button" class="filter-btn" data-filter="адресная помощь">Адресная помощь</button>
+        <button type="button" class="filter-btn" data-filter="культурное волонтёрство">Культурное волонтёрство</button>
+        <button type="button" class="filter-btn" data-filter="прочее">Прочее</button>
+      </div>
+    </div>
+
+    <div id="noSearchResults" style="display: none; text-align: center; padding: 30px; background: var(--card-bg); border-radius: 14px; color: var(--text-muted); margin-bottom: 24px; font-weight: 600;">
+      По вашему запросу акций не найдено.
+    </div>
+
+    {% if active_events %}
+    <div id="activeEventsSection" style="margin-bottom: 40px;">
+      <h2 style="color: #faf7f5; font-size: 1.05rem; margin-bottom: 16px;">Актуальные акции ({{ active_events|length }})</h2>
+      <div class="cards-grid">
+        {% for event in active_events %}
+        <div class="event-card" data-title="{{ event.title|lower }}" data-category="{{ (event.category or 'Волонтёрство')|lower }}" style="padding: 0; overflow: hidden;">
+          <div class="card-media-header {% if event.video_url %}has-media{% endif %}">
+            {% if event.video_url %}
+              {% set is_video = event.video_url.lower().endswith(('.mp4', '.webm', '.mov')) or '/video/upload/' in event.video_url %}
+              {% if is_video %}
+                <video class="card-bg-video" loop muted playsinline preload="metadata" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
+                  <source src="{{ event.video_url }}#t=0.001" type="video/mp4">
+                </video>
+              {% else %}
+                <img src="{{ event.video_url }}" alt="{{ event.title }}" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
+              {% endif %}
+              <div class="card-media-overlay"></div>
+            {% endif %}
+            <div class="card-media-content">
+              <div class="card-meta">
+                <span class="badge {% if event.video_url %}badge-on-media{% endif %}">{{ event.category or "Волонтёрство" }}</span>
+              </div>
+              <div class="card-title-row">
+                <h3 style="color: {% if event.video_url %}#ffffff{% else %}var(--text-main){% endif %};"><a href="/event/{{ event.id }}">{{ event.title }}</a></h3>
+                <span class="badge {% if event.video_url %}badge-glass{% endif %}">Активна</span>
+              </div>
+              {% if event.description %}<p style="color: {% if event.video_url %}rgba(255,255,255,0.88){% else %}var(--text-muted){% endif %};">{{ event.description }}</p>{% endif %}
+            </div>
+          </div>
+          <div class="card-body" style="padding: 18px 24px 22px 24px; background: var(--card-bg);">
+            <div class="event-details">
+              <div class="detail-row">
+                <svg class="icon-svg" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span><strong>Дата:</strong> {{ event.date or "Уточняется" }}</span>
+              </div>
+              <div class="detail-row">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span><strong>Место:</strong> {{ event.location or "По договорённости" }}</span>
+              </div>
+            </div>
+            <a href="/event/{{ event.id }}" class="btn-event-detail">Подробнее и галерея →</a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    {% if past_events %}
+    <div id="pastEventsSection">
+      <h2 style="color: rgba(250, 247, 245, 0.92); font-size: 1.05rem; margin-bottom: 16px;">Завершённые акции ({{ past_events|length }})</h2>
+      <div class="cards-grid" style="opacity: 0.95;">
+        {% for event in past_events %}
+        <div class="event-card" data-title="{{ event.title|lower }}" data-category="{{ (event.category or 'Волонтёрство')|lower }}" style="padding: 0; overflow: hidden;">
+          <div class="card-media-header {% if event.video_url %}has-media{% endif %}">
+            {% if event.video_url %}
+              {% set is_video = event.video_url.lower().endswith(('.mp4', '.webm', '.mov')) or '/video/upload/' in event.video_url %}
+              {% if is_video %}
+                <video class="card-bg-video" loop muted playsinline preload="metadata" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
+                  <source src="{{ event.video_url }}#t=0.001" type="video/mp4">
+                </video>
+              {% else %}
+                <img src="{{ event.video_url }}" alt="{{ event.title }}" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
+              {% endif %}
+              <div class="card-media-overlay"></div>
+            {% endif %}
+            <div class="card-media-content">
+              <div class="card-meta">
+                <span class="badge {% if event.video_url %}badge-on-media{% endif %}">{{ event.category or "Волонтёрство" }}</span>
+              </div>
+              <div class="card-title-row">
+                <h3 style="color: {% if event.video_url %}#ffffff{% else %}var(--text-main){% endif %};"><a href="/event/{{ event.id }}">{{ event.title }}</a></h3>
+                <span class="badge {% if event.video_url %}badge-glass{% else %}badge-muted{% endif %}">Завершена</span>
+              </div>
+              {% if event.description %}<p style="color: {% if event.video_url %}rgba(255,255,255,0.88){% else %}var(--text-muted){% endif %};">{{ event.description }}</p>{% endif %}
+            </div>
+          </div>
+          <div class="card-body" style="padding: 18px 24px 22px 24px; background: var(--card-bg);">
+            <div class="event-details">
+              <div class="detail-row">
+                <svg class="icon-svg" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span><strong>Дата:</strong> {{ event.date or "Проведена" }}</span>
+              </div>
+              <div class="detail-row">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span><strong>Место:</strong> {{ event.location or "По договорённости" }}</span>
+              </div>
+            </div>
+            <a href="/event/{{ event.id }}" class="btn-event-detail">Подробнее и галерея →</a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </main>
+
+  <footer>
+    © 2026 ДоброЗАУ. Волонтёрская деятельность и социальные проекты.
+  </footer>
+
+  <script>
+    function openDrawer() {
+      document.getElementById('sideDrawer').classList.add('open');
+      document.getElementById('drawerBackdrop').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeDrawer() {
+      document.getElementById('sideDrawer').classList.remove('open');
+      document.getElementById('drawerBackdrop').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDrawer(); });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const searchInput = document.getElementById('eventSearch');
+      const filterButtons = document.querySelectorAll('.filter-btn');
+      const allCards = document.querySelectorAll('.event-card[data-title]');
+      const noResultsBox = document.getElementById('noSearchResults');
+      const activeSection = document.getElementById('activeEventsSection');
+      const pastSection = document.getElementById('pastEventsSection');
+
+      let currentCategory = 'all';
+
+      function applyFilters() {
+        const query = searchInput.value.trim().toLowerCase();
+        let visibleTotal = 0;
+        let visibleActive = 0;
+        let visiblePast = 0;
+
+        allCards.forEach(card => {
+          const title = card.dataset.title || '';
+          const category = card.dataset.category || '';
+          const matchesSearch = title.includes(query);
+          const matchesCategory = (currentCategory === 'all') || (category === currentCategory);
+
+          if (matchesSearch && matchesCategory) {
+            card.style.display = '';
+            visibleTotal++;
+            if (activeSection && activeSection.contains(card)) visibleActive++;
+            if (pastSection && pastSection.contains(card)) visiblePast++;
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        if (activeSection) activeSection.style.display = (visibleActive === 0) ? 'none' : '';
+        if (pastSection) pastSection.style.display = (visiblePast === 0) ? 'none' : '';
+        noResultsBox.style.display = (allCards.length > 0 && visibleTotal === 0) ? 'block' : 'none';
+      }
+
+      searchInput.addEventListener('input', applyFilters);
+      filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentCategory = btn.dataset.filter;
+          applyFilters();
+        });
+      });
+    });
+  </script>
+</body>
+</html>
