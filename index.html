@@ -140,71 +140,220 @@
     .btn-event-detail { display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 100%; margin-top: 14px; padding: 10px 14px; border-radius: 10px; background: #f1eae6; color: var(--primary); text-decoration: none; font-size: 0.85rem; font-weight: 700; transition: background 0.2s, color 0.2s; }
     .btn-event-detail:hover { background: var(--primary); color: #ffffff; }
 
-    /* Пьедестал лидеров на главной (3-е слева, 1-е в центре, 2-е справа) */
+/* Пьедестал лидеров на главной (3-е слева, 1-е в центре, 2-е справа) */
     .podium-section { margin-top: 56px; }
-    .podium-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 10px; margin-bottom: 28px; }
+    .podium-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 10px; margin-bottom: 34px; }
     .podium-subtitle { font-size: 0.85rem; color: rgba(250, 247, 245, 0.72); font-weight: 600; }
 
-    .podium-stage { display: grid; grid-template-columns: 1fr 1.14fr 1fr; align-items: end; gap: 24px; }
-    .podium-col { display: flex; flex-direction: column; align-items: center; gap: 14px; position: relative; }
-    .podium-col.place-3 { order: 1; }
-    .podium-col.place-1 { order: 2; }
-    .podium-col.place-2 { order: 3; }
-
-    /* Отдельный блок для фото без рамок и прямоугольных границ */
-    .podium-visual { position: relative; width: 100%; overflow: visible; display: flex; align-items: flex-end; justify-content: center; isolation: isolate; }
-    .place-1 .podium-visual { height: 270px; }
-    .place-2 .podium-visual { height: 235px; }
-    .place-3 .podium-visual { height: 205px; }
-
-    /* Атмосферное свечение: плотное в центре, растворяется к краям */
-    .podium-aura {
-      position: absolute; inset: -24px; z-index: 0; pointer-events: none;
-      -webkit-mask-image: radial-gradient(ellipse 68% 66% at 50% 56%, #000 0%, rgba(0, 0, 0, 0.55) 45%, transparent 76%);
-      mask-image: radial-gradient(ellipse 68% 66% at 50% 56%, #000 0%, rgba(0, 0, 0, 0.55) 45%, transparent 76%);
+    .podium-stage {
+      display: grid;
+      grid-template-columns: 1fr 1.12fr 1fr;
+      align-items: end;
+      gap: 24px;
+      padding-top: 24px;
     }
-    .podium-aura::before, .podium-aura::after { content: ""; position: absolute; inset: 0; border-radius: 50%; pointer-events: none; }
 
-    .place-1 .podium-aura::before { background: radial-gradient(circle at 50% 54%, rgba(254, 240, 138, 0.9) 0%, rgba(245, 158, 11, 0.65) 30%, rgba(180, 83, 9, 0.22) 55%, transparent 74%); filter: blur(22px); }
-    .place-1 .podium-aura::after { background: radial-gradient(circle at 46% 50%, rgba(251, 191, 36, 0.55) 0%, transparent 55%); filter: blur(36px); }
+    .podium-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+    }
 
-    .place-2 .podium-aura::before { background: radial-gradient(circle at 50% 55%, rgba(255, 255, 255, 0.42) 0%, rgba(226, 232, 240, 0.2) 34%, rgba(255, 255, 255, 0.06) 56%, transparent 74%); filter: blur(22px); }
-    .place-2 .podium-aura::after { background: radial-gradient(circle at 52% 48%, rgba(255, 255, 255, 0.24) 0%, transparent 52%); filter: blur(34px); }
+    /* Заметная разница по высоте: 1-е выше всех, 2-е ниже, 3-е внизу */
+    .podium-col.place-3 { order: 1; margin-bottom: 0; }
+    .podium-col.place-1 { order: 2; margin-bottom: 92px; }
+    .podium-col.place-2 { order: 3; margin-bottom: 44px; }
 
-    .place-3 .podium-aura::before { background: radial-gradient(circle at 50% 55%, rgba(225, 45, 80, 0.72) 0%, rgba(159, 18, 57, 0.45) 34%, rgba(116, 16, 34, 0.16) 56%, transparent 74%); filter: blur(22px); }
-    .place-3 .podium-aura::after { background: radial-gradient(circle at 48% 50%, rgba(244, 63, 94, 0.35) 0%, transparent 52%); filter: blur(34px); }
+    /* Отдельный блок для фото */
+    .podium-visual {
+      position: relative;
+      width: 100%;
+      height: 230px;
+      overflow: visible;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      isolation: isolate;
+    }
+    .place-1 .podium-visual { height: 255px; }
 
+    /* Увеличенный радиус свечения + плавный эффект воды */
+    .podium-aura {
+      position: absolute;
+      inset: -75px -65px -45px -65px;
+      z-index: 0;
+      pointer-events: none;
+      -webkit-mask-image: radial-gradient(ellipse 72% 70% at 50% 55%, #000 0%, rgba(0, 0, 0, 0.5) 48%, transparent 80%);
+      mask-image: radial-gradient(ellipse 72% 70% at 50% 55%, #000 0%, rgba(0, 0, 0, 0.5) 48%, transparent 80%);
+    }
+
+    .podium-aura::before,
+    .podium-aura::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .podium-aura::before {
+      animation: waterDriftA 9s ease-in-out infinite alternate;
+    }
+    .podium-aura::after {
+      animation: waterDriftB 12s ease-in-out infinite alternate;
+    }
+
+    @keyframes waterDriftA {
+      0%   { transform: translate(-4%, -2%) scale(0.96) rotate(0deg); }
+      50%  { transform: translate(3%, 4%) scale(1.06) rotate(6deg); }
+      100% { transform: translate(-2%, 2%) scale(1.02) rotate(-5deg); }
+    }
+
+    @keyframes waterDriftB {
+      0%   { transform: translate(4%, 3%) scale(1.04) rotate(0deg); }
+      50%  { transform: translate(-4%, -3%) scale(0.94) rotate(-8deg); }
+      100% { transform: translate(2%, -2%) scale(1.08) rotate(5deg); }
+    }
+
+    /* 1-е место: тёплое янтарное свечение */
+    .place-1 .podium-aura::before {
+      background: radial-gradient(circle at 50% 54%, rgba(254, 240, 138, 0.88) 0%, rgba(245, 158, 11, 0.62) 32%, rgba(180, 83, 9, 0.24) 58%, transparent 78%);
+      filter: blur(28px);
+    }
+    .place-1 .podium-aura::after {
+      background:
+        radial-gradient(ellipse 65% 40% at 38% 46%, rgba(253, 224, 71, 0.48) 0%, transparent 65%),
+        radial-gradient(ellipse 60% 45% at 64% 62%, rgba(251, 146, 60, 0.42) 0%, transparent 65%);
+      filter: blur(34px);
+    }
+
+    /* 2-е место: мягкое свечение в тон матового стекла */
+    .place-2 .podium-aura::before {
+      background: radial-gradient(circle at 50% 55%, rgba(255, 255, 255, 0.42) 0%, rgba(226, 232, 240, 0.22) 36%, rgba(255, 255, 255, 0.07) 60%, transparent 80%);
+      filter: blur(28px);
+    }
+    .place-2 .podium-aura::after {
+      background:
+        radial-gradient(ellipse 65% 40% at 40% 48%, rgba(255, 255, 255, 0.26) 0%, transparent 65%),
+        radial-gradient(ellipse 55% 42% at 62% 60%, rgba(203, 213, 225, 0.2) 0%, transparent 65%);
+      filter: blur(34px);
+    }
+
+    /* 3-е место: свечение чуть светлее главного винного оттенка сайта */
+    .place-3 .podium-aura::before {
+      background: radial-gradient(circle at 50% 55%, rgba(225, 45, 80, 0.72) 0%, rgba(159, 18, 57, 0.45) 36%, rgba(116, 16, 34, 0.18) 60%, transparent 80%);
+      filter: blur(28px);
+    }
+    .place-3 .podium-aura::after {
+      background:
+        radial-gradient(ellipse 65% 40% at 38% 48%, rgba(244, 63, 94, 0.42) 0%, transparent 65%),
+        radial-gradient(ellipse 58% 42% at 64% 62%, rgba(190, 18, 60, 0.36) 0%, transparent 65%);
+      filter: blur(34px);
+    }
+
+    /* Лёгкая водная рябь поверх свечения */
     .podium-waves {
-      position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; opacity: 0.35; pointer-events: none;
-      -webkit-mask-image: radial-gradient(ellipse 64% 62% at 50% 55%, #000 15%, transparent 72%);
-      mask-image: radial-gradient(ellipse 64% 62% at 50% 55%, #000 15%, transparent 72%);
+      position: absolute;
+      inset: -35px;
+      width: calc(100% + 70px);
+      height: calc(100% + 70px);
+      z-index: 1;
+      opacity: 0.38;
+      pointer-events: none;
+      animation: waterRipple 8s ease-in-out infinite alternate;
+      -webkit-mask-image: radial-gradient(ellipse 66% 64% at 50% 55%, #000 12%, transparent 74%);
+      mask-image: radial-gradient(ellipse 66% 64% at 50% 55%, #000 12%, transparent 74%);
+    }
+
+    @keyframes waterRipple {
+      0%   { transform: translateY(-4px) scaleX(0.97) scaleY(1.02); }
+      100% { transform: translateY(5px) scaleX(1.04) scaleY(0.98); }
     }
 
     .podium-photo {
-      position: relative; z-index: 2; max-width: 92%; max-height: 96%;
-      object-fit: contain; object-position: bottom center; display: block;
+      position: relative;
+      z-index: 2;
+      max-width: 92%;
+      max-height: 96%;
+      object-fit: contain;
+      object-position: bottom center;
+      display: block;
       filter: drop-shadow(0 14px 24px rgba(0, 0, 0, 0.45));
       -webkit-mask-image: linear-gradient(to bottom, #000 84%, transparent 100%);
       mask-image: linear-gradient(to bottom, #000 84%, transparent 100%);
     }
-    .podium-placeholder { position: relative; z-index: 2; width: 96px; height: 96px; margin-bottom: 36px; border-radius: 50%; background: rgba(255, 255, 255, 0.14); border: 2px solid rgba(255, 255, 255, 0.32); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; font-family: 'Unbounded', sans-serif; font-size: 2rem; font-weight: 700; color: #ffffff; }
 
-    /* Отдельный блок пьедестала (имя и часы) */
-    .podium-base { width: 100%; border-radius: 20px; padding: 18px 16px 20px; text-align: center; position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; }
-    .place-1 .podium-base { min-height: 142px; background: linear-gradient(180deg, #faf7f5 0%, #f3e8d8 100%); border: 1px solid rgba(251, 191, 36, 0.55); box-shadow: 0 18px 38px rgba(0, 0, 0, 0.32); }
-    .place-2 .podium-base { min-height: 122px; background: rgba(255, 255, 255, 0.11); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid rgba(255, 255, 255, 0.22); color: #ffffff; box-shadow: 0 14px 30px rgba(0, 0, 0, 0.25); }
-    .place-3 .podium-base { min-height: 106px; background: linear-gradient(180deg, #7d1326 0%, #5c0613 100%); border: 1px solid rgba(255, 160, 175, 0.26); color: #faf7f5; box-shadow: 0 12px 26px rgba(0, 0, 0, 0.28); }
+    .podium-placeholder {
+      position: relative;
+      z-index: 2;
+      width: 92px;
+      height: 92px;
+      margin-bottom: 34px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.14);
+      border: 2px solid rgba(255, 255, 255, 0.32);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
 
-    .podium-rank-num { font-family: 'Unbounded', sans-serif; font-size: 0.76rem; font-weight: 800; padding: 4px 12px; border-radius: 999px; margin-bottom: 2px; }
-    .place-1 .podium-rank-num { background: linear-gradient(135deg, #fde68a, #f59e0b); color: #451a03; }
-    .place-2 .podium-rank-num { background: rgba(255, 255, 255, 0.18); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.26); }
-    .place-3 .podium-rank-num { background: rgba(255, 255, 255, 0.14); color: #fecdd3; }
-    .podium-name { font-family: 'Unbounded', 'Manrope', sans-serif; font-size: 0.96rem; font-weight: 700; line-height: 1.25; }
-    .place-1 .podium-name { color: #23090e; font-size: 1.05rem; }
-    .podium-hours { font-size: 0.85rem; font-weight: 800; padding: 4px 12px; border-radius: 999px; }
-    .place-1 .podium-hours { background: rgba(245, 158, 11, 0.18); color: #b45309; }
-    .place-2 .podium-hours { background: rgba(255, 255, 255, 0.16); color: #ffffff; }
-    .place-3 .podium-hours { background: rgba(255, 255, 255, 0.14); color: #fde68a; }
+    /* Тонкие пьедесталы одинакового цвета для всех трёх мест */
+    .podium-base {
+      width: 100%;
+      border-radius: 16px;
+      padding: 12px 14px;
+      text-align: center;
+      position: relative;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #faf7f5;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.26);
+    }
+
+    .podium-rank-num {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.16);
+      color: #faf7f5;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+    }
+    .place-1 .podium-rank-num {
+      background: linear-gradient(135deg, #fde68a, #f59e0b);
+      color: #451a03;
+      border: none;
+    }
+
+    .podium-name {
+      font-family: 'Unbounded', 'Manrope', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      line-height: 1.25;
+      color: #ffffff;
+    }
+
+    .podium-hours {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #fde68a;
+    }
 
     /* Блок обратной связи */
     .join-box-wrap { position: relative; margin-top: 54px; }
@@ -235,6 +384,7 @@
       .podium-col.place-1 { order: 1; }
       .podium-col.place-2 { order: 2; }
       .podium-col.place-3 { order: 3; }
+      .podium-col.place-1, .podium-col.place-2, .podium-col.place-3 { margin-bottom: 0; }
       .place-1 .podium-visual, .place-2 .podium-visual, .place-3 .podium-visual { height: 220px; }
       .container, .stats-wrapper, .hero { padding: 0 16px; }
       .nav-btn-admin span { display: none; }
