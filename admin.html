@@ -5,55 +5,217 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#5c0613">
   <title>Панель управления штабом — ДоброЗАУ</title>
-  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="icon" type="image/jpeg" href="/static/static/logo.png.jpg">
   <style>
+    :root {
+      --primary: #5c0613;
+      --primary-dark: #3f030b;
+      --danger: #dc2626;
+      --danger-bg: #fef2f2;
+      --danger-border: #fecaca;
+      --emerald: #059669;
+      --emerald-bg: #ecfdf5;
+      --emerald-border: #a7f3d0;
+      --amber: #d97706;
+      --amber-bg: #fffbeb;
+      --amber-border: #fde68a;
+      --card-bg: #ffffff;
+      --surface: #f8fafc;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     html, body { background-color: #5c0613; overflow-x: hidden; max-width: 100%; }
-    body { font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; padding-bottom: calc(2rem + env(safe-area-inset-bottom)); }
-    h1, h2 { font-family: 'Unbounded', 'Manrope', sans-serif; }
+    body {
+      background: linear-gradient(180deg, #6b0c1c 0%, #4a0510 50%, #260208 100%);
+      background-attachment: fixed;
+      color: var(--text);
+      line-height: 1.45;
+      min-height: 100dvh;
+      padding: 16px 14px calc(32px + env(safe-area-inset-bottom));
+    }
+
+    h1, h2 { font-family: 'Unbounded', 'Manrope', sans-serif; color: var(--primary); }
+    a { color: inherit; text-decoration: none; }
+
+    .wrap { max-width: 1040px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+
+    /* Карточки и сетки */
+    .card {
+      background: var(--card-bg);
+      border-radius: 18px;
+      padding: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.2);
+      min-width: 0;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+    .grid-2-sm { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .grid-icon-title { display: grid; grid-template-columns: 64px 1fr; gap: 10px; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+
+    /* Шапка и заголовки */
+    .top-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .brand-row { display: flex; align-items: center; gap: 14px; min-width: 0; }
+    .brand-logo { height: 46px; width: auto; border-radius: 10px; flex-shrink: 0; }
+    .top-header h1 { font-size: 1.15rem; }
+    .subtitle { font-size: 0.82rem; color: var(--muted); margin-top: 3px; }
+
+    .section-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+    .section-head h2 { font-size: 0.96rem; }
+
+    /* Бейджи */
+    .pill { font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: 999px; white-space: nowrap; display: inline-block; }
+    .pill-brand { background: #fce8eb; color: var(--primary); }
+    .pill-amber { background: var(--amber-bg); color: #92400e; border: 1px solid var(--amber-border); }
+    .pill-green { background: var(--emerald-bg); color: #065f46; border: 1px solid var(--emerald-border); }
+    .pill-gray { background: #e2e8f0; color: #475569; }
+
+    /* Формы и поля */
+    .form-stack { display: flex; flex-direction: column; gap: 12px; }
+    .field label { display: block; font-size: 0.76rem; font-weight: 700; color: #475569; margin-bottom: 4px; }
+    input[type="text"], input[type="date"], input[type="number"], select, textarea {
+      width: 100%; padding: 9px 11px; border: 1px solid #cbd5e1; border-radius: 10px;
+      font-size: 0.88rem; color: var(--text); background: #ffffff; outline: none;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(92, 6, 19, 0.12); }
+    input[type="file"] { width: 100%; font-size: 0.78rem; color: var(--muted); border: 1px solid #cbd5e1; border-radius: 10px; padding: 6px; background: #ffffff; }
+    textarea { resize: vertical; }
+
+    /* Кнопки */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 9px 14px; border-radius: 10px; font-size: 0.84rem; font-weight: 700;
+      border: 1px solid transparent; cursor: pointer; transition: opacity 0.15s, background 0.15s;
+      white-space: nowrap; text-align: center;
+    }
+    .btn:hover { opacity: 0.92; }
+    .btn-full { width: 100%; }
+    .btn-sm { padding: 6px 10px; font-size: 0.75rem; border-radius: 8px; }
+    .btn-primary { background: var(--primary); color: #ffffff; }
+    .btn-accent { background: #e63946; color: #ffffff; }
+    .btn-dark { background: #1e293b; color: #ffffff; }
+    .btn-green { background: var(--emerald); color: #ffffff; }
+    .btn-outline { background: #faf7f7; color: var(--primary); border-color: #ecdfe1; }
+    .btn-outline:hover { background: var(--primary); color: #ffffff; }
+    .btn-light { background: #ffffff; color: #475569; border-color: #cbd5e1; }
+    .btn-danger-soft { background: var(--danger-bg); color: var(--danger); border-color: var(--danger-border); }
+    .btn-icon-del { background: none; border: none; color: #94a3b8; font-size: 1.05rem; font-weight: 800; padding: 2px 6px; border-radius: 6px; cursor: pointer; line-height: 1; }
+    .btn-icon-del:hover { color: var(--danger); background: var(--danger-bg); }
+
+    .btn-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+    /* Списки и внутренние блоки */
+    .scroll-list { display: flex; flex-direction: column; gap: 8px; max-height: 320px; overflow-y: auto; padding-right: 2px; }
+    .item-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px 14px;
+    }
+    .item-box.accepted { background: #f0fdf4; border-color: #bbf7d0; }
+    .item-box.pending { background: #fffbeb; border-color: #fde68a; }
+    .item-box.rejected { opacity: 0.72; }
+
+    .item-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
+    .item-title { font-weight: 700; font-size: 0.9rem; color: var(--text); }
+    .item-title a:hover { color: var(--primary); text-decoration: underline; }
+    .item-meta { font-size: 0.75rem; color: var(--muted); margin-top: 4px; display: flex; flex-wrap: wrap; gap: 10px; }
+    .item-desc { font-size: 0.8rem; color: #475569; margin-top: 4px; }
+
+    .divider { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
+    .sub-label { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #94a3b8; margin-bottom: 10px; }
+
+    /* Раскрывающиеся панели */
+    details.panel { background: #ffffff; border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
+    details.panel summary { cursor: pointer; font-size: 0.78rem; font-weight: 700; color: var(--primary); user-select: none; }
+    details.panel .form-stack { margin-top: 10px; gap: 8px; }
+
+    /* Миниатюры галереи */
+    .media-thumb { position: relative; height: 76px; border-radius: 8px; overflow: hidden; background: #0f172a; border: 1px solid var(--border); }
+    .media-thumb img, .media-thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .media-del {
+      position: absolute; top: 4px; right: 4px; width: 20px; height: 20px; border-radius: 50%;
+      background: var(--danger); color: #ffffff; border: none; font-size: 12px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+    }
+
+    /* Таблица волонтёров */
+    .table-wrap { overflow-x: auto; max-height: 360px; overflow-y: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.84rem; min-width: 340px; }
+    th { text-align: left; font-size: 0.74rem; color: var(--muted); font-weight: 700; padding: 8px 6px; border-bottom: 1px solid var(--border); }
+    td { padding: 10px 6px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+    .td-right { text-align: right; }
+
+    .upload-label {
+      cursor: pointer; display: inline-flex; align-items: center; gap: 4px;
+      font-size: 0.72rem; font-weight: 700; padding: 5px 8px; border-radius: 7px; border: 1px solid;
+      white-space: nowrap;
+    }
+    .upload-label.has-photo { background: var(--emerald-bg); color: #047857; border-color: var(--emerald-border); }
+    .upload-label.no-photo { background: var(--amber-bg); color: #92400e; border-color: var(--amber-border); }
+
+    .empty-text { font-size: 0.8rem; color: #94a3b8; font-style: italic; text-align: center; padding: 14px 0; }
+
+    /* Адаптация под телефоны */
+    @media (max-width: 768px) {
+      body { padding: 12px 10px calc(28px + env(safe-area-inset-bottom)); }
+      .card { padding: 16px 14px; border-radius: 15px; }
+      .grid-2 { grid-template-columns: 1fr; gap: 16px; }
+      .grid-2-sm { grid-template-columns: 1fr; }
+      .top-header h1 { font-size: 1rem; }
+      .section-head h2 { font-size: 0.9rem; }
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+    }
   </style>
 </head>
-<body class="min-h-screen text-slate-800 p-4 sm:p-8">
-  <div class="max-w-5xl mx-auto space-y-6">
+<body>
+  <div class="wrap">
 
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-      <div class="flex items-center gap-4">
-        <img src="/static/static/logo.png.jpg" alt="Логотип" class="h-12 w-auto object-contain rounded-lg">
+    <!-- Шапка -->
+    <div class="card top-header">
+      <div class="brand-row">
+        <img src="/static/static/logo.png.jpg" alt="Логотип" class="brand-logo">
         <div>
-          <h1 class="text-lg sm:text-xl font-bold text-[#5c0613]">Панель администратора</h1>
-          <p class="text-sm text-slate-500 mt-0.5">Управление мероприятиями, достижениями, новостями, галереей и волонтёрами</p>
+          <h1>Панель администратора</h1>
+          <p class="subtitle">Управление мероприятиями, достижениями, новостями, галереей и волонтёрами</p>
         </div>
       </div>
-      <a href="/" class="text-sm bg-[#faf7f7] border border-[#ecdfe1] text-[#5c0613] hover:bg-[#5c0613] hover:text-white px-4 py-2 rounded-lg font-semibold transition whitespace-nowrap">← На главную</a>
+      <a href="/" class="btn btn-outline">← На главную</a>
     </div>
 
-    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <!-- Выгрузка Excel -->
+    <div class="card top-header">
       <div>
-        <h2 class="text-sm sm:text-base font-bold text-[#5c0613]">Выгрузка отчёта в Excel (.xlsx)</h2>
-        <p class="text-xs text-slate-500 mt-1">Сводка по волонтёрам и список проведённых акций за выбранный период</p>
+        <h2 style="font-size: 0.92rem;">Выгрузка отчёта в Excel (.xlsx)</h2>
+        <p class="subtitle">Сводка по волонтёрам и список проведённых акций за выбранный период</p>
       </div>
-      <div class="flex flex-wrap gap-2">
-        <a href="/admin/export-excel?period=month" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3.5 py-2 rounded-lg transition">За месяц</a>
-        <a href="/admin/export-excel?period=semester" class="text-xs bg-[#5c0613] hover:bg-[#3f030b] text-white font-semibold px-3.5 py-2 rounded-lg transition">За семестр</a>
-        <a href="/admin/export-excel?period=all" class="text-xs bg-slate-700 hover:bg-slate-800 text-white font-semibold px-3.5 py-2 rounded-lg transition">За всё время</a>
+      <div class="btn-row">
+        <a href="/admin/export-excel?period=month" class="btn btn-sm btn-green">За месяц</a>
+        <a href="/admin/export-excel?period=semester" class="btn btn-sm btn-primary">За семестр</a>
+        <a href="/admin/export-excel?period=all" class="btn btn-sm btn-dark">За всё время</a>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div id="createEventCard" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <h2 class="text-base font-bold mb-4 text-[#5c0613]">1. Добавить акцию</h2>
-        <form action="/admin/add-event" method="post" enctype="multipart/form-data" class="space-y-3.5">
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Название акции *</label>
-            <input type="text" id="createEventTitle" name="title" required placeholder="Например: Субботник в парке" class="w-full px-3 py-2 border rounded-lg text-sm">
+    <!-- Блоки 1 и 2: Создание акции + Начисление часов -->
+    <div class="grid-2">
+      <div id="createEventCard" class="card">
+        <div class="section-head">
+          <h2>1. Добавить акцию</h2>
+        </div>
+        <form action="/admin/add-event" method="post" enctype="multipart/form-data" class="form-stack">
+          <div class="field">
+            <label>Название акции *</label>
+            <input type="text" id="createEventTitle" name="title" required placeholder="Например: Субботник в парке">
           </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Категория *</label>
-              <select name="category" class="w-full px-3 py-2 border rounded-lg text-sm bg-white">
+          <div class="grid-2-sm">
+            <div class="field">
+              <label>Категория *</label>
+              <select name="category">
                 <option value="Эко волонтёрство">Эко волонтёрство</option>
                 <option value="Событийное волонтёрство">Событийное волонтёрство</option>
                 <option value="Спорт и ЗОЖ">Спорт и ЗОЖ</option>
@@ -62,107 +224,124 @@
                 <option value="Прочее">Прочее</option>
               </select>
             </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Дата проведения *</label>
-              <input type="date" name="date" required class="w-full px-3 py-2 border rounded-lg text-sm">
+            <div class="field">
+              <label>Дата проведения *</label>
+              <input type="date" name="date" required>
             </div>
           </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Место проведения</label>
-            <input type="text" name="location" placeholder="Например: Кампус ЗАУ" class="w-full px-3 py-2 border rounded-lg text-sm">
+          <div class="field">
+            <label>Место проведения</label>
+            <input type="text" name="location" placeholder="Например: Кампус ЗАУ">
           </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Описание акции</label>
-            <textarea id="createEventDesc" name="description" rows="3" class="w-full px-3 py-2 border rounded-lg text-sm"></textarea>
+          <div class="field">
+            <label>Описание акции</label>
+            <textarea id="createEventDesc" name="description" rows="3" placeholder="Подробности: что делаем, во сколько сбор..."></textarea>
           </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Обложка карточки (фото или видео)</label>
-            <input type="file" name="media_file" accept="image/*,video/*" class="w-full text-xs text-slate-500 border rounded-lg p-1">
+          <div class="field">
+            <label>Обложка карточки (фото или видео)</label>
+            <input type="file" name="media_file" accept="image/*,video/*">
           </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Или ссылка на обложку</label>
-            <input type="text" name="video_url" placeholder="https://..." class="w-full px-3 py-2 border rounded-lg text-sm">
+          <div class="field">
+            <label>Или ссылка на обложку</label>
+            <input type="text" name="video_url" placeholder="https://...">
           </div>
-          <button type="submit" class="w-full bg-[#5c0613] hover:bg-[#3f030b] text-white font-semibold py-2.5 rounded-lg transition">Создать акцию</button>
+          <button type="submit" class="btn btn-primary btn-full">Создать акцию</button>
         </form>
       </div>
 
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
+      <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
         <div>
-          <h2 class="text-base font-bold mb-4 text-[#5c0613]">2. Записать часы волонтёру</h2>
-          <form action="/admin/add-hours" method="post" class="space-y-4">
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Выберите акцию</label>
-              <select name="event_id" required class="w-full px-3 py-2 border rounded-lg text-sm bg-white">
-                {% for ev in events %}<option value="{{ ev.id }}">{{ ev.title }} ({{ ev.date }})</option>{% else %}<option disabled selected>Сначала создайте акцию</option>{% endfor %}
+          <div class="section-head">
+            <h2>2. Записать часы волонтёру</h2>
+          </div>
+          <form action="/admin/add-hours" method="post" class="form-stack">
+            <div class="field">
+              <label>Выберите акцию</label>
+              <select name="event_id" required>
+                {% for ev in events %}
+                <option value="{{ ev.id }}">{{ ev.title }} ({{ ev.date }})</option>
+                {% else %}
+                <option disabled selected>Сначала создайте акцию</option>
+                {% endfor %}
               </select>
             </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Выберите волонтёра</label>
-              <select name="user_id" required class="w-full px-3 py-2 border rounded-lg text-sm bg-white">
-                {% for u in users %}<option value="{{ u.id }}">{{ u.name }} ({{ '@' ~ u.username if u.username else 'id ' ~ u.id }})</option>{% else %}<option disabled selected>Волонтёров нет</option>{% endfor %}
+            <div class="field">
+              <label>Выберите волонтёра</label>
+              <select name="user_id" required>
+                {% for u in users %}
+                <option value="{{ u.id }}">{{ u.name }} ({{ '@' ~ u.username if u.username else 'id ' ~ u.id }})</option>
+                {% else %}
+                <option disabled selected>Волонтёров нет</option>
+                {% endfor %}
               </select>
             </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Количество часов</label>
-              <input type="number" step="0.5" min="0.5" name="hours" required placeholder="Например: 4" class="w-full px-3 py-2 border rounded-lg text-sm">
+            <div class="field">
+              <label>Количество часов</label>
+              <input type="number" step="0.5" min="0.5" name="hours" required placeholder="Например: 4 или 3.5">
             </div>
-            <button type="submit" class="w-full bg-[#e63946] hover:bg-[#c92a37] text-white font-semibold py-2.5 rounded-lg transition">Начислить часы</button>
+            <button type="submit" class="btn btn-accent btn-full">Начислить часы</button>
           </form>
         </div>
 
-        <div class="mt-6 pt-4 border-t border-slate-200">
-          <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Последние начисления часов</h3>
-          <div class="space-y-2 max-h-56 overflow-y-auto pr-1">
+        <div class="divider">
+          <div class="sub-label">Последние начисления часов</div>
+          <div class="scroll-list" style="max-height: 220px;">
             {% for h in history %}
-            <div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-lg border border-slate-200 text-xs">
-              <div><span class="font-semibold">{{ h.volunteer_name }}</span>: <span class="text-slate-600">{{ h.event_title }}</span> <span class="font-bold text-[#5c0613] ml-1 bg-red-50 px-1.5 py-0.5 rounded">+{{ h.hours }} ч.</span></div>
-              <form action="/admin/delete-hours/{{ h.id }}" method="post" onsubmit="return confirm('Отменить это начисление?');" class="m-0">
-                <button type="submit" class="text-slate-400 hover:text-red-600 font-bold px-1.5">×</button>
+            <div class="item-box" style="padding: 9px 12px; display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+              <div style="font-size: 0.78rem;">
+                <strong>{{ h.volunteer_name }}</strong>: {{ h.event_title }}
+                <span class="pill pill-brand" style="margin-left: 4px;">+{{ h.hours }} ч.</span>
+              </div>
+              <form action="/admin/delete-hours/{{ h.id }}" method="post" onsubmit="return confirm('Отменить это начисление?');">
+                <button type="submit" class="btn-icon-del" title="Отменить">×</button>
               </form>
             </div>
             {% else %}
-            <div class="text-xs text-slate-400 italic">Начислений пока не было</div>
+            <div class="empty-text">Начислений пока не было</div>
             {% endfor %}
           </div>
         </div>
       </div>
     </div>
 
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-base font-bold text-[#5c0613]">3. Управление акциями и галереей</h2>
-        <span class="text-xs font-semibold bg-[#fce8eb] text-[#5c0613] px-2.5 py-1 rounded-full">Всего: {{ events|length }}</span>
+    <!-- Блок 3: Управление акциями и галереей -->
+    <div class="card">
+      <div class="section-head">
+        <h2>3. Управление акциями и галереей</h2>
+        <span class="pill pill-brand">Всего: {{ events|length }}</span>
       </div>
-      <div class="space-y-3">
+      <div class="form-stack">
         {% for ev in events %}
         {% set media_list = event_media_map.get(ev.id, []) if event_media_map else [] %}
-        <div class="border border-slate-200 rounded-xl p-4 bg-slate-50/60">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div class="item-box">
+          <div class="item-row">
             <div>
-              <div class="flex flex-wrap items-center gap-2">
-                <a href="/event/{{ ev.id }}" target="_blank" class="font-bold text-slate-800 hover:text-[#5c0613] hover:underline">{{ ev.title }}</a>
-                <span class="text-[11px] font-semibold bg-[#fce8eb] text-[#5c0613] px-2 py-0.5 rounded-full">{{ ev.category or "Волонтёрство" }}</span>
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px;">
+                <span class="item-title"><a href="/event/{{ ev.id }}" target="_blank">{{ ev.title }}</a></span>
+                <span class="pill pill-brand">{{ ev.category or "Волонтёрство" }}</span>
               </div>
-              <div class="text-xs text-slate-500 mt-1 flex flex-wrap gap-3">
-                <span>Дата: {{ ev.date }}</span><span>Место: {{ ev.location or "По договорённости" }}</span><span>В галерее: {{ media_list|length }}</span>
+              <div class="item-meta">
+                <span>Дата: {{ ev.date }}</span>
+                <span>Место: {{ ev.location or "По договорённости" }}</span>
+                <span>В галерее: {{ media_list|length }}</span>
               </div>
             </div>
-            <div class="flex items-center gap-2">
-              <a href="/event/{{ ev.id }}" target="_blank" class="text-xs bg-white border border-slate-200 px-2.5 py-1.5 rounded-lg">Открыть ↗</a>
-              <form action="/admin/delete-event/{{ ev.id }}" method="post" onsubmit="return confirm('Удалить акцию?');" class="m-0">
-                <button type="submit" class="text-xs bg-red-50 text-red-600 border border-red-200 px-2.5 py-1.5 rounded-lg">Удалить</button>
+            <div class="btn-row">
+              <a href="/event/{{ ev.id }}" target="_blank" class="btn btn-sm btn-light">Открыть ↗</a>
+              <form action="/admin/delete-event/{{ ev.id }}" method="post" onsubmit="return confirm('Удалить акцию и все начисленные за неё часы?');">
+                <button type="submit" class="btn btn-sm btn-danger-soft">Удалить</button>
               </form>
             </div>
           </div>
-          <div class="mt-3 pt-3 border-t border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-3">
-            <details class="bg-white border border-slate-200 rounded-lg p-3">
-              <summary class="cursor-pointer text-xs font-bold text-[#5c0613] select-none">Редактировать акцию</summary>
-              <form action="/admin/edit-event/{{ ev.id }}" method="post" enctype="multipart/form-data" class="mt-3 space-y-2.5">
-                <input type="text" name="title" value="{{ ev.title }}" required class="w-full px-2.5 py-1.5 border rounded-lg text-xs">
-                <div class="grid grid-cols-2 gap-2">
+
+          <div class="grid-2" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); gap: 10px;">
+            <details class="panel">
+              <summary>Редактировать акцию</summary>
+              <form action="/admin/edit-event/{{ ev.id }}" method="post" enctype="multipart/form-data" class="form-stack">
+                <input type="text" name="title" value="{{ ev.title }}" required>
+                <div class="grid-2-sm">
                   {% set cur_cat = ev.category or "Прочее" %}
-                  <select name="category" class="w-full px-2 py-1.5 border rounded-lg text-xs bg-white">
+                  <select name="category">
                     <option value="Эко волонтёрство" {% if cur_cat == 'Эко волонтёрство' %}selected{% endif %}>Эко волонтёрство</option>
                     <option value="Событийное волонтёрство" {% if cur_cat == 'Событийное волонтёрство' %}selected{% endif %}>Событийное волонтёрство</option>
                     <option value="Спорт и ЗОЖ" {% if cur_cat == 'Спорт и ЗОЖ' %}selected{% endif %}>Спорт и ЗОЖ</option>
@@ -170,246 +349,266 @@
                     <option value="Культурное волонтёрство" {% if cur_cat == 'Культурное волонтёрство' %}selected{% endif %}>Культурное волонтёрство</option>
                     <option value="Прочее" {% if cur_cat == 'Прочее' %}selected{% endif %}>Прочее</option>
                   </select>
-                  <input type="date" name="date" value="{{ ev.date }}" required class="w-full px-2 py-1.5 border rounded-lg text-xs">
+                  <input type="date" name="date" value="{{ ev.date }}" required>
                 </div>
-                <input type="text" name="location" value="{{ ev.location or '' }}" class="w-full px-2.5 py-1.5 border rounded-lg text-xs">
-                <textarea name="description" rows="2" class="w-full px-2.5 py-1.5 border rounded-lg text-xs">{{ ev.description or '' }}</textarea>
-                <input type="file" name="media_file" accept="image/*,video/*" class="w-full text-[11px] border rounded-lg p-1">
-                <input type="text" name="video_url" value="{{ ev.video_url or '' }}" placeholder="https://..." class="w-full px-2.5 py-1.5 border rounded-lg text-xs">
-                <button type="submit" class="w-full bg-[#5c0613] text-white text-xs font-semibold py-2 rounded-lg">Сохранить изменения</button>
+                <input type="text" name="location" value="{{ ev.location or '' }}" placeholder="Место">
+                <textarea name="description" rows="2" placeholder="Описание">{{ ev.description or '' }}</textarea>
+                <input type="file" name="media_file" accept="image/*,video/*">
+                <input type="text" name="video_url" value="{{ ev.video_url or '' }}" placeholder="Ссылка на обложку">
+                <button type="submit" class="btn btn-sm btn-primary btn-full">Сохранить изменения</button>
               </form>
             </details>
 
-            <details class="bg-white border border-slate-200 rounded-lg p-3">
-              <summary class="cursor-pointer text-xs font-bold text-[#5c0613] select-none">Галерея акции ({{ media_list|length }})</summary>
-              <div class="mt-3 space-y-3">
-                <form action="/admin/event/{{ ev.id }}/add-media" method="post" enctype="multipart/form-data" class="space-y-2">
-                  <input type="file" name="files" multiple required accept="image/*,video/*" class="w-full text-[11px] border rounded-lg p-1">
-                  <button type="submit" class="w-full bg-slate-800 text-white text-xs font-semibold py-1.5 rounded-lg">Добавить в галерею</button>
-                </form>
-                {% if media_list %}
-                <div class="grid grid-cols-3 gap-2 pt-2 border-t border-slate-100">
-                  {% for m in media_list %}
-                  <div class="relative rounded-lg overflow-hidden border bg-slate-900 h-20">
-                    {% if m.media_url.lower().endswith(('.mp4', '.webm', '.mov')) or '/video/upload/' in m.media_url %}
-                      <video src="{{ m.media_url }}#t=0.001" muted preload="metadata" class="w-full h-full object-cover"></video>
-                    {% else %}
-                      <img src="{{ m.media_url }}" alt="Медиа" class="w-full h-full object-cover">
-                    {% endif %}
-                    <form action="/admin/delete-media/{{ m.id }}" method="post" onsubmit="return confirm('Удалить файл?');" class="absolute top-1 right-1 m-0">
-                      <button type="submit" class="bg-red-600 text-white text-[11px] font-bold w-5 h-5 rounded-full flex items-center justify-center">×</button>
-                    </form>
-                  </div>
-                  {% endfor %}
+            <details class="panel">
+              <summary>Галерея акции ({{ media_list|length }})</summary>
+              <form action="/admin/event/{{ ev.id }}/add-media" method="post" enctype="multipart/form-data" class="form-stack">
+                <input type="file" name="files" multiple required accept="image/*,video/*">
+                <button type="submit" class="btn btn-sm btn-dark btn-full">Добавить в галерею</button>
+              </form>
+              {% if media_list %}
+              <div class="gallery-grid">
+                {% for m in media_list %}
+                <div class="media-thumb">
+                  {% if m.media_url.lower().endswith(('.mp4', '.webm', '.mov')) or '/video/upload/' in m.media_url %}
+                    <video src="{{ m.media_url }}#t=0.001" muted preload="metadata"></video>
+                  {% else %}
+                    <img src="{{ m.media_url }}" alt="Медиа">
+                  {% endif %}
+                  <form action="/admin/delete-media/{{ m.id }}" method="post" onsubmit="return confirm('Удалить файл?');">
+                    <button type="submit" class="media-del" title="Удалить">×</button>
+                  </form>
                 </div>
-                {% endif %}
+                {% endfor %}
               </div>
+              {% endif %}
             </details>
           </div>
         </div>
         {% else %}
-        <p class="text-sm text-slate-400 italic text-center py-4">Пока нет созданных акций</p>
+        <div class="empty-text">Пока нет созданных акций</div>
         {% endfor %}
       </div>
     </div>
 
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-base font-bold text-[#5c0613]">4. Предложенные идеи акций</h2>
-        <span class="text-xs font-semibold bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full">Всего: {{ suggestions|length if suggestions else 0 }}</span>
+    <!-- Блок 4: Предложенные идеи -->
+    <div class="card">
+      <div class="section-head">
+        <h2>4. Предложенные идеи акций</h2>
+        <span class="pill pill-amber">Всего: {{ suggestions|length if suggestions else 0 }}</span>
       </div>
-      <div class="space-y-3">
+      <div class="form-stack">
         {% for s in suggestions %}
         {% set st = s.status or 'new' %}
-        <div class="border border-slate-200 rounded-xl p-4 {% if st == 'accepted' %}bg-emerald-50/50 border-emerald-200{% elif st == 'rejected' %}bg-slate-50 opacity-75{% else %}bg-amber-50/40{% endif %} flex flex-col sm:flex-row justify-between gap-3">
-          <div>
-            <div class="flex flex-wrap items-center gap-2">
-              <div class="font-bold text-slate-800">{{ s.title }}</div>
-              {% if st == 'accepted' %}<span class="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">Принята в работу</span>
-              {% elif st == 'rejected' %}<span class="text-[10px] font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full">Отклонена</span>
-              {% else %}<span class="text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">Новая</span>{% endif %}
+        <div class="item-box {% if st == 'accepted' %}accepted{% elif st == 'rejected' %}rejected{% else %}pending{% endif %}">
+          <div class="item-row">
+            <div style="flex: 1; min-width: 200px;">
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px;">
+                <span class="item-title">{{ s.title }}</span>
+                {% if st == 'accepted' %}<span class="pill pill-green">Принята в работу</span>
+                {% elif st == 'rejected' %}<span class="pill pill-gray">Отклонена</span>
+                {% else %}<span class="pill pill-amber">Новая</span>{% endif %}
+              </div>
+              {% if s.description %}<p class="item-desc">{{ s.description }}</p>{% endif %}
+              <div class="item-meta">
+                <span>Автор: <strong>{{ s.author_name }}</strong></span>
+                {% if s.contact %}<span>Контакт: {{ s.contact }}</span>{% endif %}
+                <span>Дата: {{ s.created_at }}</span>
+              </div>
             </div>
-            {% if s.description %}<p class="text-xs text-slate-600 mt-1">{{ s.description }}</p>{% endif %}
-            <div class="text-[11px] text-slate-500 mt-2 flex flex-wrap gap-3">
-              <span>Автор: <strong>{{ s.author_name }}</strong></span>{% if s.contact %}<span>Контакт: {{ s.contact }}</span>{% endif %}<span>Дата: {{ s.created_at }}</span>
+            <div class="btn-row">
+              {% if st != 'accepted' %}
+              <form action="/admin/accept-suggestion/{{ s.id }}" method="post">
+                <button type="submit" class="btn btn-sm btn-green">✓ Принять</button>
+              </form>
+              {% endif %}
+              <button type="button" data-title="{{ s.title }}" data-desc="{{ s.description or '' }}" onclick="useSuggestion(this)" class="btn btn-sm btn-primary">Заполнить акцию</button>
+              <form action="/admin/delete-suggestion/{{ s.id }}" method="post" onsubmit="return confirm('Продолжить?');">
+                <button type="submit" class="btn btn-sm btn-light">{% if st == 'new' %}Отклонить{% else %}Удалить{% endif %}</button>
+              </form>
             </div>
-          </div>
-          <div class="flex flex-wrap items-start gap-2 shrink-0">
-            {% if st != 'accepted' %}
-            <form action="/admin/accept-suggestion/{{ s.id }}" method="post" class="m-0">
-              <button type="submit" class="text-xs bg-emerald-600 text-white font-semibold px-3 py-1.5 rounded-lg">✓ Принять</button>
-            </form>
-            {% endif %}
-            <button type="button" data-title="{{ s.title }}" data-desc="{{ s.description or '' }}" onclick="useSuggestion(this)" class="text-xs bg-[#5c0613] text-white font-semibold px-3 py-1.5 rounded-lg">Заполнить акцию</button>
-            <form action="/admin/delete-suggestion/{{ s.id }}" method="post" onsubmit="return confirm('Продолжить?');" class="m-0">
-              <button type="submit" class="text-xs bg-white border border-slate-200 text-slate-500 px-2.5 py-1.5 rounded-lg">{% if st == 'new' %}Отклонить{% else %}Удалить{% endif %}</button>
-            </form>
           </div>
         </div>
         {% else %}
-        <p class="text-xs text-slate-400 italic">Новых предложений пока нет</p>
+        <div class="empty-text">Новых предложений пока нет</div>
         {% endfor %}
       </div>
     </div>
 
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-base font-bold text-[#5c0613]">5. Новости и изменения</h2>
-        <span class="text-xs font-semibold bg-[#fce8eb] text-[#5c0613] px-2.5 py-1 rounded-full">Записей: {{ news_posts|length if news_posts else 0 }}</span>
+    <!-- Блок 5: Новости и изменения -->
+    <div class="card">
+      <div class="section-head">
+        <h2>5. Новости и изменения</h2>
+        <span class="pill pill-brand">Записей: {{ news_posts|length if news_posts else 0 }}</span>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <form action="/admin/add-news" method="post" class="space-y-3">
-          <input type="text" name="title" required placeholder="Заголовок *" class="w-full px-3 py-2 border rounded-lg text-sm">
-          <select name="audience" class="w-full px-3 py-2 border rounded-lg text-sm bg-white">
+      <div class="grid-2">
+        <form action="/admin/add-news" method="post" class="form-stack">
+          <input type="text" name="title" required placeholder="Заголовок *">
+          <select name="audience">
             <option value="public">Новость штаба (видят все)</option>
             <option value="internal">Внутреннее изменение (только волонтёры)</option>
           </select>
-          <textarea name="content" rows="4" required placeholder="Текст сообщения *" class="w-full px-3 py-2 border rounded-lg text-sm"></textarea>
-          <button type="submit" class="w-full bg-[#5c0613] text-white font-semibold py-2.5 rounded-lg">Опубликовать</button>
+          <textarea name="content" rows="4" required placeholder="Текст сообщения *"></textarea>
+          <button type="submit" class="btn btn-primary btn-full">Опубликовать</button>
         </form>
-        <div class="space-y-2.5 max-h-80 overflow-y-auto pr-1">
+
+        <div class="scroll-list">
           {% for post in news_posts %}
-          <div class="border border-slate-200 rounded-xl p-3.5 bg-slate-50 flex justify-between items-start gap-3">
-            <div class="min-w-0">
-              <div class="flex flex-wrap items-center gap-2">
-                <span class="font-bold text-xs text-slate-800">{{ post.title }}</span>
-                {% if post.is_internal %}<span class="text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">Только волонтёры</span>{% else %}<span class="text-[10px] font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full">Публичная</span>{% endif %}
+          <div class="item-box" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
+            <div style="min-width: 0;">
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px;">
+                <span class="item-title" style="font-size: 0.84rem;">{{ post.title }}</span>
+                {% if post.is_internal %}<span class="pill pill-amber">Только волонтёры</span>{% else %}<span class="pill pill-gray">Публичная</span>{% endif %}
               </div>
-              <p class="text-xs text-slate-600 mt-1 line-clamp-2">{{ post.content }}</p>
-              <div class="text-[10px] text-slate-400 mt-1">{{ post.created_at }}</div>
+              <p class="item-desc">{{ post.content }}</p>
+              <div class="item-meta">{{ post.created_at }}</div>
             </div>
-            <form action="/admin/delete-news/{{ post.id }}" method="post" onsubmit="return confirm('Удалить публикацию?');" class="m-0 shrink-0">
-              <button type="submit" class="text-xs text-slate-400 hover:text-red-600 font-bold px-1.5">×</button>
+            <form action="/admin/delete-news/{{ post.id }}" method="post" onsubmit="return confirm('Удалить публикацию?');">
+              <button type="submit" class="btn-icon-del" title="Удалить">×</button>
             </form>
           </div>
           {% else %}
-          <p class="text-xs text-slate-400 italic">Публикаций пока нет</p>
+          <div class="empty-text">Публикаций пока нет</div>
           {% endfor %}
         </div>
       </div>
     </div>
 
-    <!-- Блок 6: Управление достижениями -->
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-base font-bold text-[#5c0613]">6. Управление достижениями (ачивками)</h2>
-        <span class="text-xs font-semibold bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full">Всего: {{ achievements|length if achievements else 0 }}</span>
+    <!-- Блок 6: Достижения -->
+    <div class="card">
+      <div class="section-head">
+        <h2>6. Управление достижениями (ачивками)</h2>
+        <span class="pill pill-amber">Всего: {{ achievements|length if achievements else 0 }}</span>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <form action="/admin/add-achievement" method="post" class="space-y-3">
-          <div class="grid grid-cols-4 gap-2">
-            <input type="text" name="icon" value="🏆" required class="px-3 py-2 border rounded-lg text-sm text-center">
-            <input type="text" name="title" required placeholder="Название *" class="col-span-3 px-3 py-2 border rounded-lg text-sm">
+      <div class="grid-2">
+        <form action="/admin/add-achievement" method="post" class="form-stack">
+          <div class="grid-icon-title">
+            <input type="text" name="icon" value="🏆" required style="text-align: center;">
+            <input type="text" name="title" required placeholder="Название *">
           </div>
-          <input type="text" name="description" required placeholder="Описание (например: Участие в 10 акциях) *" class="w-full px-3 py-2 border rounded-lg text-sm">
-          <div class="grid grid-cols-2 gap-2">
-            <select name="metric_type" class="px-2.5 py-2 border rounded-lg text-xs bg-white">
+          <input type="text" name="description" required placeholder="Описание (напр.: Участие в 10 акциях) *">
+          <div class="grid-2-sm">
+            <select name="metric_type">
               <option value="events_count">Кол-во акций</option>
               <option value="total_hours">Сумма часов</option>
               <option value="category_count">Акции в категории</option>
             </select>
-            <input type="number" step="0.5" min="0.5" name="target_value" required placeholder="Цель (число) *" class="px-3 py-2 border rounded-lg text-sm">
+            <input type="number" step="0.5" min="0.5" name="target_value" required placeholder="Цель (число) *">
           </div>
-          <input type="text" name="category_filter" placeholder="Ключевое слово категории (эко, зож, адресн...)" class="w-full px-3 py-2 border rounded-lg text-sm">
-          <button type="submit" class="w-full bg-[#5c0613] text-white font-semibold py-2.5 rounded-lg">Добавить достижение</button>
+          <input type="text" name="category_filter" placeholder="Ключевое слово категории (эко, зож, адресн...)">
+          <button type="submit" class="btn btn-primary btn-full">Добавить достижение</button>
         </form>
 
-        <div class="space-y-2.5 max-h-96 overflow-y-auto pr-1">
+        <div class="scroll-list">
           {% for ach in achievements %}
-          <div class="border border-slate-200 rounded-xl p-3 bg-slate-50">
-            <div class="flex justify-between items-start gap-2">
-              <div class="flex items-center gap-2 min-w-0">
-                <span class="text-lg">{{ ach.icon }}</span>
-                <div class="min-w-0">
-                  <div class="font-bold text-xs text-slate-800">{{ ach.title }}</div>
-                  <div class="text-[11px] text-slate-500">{{ ach.description }}</div>
+          <div class="item-box">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+              <div style="display: flex; align-items: center; gap: 8px; min-width: 0;">
+                <span style="font-size: 1.2rem;">{{ ach.icon }}</span>
+                <div>
+                  <div class="item-title" style="font-size: 0.84rem;">{{ ach.title }}</div>
+                  <div class="item-desc" style="margin-top: 1px;">{{ ach.description }}</div>
                 </div>
               </div>
-              <form action="/admin/delete-achievement/{{ ach.id }}" method="post" onsubmit="return confirm('Удалить достижение?');" class="m-0 shrink-0">
-                <button type="submit" class="text-xs text-slate-400 hover:text-red-600 font-bold px-1.5">×</button>
+              <form action="/admin/delete-achievement/{{ ach.id }}" method="post" onsubmit="return confirm('Удалить достижение?');">
+                <button type="submit" class="btn-icon-del" title="Удалить">×</button>
               </form>
             </div>
-            <details class="mt-2 pt-2 border-t border-slate-200">
-              <summary class="cursor-pointer text-[11px] font-bold text-[#5c0613] select-none">Изменить</summary>
-              <form action="/admin/edit-achievement/{{ ach.id }}" method="post" class="mt-2 space-y-2">
-                <div class="grid grid-cols-4 gap-2">
-                  <input type="text" name="icon" value="{{ ach.icon }}" required class="px-2 py-1 border rounded text-xs text-center bg-white">
-                  <input type="text" name="title" value="{{ ach.title }}" required class="col-span-3 px-2 py-1 border rounded text-xs bg-white">
+
+            <details class="panel" style="margin-top: 8px;">
+              <summary>Изменить</summary>
+              <form action="/admin/edit-achievement/{{ ach.id }}" method="post" class="form-stack">
+                <div class="grid-icon-title">
+                  <input type="text" name="icon" value="{{ ach.icon }}" required style="text-align: center;">
+                  <input type="text" name="title" value="{{ ach.title }}" required>
                 </div>
-                <input type="text" name="description" value="{{ ach.description }}" required class="w-full px-2 py-1 border rounded text-xs bg-white">
-                <div class="grid grid-cols-2 gap-2">
-                  <select name="metric_type" class="px-2 py-1 border rounded text-xs bg-white">
+                <input type="text" name="description" value="{{ ach.description }}" required>
+                <div class="grid-2-sm">
+                  <select name="metric_type">
                     <option value="events_count" {% if ach.metric_type == 'events_count' %}selected{% endif %}>Кол-во акций</option>
                     <option value="total_hours" {% if ach.metric_type == 'total_hours' %}selected{% endif %}>Сумма часов</option>
                     <option value="category_count" {% if ach.metric_type == 'category_count' %}selected{% endif %}>Акции в категории</option>
                   </select>
-                  <input type="number" step="0.5" min="0.5" name="target_value" value="{{ ach.target_value }}" required class="px-2 py-1 border rounded text-xs bg-white">
+                  <input type="number" step="0.5" min="0.5" name="target_value" value="{{ ach.target_value }}" required>
                 </div>
-                <input type="text" name="category_filter" value="{{ ach.category_filter or '' }}" placeholder="Ключевое слово категории" class="w-full px-2 py-1 border rounded text-xs bg-white">
-                <button type="submit" class="w-full bg-slate-800 text-white text-xs font-semibold py-1.5 rounded">Сохранить</button>
+                <input type="text" name="category_filter" value="{{ ach.category_filter or '' }}" placeholder="Ключевое слово категории">
+                <button type="submit" class="btn btn-sm btn-dark btn-full">Сохранить</button>
               </form>
             </details>
           </div>
           {% else %}
-          <p class="text-xs text-slate-400 italic">Достижений пока нет</p>
+          <div class="empty-text">Достижений пока нет</div>
           {% endfor %}
         </div>
       </div>
     </div>
 
-    <!-- Блок 7 и 8: Волонтёры и фото для пьедестала -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <h2 class="text-base font-bold mb-4 text-[#5c0613]">7. Добавить волонтёра (вручную)</h2>
-        <form action="/admin/add-user" method="post" class="space-y-4">
-          <input type="text" name="name" required placeholder="ФИО волонтёра" class="w-full px-3 py-2 border rounded-lg text-sm">
-          <input type="text" name="username" required placeholder="Логин для входа" class="w-full px-3 py-2 border rounded-lg text-sm">
-          <input type="text" name="password" required value="123456" class="w-full px-3 py-2 border rounded-lg text-sm">
-          <button type="submit" class="w-full bg-[#5c0613] text-white font-semibold py-2 rounded-lg">Сохранить волонтёра</button>
+    <!-- Блоки 7 и 8: Волонтёры и фото для пьедестала -->
+    <div class="grid-2">
+      <div class="card">
+        <div class="section-head">
+          <h2>7. Добавить волонтёра</h2>
+        </div>
+        <form action="/admin/add-user" method="post" class="form-stack">
+          <div class="field">
+            <label>ФИО волонтёра</label>
+            <input type="text" name="name" required placeholder="Иван Иванов">
+          </div>
+          <div class="field">
+            <label>Логин для входа</label>
+            <input type="text" name="username" required placeholder="ivanov">
+          </div>
+          <div class="field">
+            <label>Стартовый пароль</label>
+            <input type="text" name="password" required value="123456">
+          </div>
+          <button type="submit" class="btn btn-primary btn-full">Сохранить волонтёра</button>
         </form>
       </div>
 
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <h2 class="text-base font-bold mb-4 text-[#5c0613]">8. Волонтёры и фото пьедестала ({{ users|length }})</h2>
-        <div class="overflow-x-auto max-h-80 overflow-y-auto">
-          <table class="w-full text-left border-collapse text-sm">
+      <div class="card">
+        <div class="section-head">
+          <h2>8. Волонтёры и фото пьедестала</h2>
+          <span class="pill pill-brand">{{ users|length }}</span>
+        </div>
+        <div class="table-wrap">
+          <table>
             <thead>
-              <tr class="border-b border-slate-200 text-slate-500 font-semibold text-xs">
-                <th class="py-2 px-2">ФИО</th>
-                <th class="py-2 px-2">Фото пьедестала</th>
-                <th class="py-2 px-2 text-right">Действие</th>
+              <tr>
+                <th>ФИО</th>
+                <th>Фото пьедестала</th>
+                <th class="td-right">Действие</th>
               </tr>
             </thead>
             <tbody>
               {% for u in users %}
-              <tr class="border-b border-slate-100 hover:bg-slate-50">
-                <td class="py-2.5 px-2">
-                  <div class="font-medium text-slate-800">{{ u.name }}</div>
-                  <div class="text-[11px] text-slate-400">{% if u.username %}@{{ u.username }}{% else %}—{% endif %}</div>
+              <tr>
+                <td>
+                  <div style="font-weight: 700;">{{ u.name }}</div>
+                  <div style="font-size: 0.74rem; color: var(--muted);">{% if u.username %}@{{ u.username }}{% else %}—{% endif %}</div>
                 </td>
-                <td class="py-2.5 px-2">
-                  <div class="flex items-center gap-1.5">
-                    <form action="/admin/user/{{ u.id }}/podium-photo" method="post" enctype="multipart/form-data" class="m-0">
-                      <label class="cursor-pointer inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-1 rounded border transition {% if u.podium_photo_url %}bg-emerald-50 text-emerald-700 border-emerald-200{% else %}bg-amber-50 text-amber-800 border-amber-200{% endif %}">
-                        <span>{% if u.podium_photo_url %}✓ Фото PNG{% else %}+ Фото PNG{% endif %}</span>
-                        <input type="file" name="photo_file" accept="image/png,image/webp,image/jpeg" class="hidden" onchange="this.form.submit()">
+                <td>
+                  <div style="display: flex; align-items: center; gap: 4px;">
+                    <form action="/admin/user/{{ u.id }}/podium-photo" method="post" enctype="multipart/form-data">
+                      <label class="upload-label {% if u.podium_photo_url %}has-photo{% else %}no-photo{% endif %}">
+                        <span>{% if u.podium_photo_url %}✓ PNG{% else %}+ PNG{% endif %}</span>
+                        <input type="file" name="photo_file" accept="image/png,image/webp,image/jpeg" style="display: none;" onchange="this.form.submit()">
                       </label>
                     </form>
                     {% if u.podium_photo_url %}
-                    <form action="/admin/user/{{ u.id }}/podium-photo/delete" method="post" onsubmit="return confirm('Удалить фото для пьедестала?');" class="m-0">
-                      <button type="submit" class="text-[11px] text-slate-400 hover:text-red-600 px-1" title="Удалить фото">×</button>
+                    <form action="/admin/user/{{ u.id }}/podium-photo/delete" method="post" onsubmit="return confirm('Удалить фото для пьедестала?');">
+                      <button type="submit" class="btn-icon-del" title="Удалить фото">×</button>
                     </form>
                     {% endif %}
                   </div>
                 </td>
-                <td class="py-2.5 px-2 text-right">
-                  <form action="/admin/delete-user/{{ u.id }}" method="post" onsubmit="return confirm('Удалить волонтёра {{ u.name }}?');" class="m-0 inline">
-                    <button type="submit" class="text-xs bg-red-50 text-red-600 border border-red-200 px-2 py-1 rounded">Удалить</button>
+                <td class="td-right">
+                  <form action="/admin/delete-user/{{ u.id }}" method="post" onsubmit="return confirm('Удалить волонтёра {{ u.name }}?');">
+                    <button type="submit" class="btn btn-sm btn-danger-soft">Удалить</button>
                   </form>
                 </td>
               </tr>
               {% else %}
-              <tr><td colspan="3" class="py-4 text-center text-slate-400 text-xs italic">Список волонтёров пока пуст</td></tr>
+              <tr><td colspan="3" class="empty-text">Список волонтёров пока пуст</td></tr>
               {% endfor %}
             </tbody>
           </table>
