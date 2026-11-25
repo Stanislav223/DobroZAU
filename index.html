@@ -29,7 +29,6 @@
     html, body { overflow-x: hidden; max-width: 100%; background-color: var(--bg-bottom); }
     body {
       background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-mid) 48%, var(--bg-bottom) 100%);
-      background-attachment: fixed;
       color: var(--text-main);
       line-height: 1.5;
       min-height: 100dvh;
@@ -38,13 +37,13 @@
       position: relative;
     }
     body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background: radial-gradient(circle at 50% 35%, rgba(245, 158, 11, 0.12) 0%, rgba(245, 158, 11, 0) 60%);
-    pointer-events: none;
-    z-index: 0;
-  }
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 50% 35%, rgba(245, 158, 11, 0.12) 0%, rgba(245, 158, 11, 0) 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
 
     header, section, main, footer { position: relative; z-index: 1; }
     main { flex: 1; }
@@ -175,19 +174,15 @@
       display: flex;
       align-items: flex-end;
       justify-content: center;
-      isolation: isolate;
     }
     .place-1 .podium-visual { height: 260px; }
 
-    /* Увеличенный радиус свечения + эффект воды (SVG-фильтр + плавный дрейф) */
+    /* Лёгкое широкое свечение с плавным переливом (без лагов на Android) */
     .podium-aura {
       position: absolute;
-      inset: -95px -80px -50px -80px;
+      inset: -70px -50px -35px -50px;
       z-index: 0;
       pointer-events: none;
-      filter: url(#podiumWaterFilter);
-      -webkit-mask-image: radial-gradient(ellipse 74% 72% at 50% 54%, #000 0%, rgba(0, 0, 0, 0.55) 48%, transparent 82%);
-      mask-image: radial-gradient(ellipse 74% 72% at 50% 54%, #000 0%, rgba(0, 0, 0, 0.55) 48%, transparent 82%);
     }
 
     .podium-aura::before,
@@ -195,78 +190,45 @@
       content: "";
       position: absolute;
       inset: 0;
-      border-radius: 50%;
       pointer-events: none;
+      will-change: transform, opacity;
     }
 
-    .podium-aura::before { animation: waterDriftA 9s ease-in-out infinite alternate; }
-    .podium-aura::after  { animation: waterDriftB 12s ease-in-out infinite alternate; }
+    .podium-aura::before { animation: waterDriftA 10s ease-in-out infinite alternate; }
+    .podium-aura::after  { animation: waterDriftB 13s ease-in-out infinite alternate; }
 
     @keyframes waterDriftA {
-      0%   { transform: translate(-4%, -2%) scale(0.96) rotate(0deg); }
-      50%  { transform: translate(3%, 4%) scale(1.06) rotate(6deg); }
-      100% { transform: translate(-2%, 2%) scale(1.02) rotate(-5deg); }
+      0%   { transform: translate3d(-3%, -2%, 0) scale(0.97); opacity: 0.88; }
+      100% { transform: translate3d(3%, 2%, 0) scale(1.04); opacity: 1; }
     }
 
     @keyframes waterDriftB {
-      0%   { transform: translate(4%, 3%) scale(1.04) rotate(0deg); }
-      50%  { transform: translate(-4%, -3%) scale(0.94) rotate(-8deg); }
-      100% { transform: translate(2%, -2%) scale(1.08) rotate(5deg); }
+      0%   { transform: translate3d(3%, 2%, 0) scale(1.03); opacity: 0.75; }
+      100% { transform: translate3d(-3%, -2%, 0) scale(0.96); opacity: 0.95; }
     }
 
     /* 1-е место: тёплое янтарное свечение */
     .place-1 .podium-aura::before {
-      background: radial-gradient(circle at 50% 54%, rgba(254, 240, 138, 0.9) 0%, rgba(245, 158, 11, 0.65) 34%, rgba(180, 83, 9, 0.25) 60%, transparent 82%);
-      filter: blur(26px);
+      background: radial-gradient(ellipse 62% 58% at 50% 54%, rgba(254, 240, 138, 0.72) 0%, rgba(245, 158, 11, 0.42) 34%, rgba(180, 83, 9, 0.14) 56%, transparent 74%);
     }
     .place-1 .podium-aura::after {
-      background:
-        radial-gradient(ellipse 68% 42% at 38% 46%, rgba(253, 224, 71, 0.5) 0%, transparent 66%),
-        radial-gradient(ellipse 62% 46% at 64% 62%, rgba(251, 146, 60, 0.44) 0%, transparent 66%);
-      filter: blur(32px);
+      background: radial-gradient(ellipse 52% 44% at 44% 50%, rgba(253, 224, 71, 0.32) 0%, rgba(251, 146, 60, 0.16) 40%, transparent 70%);
     }
 
-    /* 2-е место: свечение матового стекла */
+    /* 2-е место: мягкое свечение матового стекла */
     .place-2 .podium-aura::before {
-      background: radial-gradient(circle at 50% 55%, rgba(255, 255, 255, 0.44) 0%, rgba(226, 232, 240, 0.24) 38%, rgba(255, 255, 255, 0.08) 62%, transparent 82%);
-      filter: blur(26px);
+      background: radial-gradient(ellipse 62% 58% at 50% 55%, rgba(255, 255, 255, 0.34) 0%, rgba(226, 232, 240, 0.16) 36%, rgba(255, 255, 255, 0.05) 58%, transparent 74%);
     }
     .place-2 .podium-aura::after {
-      background:
-        radial-gradient(ellipse 68% 42% at 40% 48%, rgba(255, 255, 255, 0.28) 0%, transparent 66%),
-        radial-gradient(ellipse 58% 44% at 62% 60%, rgba(203, 213, 225, 0.22) 0%, transparent 66%);
-      filter: blur(32px);
+      background: radial-gradient(ellipse 52% 44% at 54% 48%, rgba(255, 255, 255, 0.2) 0%, transparent 68%);
     }
 
     /* 3-е место: светлее главного винного оттенка сайта */
     .place-3 .podium-aura::before {
-      background: radial-gradient(circle at 50% 55%, rgba(225, 45, 80, 0.75) 0%, rgba(159, 18, 57, 0.48) 38%, rgba(116, 16, 34, 0.2) 62%, transparent 82%);
-      filter: blur(26px);
+      background: radial-gradient(ellipse 62% 58% at 50% 55%, rgba(225, 45, 80, 0.58) 0%, rgba(159, 18, 57, 0.34) 36%, rgba(116, 16, 34, 0.12) 58%, transparent 74%);
     }
     .place-3 .podium-aura::after {
-      background:
-        radial-gradient(ellipse 68% 42% at 38% 48%, rgba(244, 63, 94, 0.45) 0%, transparent 66%),
-        radial-gradient(ellipse 60% 44% at 64% 62%, rgba(190, 18, 60, 0.38) 0%, transparent 66%);
-      filter: blur(32px);
-    }
-
-    /* Лёгкая водная рябь поверх свечения */
-    .podium-waves {
-      position: absolute;
-      inset: -40px;
-      width: calc(100% + 80px);
-      height: calc(100% + 80px);
-      z-index: 1;
-      opacity: 0.36;
-      pointer-events: none;
-      animation: waterRipple 8s ease-in-out infinite alternate;
-      -webkit-mask-image: radial-gradient(ellipse 68% 66% at 50% 55%, #000 12%, transparent 76%);
-      mask-image: radial-gradient(ellipse 68% 66% at 50% 55%, #000 12%, transparent 76%);
-    }
-
-    @keyframes waterRipple {
-      0%   { transform: translateY(-4px) scaleX(0.97) scaleY(1.02); }
-      100% { transform: translateY(5px) scaleX(1.04) scaleY(0.98); }
+      background: radial-gradient(ellipse 52% 44% at 46% 50%, rgba(244, 63, 94, 0.3) 0%, transparent 68%);
     }
 
     /* Крупное имя на фоне за головой (в стиле Яндекс Музыки) */
@@ -303,7 +265,6 @@
       object-fit: contain;
       object-position: bottom center;
       display: block;
-      filter: drop-shadow(0 14px 24px rgba(0, 0, 0, 0.45));
       -webkit-mask-image: linear-gradient(to bottom, #000 84%, transparent 100%);
       mask-image: linear-gradient(to bottom, #000 84%, transparent 100%);
     }
@@ -410,18 +371,6 @@
   <link rel="apple-touch-icon" href="/static/static/logo.png.jpg">
 </head>
 <body>
-
-  <!-- Скрытый SVG-фильтр для лёгкого эффекта воды на свечении -->
-  <svg width="0" height="0" style="position: absolute; pointer-events: none;" aria-hidden="true">
-    <defs>
-      <filter id="podiumWaterFilter" x="-20%" y="-20%" width="140%" height="140%">
-        <feTurbulence type="fractalNoise" baseFrequency="0.014 0.022" numOctaves="2" seed="3" result="noise">
-          <animate attributeName="baseFrequency" dur="14s" values="0.014 0.022;0.019 0.028;0.014 0.022" repeatCount="indefinite" />
-        </feTurbulence>
-        <feDisplacementMap in="SourceGraphic" in2="noise" scale="18" xChannelSelector="R" yChannelSelector="G" />
-      </filter>
-    </defs>
-  </svg>
 
   <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawer()"></div>
   <aside class="side-drawer" id="sideDrawer">
@@ -681,14 +630,7 @@
         <div class="podium-col place-{{ place }}">
           <div class="podium-visual">
             <div class="podium-aura"></div>
-            <svg class="podium-waves" viewBox="0 0 300 260" preserveAspectRatio="none">
-              <path d="M-20,180 C60,90 140,220 320,110" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="2.5" filter="blur(3px)"/>
-              <path d="M-30,110 C90,210 190,40 330,160" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2" filter="blur(4px)"/>
-            </svg>
-
-            <!-- Имя на заднем фоне за головой -->
             <div class="podium-bg-name">{{ u.name }}</div>
-
             {% if u.podium_photo_url %}
               <img src="{{ u.podium_photo_url }}" alt="{{ u.name }}" class="podium-photo">
             {% else %}
@@ -828,3 +770,4 @@
   </script>
 </body>
 </html>
+      
