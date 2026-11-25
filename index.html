@@ -38,13 +38,13 @@
       position: relative;
     }
     body::before {
-      content: "";
-      position: fixed;
-      top: 18%; left: 50%; transform: translateX(-50%);
-      width: 780px; height: 420px;
-      background: radial-gradient(circle, rgba(245, 158, 11, 0.14) 0%, rgba(245, 158, 11, 0) 70%);
-      pointer-events: none; z-index: 0;
-    }
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at 50% 35%, rgba(245, 158, 11, 0.12) 0%, rgba(245, 158, 11, 0) 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
 
     header, section, main, footer { position: relative; z-index: 1; }
     main { flex: 1; }
