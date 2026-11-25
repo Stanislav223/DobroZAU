@@ -4,103 +4,104 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#5c0613">
-  <title>Вход волонтёра — ДоброЗАУ</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Вход в личный кабинет — ДоброЗАУ</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="icon" type="image/jpeg" href="/static/static/logo.png.jpg">
   <style>
-    html, body {
-      background-color: #260208;
-      overflow-x: hidden;
-      max-width: 100%;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    html, body { background-color: #260208; min-height: 100dvh; }
     body {
       background: linear-gradient(180deg, #6b0c1c 0%, #4a0510 50%, #260208 100%);
-      background-attachment: fixed;
-      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      min-height: 100dvh;
-      padding-bottom: calc(1rem + env(safe-area-inset-bottom));
-      position: relative;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px 16px;
     }
-    body::before {
-      content: "";
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 520px;
-      height: 520px;
-      background: radial-gradient(circle, rgba(245, 158, 11, 0.18) 0%, transparent 70%);
-      pointer-events: none;
+    .auth-card {
+      width: 100%; max-width: 420px; background: #faf7f5; border-radius: 22px;
+      padding: 28px 24px; box-shadow: 0 20px 48px rgba(0, 0, 0, 0.38);
+      border: 1px solid rgba(255, 255, 255, 0.55);
     }
-    h1 {
-      font-family: 'Unbounded', 'Manrope', sans-serif;
+    .brand { text-align: center; margin-bottom: 20px; }
+    .brand h1 { font-family: 'Unbounded', sans-serif; font-size: 1.4rem; color: #5c0613; }
+    .brand p { font-size: 0.86rem; color: #6e585c; margin-top: 4px; font-weight: 600; }
+
+    .tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; background: #ebe2de; padding: 4px; border-radius: 12px; margin-bottom: 20px; }
+    .tab-btn {
+      border: none; background: transparent; padding: 9px; border-radius: 9px;
+      font-size: 0.86rem; font-weight: 700; color: #6e585c; cursor: pointer; transition: all 0.2s;
     }
+    .tab-btn.active { background: #ffffff; color: #5c0613; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); }
+
+    .form-panel { display: none; flex-direction: column; gap: 14px; }
+    .form-panel.active { display: flex; }
+    .field label { display: block; font-size: 0.8rem; font-weight: 700; color: #473639; margin-bottom: 5px; }
+    .field input {
+      width: 100%; padding: 11px 13px; border-radius: 10px; border: 1px solid #d6ccc8;
+      background: #ffffff; font-size: 0.94rem; outline: none; color: #23090e;
+    }
+    .field input:focus { border-color: #5c0613; }
+    .submit-btn {
+      width: 100%; margin-top: 4px; padding: 12px; border: none; border-radius: 11px;
+      background: linear-gradient(135deg, #6b0c1c 0%, #42040d 100%); color: #ffffff;
+      font-size: 0.94rem; font-weight: 700; cursor: pointer;
+    }
+    .back-link {
+      display: block; text-align: center; margin-top: 18px;
+      font-size: 0.84rem; font-weight: 700; color: #5c0613; text-decoration: none;
+    }
+    .back-link:hover { text-decoration: underline; }
   </style>
 </head>
-<body class="flex items-center justify-center p-4">
-  <div class="relative z-10 bg-[#faf7f5] max-w-md w-full p-8 rounded-2xl shadow-2xl border border-white/50">
-    <div class="text-center mb-6">
-      <h1 class="text-xl font-bold text-[#5c0613]">ДоброЗАУ</h1>
-      <p class="text-xs text-[#6e585c] mt-1.5 font-medium">Личный кабинет волонтёра</p>
+<body>
+  <div class="auth-card">
+    <div class="brand">
+      <h1>ДоброЗАУ</h1>
+      <p>Личный кабинет волонтёра</p>
     </div>
 
-    <!-- Вкладки Вход / Регистрация -->
-    <div class="flex border-b border-[#ebe2de] mb-6">
-      <button id="tab-login-btn" type="button" onclick="showTab('login')" class="w-1/2 py-2.5 font-bold text-sm border-b-2 border-[#5c0613] text-[#5c0613] transition">Вход</button>
-      <button id="tab-reg-btn" type="button" onclick="showTab('reg')" class="w-1/2 py-2.5 font-semibold text-sm border-b-2 border-transparent text-[#9c8a8d] hover:text-[#6e585c] transition">Регистрация</button>
+    <div class="tabs">
+      <button type="button" class="tab-btn active" id="tabLogin" onclick="switchTab('login')">Вход</button>
+      <button type="button" class="tab-btn" id="tabReg" onclick="switchTab('register')">Регистрация</button>
     </div>
 
-    <!-- Форма Входа -->
-    <form id="form-login" action="/auth/login" method="post" class="space-y-4">
-      <div>
-        <label class="block text-xs font-semibold text-[#6e585c] mb-1">Логин</label>
-        <input type="text" name="login" required autocomplete="username" placeholder="Например: ivan_ivanov" class="w-full px-3.5 py-2.5 bg-white border border-[#d6ccc8] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#5c0613] focus:border-transparent">
+    <form action="/auth/login" method="post" class="form-panel active" id="panelLogin">
+      <div class="field">
+        <label>Логин</label>
+        <input type="text" name="login" required placeholder="Например: ivan_ivanov">
       </div>
-      <div>
-        <label class="block text-xs font-semibold text-[#6e585c] mb-1">Пароль</label>
-        <input type="password" name="password" required autocomplete="current-password" placeholder="Введите пароль" class="w-full px-3.5 py-2.5 bg-white border border-[#d6ccc8] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#5c0613] focus:border-transparent">
+      <div class="field">
+        <label>Пароль</label>
+        <input type="password" name="password" required placeholder="Введите пароль">
       </div>
-      <button type="submit" class="w-full bg-gradient-to-r from-[#6b0c1c] to-[#42040d] text-white py-2.5 rounded-lg text-sm font-bold hover:opacity-95 transition shadow-md">Войти в кабинет</button>
+      <button type="submit" class="submit-btn">Войти в кабинет</button>
     </form>
 
-    <!-- Форма Регистрации -->
-    <form id="form-reg" action="/auth/register" method="post" class="space-y-4 hidden">
-      <div>
-        <label class="block text-xs font-semibold text-[#6e585c] mb-1">ФИО (как в списках)</label>
-        <input type="text" name="name" required autocomplete="name" placeholder="Иванов Иван Иванович" class="w-full px-3.5 py-2.5 bg-white border border-[#d6ccc8] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#5c0613] focus:border-transparent">
+    <form action="/auth/register" method="post" class="form-panel" id="panelRegister">
+      <div class="field">
+        <label>ФИО (как в списках)</label>
+        <input type="text" name="name" required placeholder="Иванов Иван Иванович">
       </div>
-      <div>
-        <label class="block text-xs font-semibold text-[#6e585c] mb-1">Придумайте логин (латиница, от 3 символов)</label>
-        <input type="text" name="login" required autocomplete="username" minlength="3" maxlength="32" placeholder="ivanov_i" class="w-full px-3.5 py-2.5 bg-white border border-[#d6ccc8] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#5c0613] focus:border-transparent">
+      <div class="field">
+        <label>Придумайте логин (латиница, от 3 символов)</label>
+        <input type="text" name="login" required placeholder="ivanov_i">
       </div>
-      <div>
-        <label class="block text-xs font-semibold text-[#6e585c] mb-1">Придумайте пароль (от 6 символов)</label>
-        <input type="password" name="password" required autocomplete="new-password" minlength="6" maxlength="128" placeholder="Минимум 6 символов" class="w-full px-3.5 py-2.5 bg-white border border-[#d6ccc8] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#5c0613] focus:border-transparent">
+      <div class="field">
+        <label>Придумайте пароль (от 6 символов)</label>
+        <input type="password" name="password" required placeholder="Минимум 6 символов">
       </div>
-      <button type="submit" class="w-full bg-gradient-to-r from-[#6b0c1c] to-[#42040d] text-white py-2.5 rounded-lg text-sm font-bold hover:opacity-95 transition shadow-md">Зарегистрироваться</button>
+      <button type="submit" class="submit-btn">Зарегистрироваться</button>
     </form>
 
-    <div class="mt-6 text-center">
-      <a href="/" class="text-xs font-semibold text-[#6e585c] hover:text-[#5c0613] transition">← Вернуться на главную</a>
-    </div>
+    <a href="/" class="back-link">← Вернуться на главную</a>
   </div>
 
   <script>
-    function showTab(tab) {
-      if (tab === 'login') {
-        document.getElementById('form-login').classList.remove('hidden');
-        document.getElementById('form-reg').classList.add('hidden');
-        document.getElementById('tab-login-btn').className = "w-1/2 py-2.5 font-bold text-sm border-b-2 border-[#5c0613] text-[#5c0613] transition";
-        document.getElementById('tab-reg-btn').className = "w-1/2 py-2.5 font-semibold text-sm border-b-2 border-transparent text-[#9c8a8d] hover:text-[#6e585c] transition";
-      } else {
-        document.getElementById('form-login').classList.add('hidden');
-        document.getElementById('form-reg').classList.remove('hidden');
-        document.getElementById('tab-reg-btn').className = "w-1/2 py-2.5 font-bold text-sm border-b-2 border-[#5c0613] text-[#5c0613] transition";
-        document.getElementById('tab-login-btn').className = "w-1/2 py-2.5 font-semibold text-sm border-b-2 border-transparent text-[#9c8a8d] hover:text-[#6e585c] transition";
-      }
+    function switchTab(tab) {
+      document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
+      document.getElementById('tabReg').classList.toggle('active', tab === 'register');
+      document.getElementById('panelLogin').classList.toggle('active', tab === 'login');
+      document.getElementById('panelRegister').classList.toggle('active', tab === 'register');
     }
   </script>
 </body>
