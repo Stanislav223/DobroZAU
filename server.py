@@ -128,7 +128,7 @@ class Achievement(Base):
     icon = Column(String, default="🏆")
     title = Column(String, nullable=False)
     description = Column(String, nullable=False)
-    metric_type = Column(String, nullable=False)  # events_count | total_hours | category_count
+    metric_type = Column(String, nullable=False)
     category_filter = Column(String, nullable=True)
     target_value = Column(Float, nullable=False)
 
@@ -331,7 +331,7 @@ def is_valid_media_magic_bytes(data: bytes) -> bool:
         return True
     if data.startswith((b"GIF87a", b"GIF89a")):
         return True
-    if data[:4] == b"RIFF" and data[8:12] == b"WEBP":
+    if data[:4] == b"RIFF" and data == b"WEBP":
         return True
     if data[4:8] == b"ftyp" or data.startswith(b"\x1a\x45\xdf\xa3"):
         return True
@@ -500,11 +500,11 @@ async def security_middleware(request: Request, call_next):
     response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
     response.headers["Content-Security-Policy"] = (
         "default-src 'self' https:; "
-        "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://unpkg.com https://cdn.jsdelivr.net; "
-        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com; "
+        "script-src 'self' 'unsafe-inline' [https://cdn.tailwindcss.com](https://cdn.tailwindcss.com) [https://unpkg.com](https://unpkg.com) [https://cdn.jsdelivr.net](https://cdn.jsdelivr.net); "
+        "style-src 'self' 'unsafe-inline' [https://fonts.googleapis.com](https://fonts.googleapis.com) [https://cdn.tailwindcss.com](https://cdn.tailwindcss.com); "
         "img-src 'self' data: blob: https:; "
         "media-src 'self' blob: https:; "
-        "font-src 'self' data: https://fonts.gstatic.com; "
+        "font-src 'self' data: [https://fonts.gstatic.com](https://fonts.gstatic.com); "
         "frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
     )
     is_https = request.url.scheme == "https" or request.headers.get("x-forwarded-proto") == "https"
@@ -526,11 +526,14 @@ def home(request: Request):
         users = db.query(User).all()
 
         logs_by_event = defaultdict(list)
+        logs_by_user = defaultdict(list)
         for log in all_logs:
             logs_by_event[log.event_id].append(log)
+            logs_by_user[log.user_id].append(log)
 
         month_events_count = semester_events_count = 0
         month_hours_sum = semester_hours_sum = 0.0
+        sem_event_ids = set()
 
         for ev in all_events:
             ev_duration = max(((l.hours or 0.0) for l in logs_by_event.get(ev.id, [])), default=0.0)
@@ -542,6 +545,26 @@ def home(request: Request):
                 if sem_start <= ev_date <= sem_end:
                     semester_events_count += 1
                     semester_hours_sum += ev_duration
+                    sem_event_ids.add(ev.id)
+
+        podium_candidates = []
+        for u in users:
+            u_logs = logs_by_user.get(u.id, [])
+            sem_hours = sum((l.hours or 0.0) for l in u_logs if l.event_id in sem_event_ids)
+            total_hours = sum((l.hours or 0.0) for l in u_logs)
+            podium_candidates.append({
+                "id": u.id,
+                "name": u.name,
+                "hours": round(total_hours, 1),
+                "semester_hours": round(sem_hours, 1),
+                "podium_photo_url": u.podium_photo_url,
+            })
+
+        podium_top3 = sorted(
+            podium_candidates,
+            key=lambda x: (x["semester_hours"], x["hours"]),
+            reverse=True
+        )[:3]
 
         active_events, past_events = build_events_collections(db)
         stats = {
@@ -558,6 +581,8 @@ def home(request: Request):
             past_events=past_events[:3],
             total_past_count=len(past_events),
             stats=stats,
+            podium_top3=podium_top3,
+            semester_label=sem_label,
             current_user=current_user,
             active_page="home"
         )
