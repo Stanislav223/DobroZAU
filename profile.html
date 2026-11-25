@@ -5,151 +5,253 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#5c0613">
   <title>Личный кабинет волонтёра — ДоброЗАУ</title>
-  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="icon" type="image/jpeg" href="/static/static/logo.png.jpg">
   <style>
-    html, body {
-      background-color: #260208;
-      overflow-x: hidden;
-      max-width: 100%;
+    :root {
+      --primary: #5c0613;
+      --primary-hover: #3f030b;
+      --amber: #f59e0b;
+      --amber-deep: #b45309;
+      --amber-soft: rgba(245, 158, 11, 0.14);
+      --card-bg: #faf7f5;
+      --text-main: #23090e;
+      --text-muted: #6e585c;
+      --border: #ebe2de;
     }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    html, body { background-color: #260208; overflow-x: hidden; max-width: 100%; }
     body {
       background: linear-gradient(180deg, #6b0c1c 0%, #4a0510 50%, #260208 100%);
       background-attachment: fixed;
-      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      padding-bottom: calc(2rem + env(safe-area-inset-bottom));
+      color: var(--text-main);
+      min-height: 100dvh;
+      padding: 18px 16px calc(32px + env(safe-area-inset-bottom));
     }
-    h1, h2, .font-display {
-      font-family: 'Unbounded', 'Manrope', sans-serif;
+    h1, h2, .font-display { font-family: 'Unbounded', 'Manrope', sans-serif; }
+    .wrap { max-width: 780px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+
+    /* Верхняя панель */
+    .top-bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .top-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.82rem; font-weight: 700; color: #faf7f5; text-decoration: none;
+      background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.16);
+      padding: 8px 14px; border-radius: 999px; backdrop-filter: blur(12px);
+    }
+    .top-btn:hover { background: rgba(255, 255, 255, 0.2); }
+    .top-btn svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2; fill: none; flex-shrink: 0; }
+
+    /* Карточки */
+    .card {
+      background: var(--card-bg); border-radius: 20px; padding: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.55); box-shadow: 0 14px 32px rgba(0, 0, 0, 0.24);
+    }
+    .profile-head { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .profile-left { display: flex; align-items: center; gap: 18px; min-width: 0; }
+    .avatar-box { position: relative; flex-shrink: 0; }
+    .avatar-img { width: 86px; height: 86px; border-radius: 20px; object-fit: cover; border: 2px solid rgba(245, 158, 11, 0.45); display: block; }
+    .avatar-fallback {
+      width: 86px; height: 86px; border-radius: 20px;
+      background: linear-gradient(135deg, #6b0c1c, #3f030b); color: #fbbf24;
+      font-family: 'Unbounded', sans-serif; font-size: 1.9rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .avatar-upload-btn {
+      position: absolute; bottom: -6px; right: -6px;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: #f59e0b; color: #23090e; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    }
+    .avatar-upload-btn svg { width: 15px; height: 15px; stroke: currentColor; stroke-width: 2.2; fill: none; }
+    .role-pill {
+      display: inline-block; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em;
+      background: var(--amber-soft); color: var(--amber-deep); border: 1px solid rgba(245, 158, 11, 0.28);
+      padding: 4px 10px; border-radius: 999px;
+    }
+    .user-name { font-size: 1.25rem; color: var(--text-main); margin-top: 8px; line-height: 1.25; word-break: break-word; }
+    .user-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 4px; font-size: 0.85rem; color: var(--text-muted); }
+    .del-photo-btn { background: none; border: none; color: #b91c1c; font-size: 0.78rem; font-weight: 700; text-decoration: underline; cursor: pointer; }
+
+    .hours-box {
+      background: #ffffff; border: 1px solid var(--border); border-radius: 16px;
+      padding: 16px 22px; text-align: center; min-width: 155px;
+    }
+    .hours-label { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.04em; }
+    .hours-val { font-family: 'Unbounded', sans-serif; font-size: 1.6rem; font-weight: 700; color: var(--primary); margin-top: 4px; }
+
+    /* Достижения */
+    .card-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .card-title { font-size: 1.02rem; color: var(--text-main); }
+    .ach-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .ach-item {
+      background: #ffffff; border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 14px;
+      padding: 14px; display: flex; align-items: flex-start; gap: 12px;
+    }
+    .ach-icon {
+      width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
+      background: linear-gradient(135deg, #fbbf24, #d97706);
+      display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+    }
+    .ach-title { font-weight: 800; font-size: 0.88rem; color: var(--primary); }
+    .ach-desc { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+    .empty-ach {
+      text-align: center; padding: 28px 16px; background: rgba(255, 255, 255, 0.7);
+      border: 1px dashed #d6ccc8; border-radius: 14px;
+    }
+
+    /* История */
+    .history-row {
+      display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      padding: 12px 0; border-bottom: 1px solid var(--border);
+    }
+    .history-row:last-child { border-bottom: none; }
+    .history-link { font-weight: 700; font-size: 0.92rem; color: var(--text-main); text-decoration: none; }
+    .history-link:hover { color: var(--primary); text-decoration: underline; }
+    .history-date { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+    .hours-pill {
+      background: var(--amber-soft); color: var(--amber-deep); border: 1px solid rgba(245, 158, 11, 0.28);
+      font-weight: 800; font-size: 0.82rem; padding: 5px 12px; border-radius: 999px; white-space: nowrap;
+    }
+
+    /* Форма безопасности */
+    .sec-form { max-width: 420px; display: flex; flex-direction: column; gap: 14px; }
+    .field label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 5px; }
+    .field input {
+      width: 100%; padding: 10px 13px; border-radius: 10px; border: 1px solid #d6ccc8;
+      background: #ffffff; font-size: 0.92rem; outline: none;
+    }
+    .field input:focus { border-color: var(--primary); }
+    .btn-save {
+      align-self: flex-start; background: var(--primary); color: #ffffff; border: none;
+      padding: 11px 22px; border-radius: 10px; font-size: 0.88rem; font-weight: 700; cursor: pointer;
+    }
+    .btn-save:hover { background: var(--primary-hover); }
+
+    @media (max-width: 640px) {
+      .card { padding: 18px 16px; border-radius: 16px; }
+      .profile-head { flex-direction: column; align-items: stretch; }
+      .avatar-img, .avatar-fallback { width: 70px; height: 70px; border-radius: 16px; }
+      .user-name { font-size: 1.05rem; }
+      .ach-grid { grid-template-columns: 1fr; }
+      .btn-save { width: 100%; }
     }
   </style>
 </head>
-<body class="min-h-screen p-4 sm:p-8">
-  <div class="max-w-3xl mx-auto space-y-6">
-
-    <!-- Верхняя шапка -->
-    <div class="flex justify-between items-center text-white">
-      <a href="/" class="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold bg-white/10 hover:bg-white/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/15 transition">
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+<body>
+  <div class="wrap">
+    <div class="top-bar">
+      <a href="/" class="top-btn">
+        <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
         <span>На главную</span>
       </a>
-      <a href="/logout" class="text-xs sm:text-sm font-semibold bg-white/10 hover:bg-white/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/15 transition">Выйти из кабинета</a>
+      <a href="/logout" class="top-btn">Выйти</a>
     </div>
 
-    <!-- Визитка волонтёра -->
-    <div class="bg-[#faf7f5] p-6 sm:p-8 rounded-2xl shadow-xl border border-white/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
-      <div>
-        <span class="text-xs bg-amber-500/15 text-amber-800 border border-amber-500/25 font-bold px-3 py-1 rounded-full uppercase tracking-wide">Волонтёр ДоброЗАУ</span>
-        <h1 class="text-xl sm:text-2xl font-bold text-[#23090e] mt-3">{{ user.name }}</h1>
-        <p class="text-sm text-[#6e585c] mt-1">Логин: @{{ user.username }}</p>
-      </div>
-      <div class="bg-white border border-[#ebe2de] p-4 rounded-xl text-center min-w-[165px] self-stretch sm:self-auto shadow-sm">
-        <div class="text-xs text-[#6e585c] font-bold uppercase tracking-wider">Ваши часы</div>
-        <div class="font-display text-2xl sm:text-3xl font-bold text-[#5c0613] mt-1">{{ total_hours }} ч.</div>
-      </div>
-    </div>
-
-    <!-- Достижения -->
-    {% if achievements %}
-    {% set unlocked_count = achievements | selectattr("unlocked") | list | length %}
-    <div class="bg-[#faf7f5] p-6 sm:p-8 rounded-2xl shadow-xl border border-white/50">
-      <div class="flex flex-wrap justify-between items-center gap-2 mb-5">
-        <h2 class="text-base sm:text-lg font-bold text-[#23090e]">Достижения</h2>
-        <span class="text-xs font-bold bg-amber-500/15 text-amber-800 border border-amber-500/25 px-3 py-1 rounded-full">
-          Открыто: {{ unlocked_count }} / {{ achievements|length }}
-        </span>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-        {% for a in achievements %}
-        <div class="p-4 rounded-xl border transition {% if a.unlocked %}bg-white border-amber-400/50 shadow-sm{% else %}bg-white/60 border-[#ebe2de] opacity-75{% endif %}">
-          <div class="flex items-start gap-3">
-            <div class="w-9 h-9 rounded-lg flex items-center justify-center text-xs font-extrabold shrink-0 {% if a.unlocked %}bg-gradient-to-br from-amber-400 to-amber-600 text-[#23090e]{% else %}bg-[#ebe2de] text-[#6e585c]{% endif %}">
-              {{ loop.index }}
-            </div>
-            <div class="min-w-0 flex-1">
-              <div class="flex items-center justify-between gap-2">
-                <div class="font-bold text-sm {% if a.unlocked %}text-[#5c0613]{% else %}text-[#6e585c]{% endif %}">
-                  {{ a.title }}
-                </div>
-                {% if a.unlocked %}
-                <span class="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full shrink-0">Получено</span>
-                {% endif %}
-              </div>
-              <p class="text-xs text-[#6e585c] mt-0.5">{{ a.desc }}</p>
-
-              <!-- Прогресс-бар -->
-              <div class="mt-2.5">
-                <div class="flex justify-between text-[11px] font-semibold mb-1 {% if a.unlocked %}text-amber-800{% else %}text-[#9c8a8d]{% endif %}">
-                  <span>Прогресс</span>
-                  <span>{{ a.progress_text }}</span>
-                </div>
-                <div class="w-full h-1.5 bg-[#ebe2de] rounded-full overflow-hidden">
-                  <div class="h-full rounded-full transition-all {% if a.unlocked %}bg-amber-500{% else %}bg-[#b8a9ac]{% endif %}"
-                       style="width: {{ a.percent }}%;"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-    </div>
-    {% endif %}
-
-    <!-- Список посещённых акций -->
-    <div class="bg-[#faf7f5] p-6 sm:p-8 rounded-2xl shadow-xl border border-white/50">
-      <h2 class="text-base sm:text-lg font-bold text-[#23090e] mb-4">Посещённые акции и начисления</h2>
-      <div class="divide-y divide-[#ebe2de]">
-        {% for item in history %}
-        <div class="py-3.5 flex justify-between items-center gap-3">
-          <div>
-            {% if item.event_id %}
-              <a href="/event/{{ item.event_id }}" class="font-semibold text-[#23090e] hover:text-[#5c0613] hover:underline">
-                {{ item.event_title }}
-              </a>
+    <div class="card">
+      <div class="profile-head">
+        <div class="profile-left">
+          <div class="avatar-box">
+            {% if user.avatar_url %}
+              <img src="{{ user.avatar_url }}" alt="{{ user.name }}" class="avatar-img">
             {% else %}
-              <div class="font-semibold text-[#23090e]">{{ item.event_title }}</div>
+              <div class="avatar-fallback">{{ user.name[0]|upper if user.name else 'В' }}</div>
             {% endif %}
-            <div class="text-xs text-[#6e585c] mt-0.5">Дата: {{ item.event_date }}</div>
+            <form id="avatarUploadForm" action="/profile/avatar" method="post" enctype="multipart/form-data">
+              <label class="avatar-upload-btn" title="Сменить фото">
+                <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                <input type="file" name="avatar_file" accept="image/jpeg,image/png,image/webp,image/gif" style="display:none;" onchange="document.getElementById('avatarUploadForm').submit()">
+              </label>
+            </form>
           </div>
-          <span class="bg-amber-500/15 text-amber-800 border border-amber-500/25 font-bold text-sm px-3 py-1 rounded-full shrink-0">
-            +{{ item.hours }} ч.
-          </span>
+
+          <div style="min-width: 0;">
+            <span class="role-pill">Волонтёр ДоброЗАУ</span>
+            <h1 class="user-name">{{ user.name }}</h1>
+            <div class="user-meta">
+              <span>Логин: @{{ user.username }}</span>
+              {% if user.avatar_url %}
+                <form action="/profile/avatar/delete" method="post" onsubmit="return confirm('Удалить фото профиля?');">
+                  <button type="submit" class="del-photo-btn">Удалить фото</button>
+                </form>
+              {% endif %}
+            </div>
+          </div>
         </div>
-        {% else %}
-        <div class="py-6 text-center text-[#6e585c] text-sm italic">
-          У вас пока нет начисленных часов за проведённые акции.
+
+        <div class="hours-box">
+          <div class="hours-label">Ваши часы</div>
+          <div class="hours-val">{{ total_hours }} ч.</div>
         </div>
-        {% endfor %}
       </div>
     </div>
 
-    <!-- Изменение логина и пароля -->
-    <div class="bg-[#faf7f5] p-6 sm:p-8 rounded-2xl shadow-xl border border-white/50">
-      <h2 class="text-base sm:text-lg font-bold text-[#23090e] mb-4">Безопасность профиля</h2>
-      <form action="/profile/update" method="post" class="space-y-4 max-w-md">
-        <div>
-          <label class="block text-xs font-semibold text-[#6e585c] mb-1">Ваш логин</label>
-          <input type="text" name="new_login" value="{{ user.username }}" required class="w-full px-3.5 py-2 bg-white border border-[#d6ccc8] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
+    <div class="card">
+      <div class="card-head">
+        <h2 class="card-title">Открытые достижения</h2>
+        <span class="role-pill">Собрано: {{ achievements|length }} / {{ total_achievements_count }}</span>
+      </div>
+      {% if achievements %}
+      <div class="ach-grid">
+        {% for a in achievements %}
+        <div class="ach-item">
+          <div class="ach-icon">{{ a.icon }}</div>
+          <div>
+            <div class="ach-title">{{ a.title }}</div>
+            <div class="ach-desc">{{ a.desc }}</div>
+          </div>
         </div>
-        <div>
-          <label class="block text-xs font-semibold text-[#6e585c] mb-1">Новый пароль (оставьте пустым, если не меняете)</label>
-          <input type="password" name="new_password" placeholder="Минимум 6 символов" class="w-full px-3.5 py-2 bg-white border border-[#d6ccc8] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-ach">
+        <div style="font-weight: 700; font-size: 0.9rem; color: var(--primary);">Достижения пока скрыты</div>
+        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Участвуйте в акциях ДоброЗАУ — открытые достижения появятся здесь автоматически.</div>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="card">
+      <h2 class="card-title" style="margin-bottom: 12px;">Посещённые акции и начисления</h2>
+      {% for item in history %}
+      <div class="history-row">
+        <div style="min-width: 0;">
+          {% if item.event_id %}
+            <a href="/event/{{ item.event_id }}" class="history-link">{{ item.event_title }}</a>
+          {% else %}
+            <div class="history-link">{{ item.event_title }}</div>
+          {% endif %}
+          <div class="history-date">Дата: {{ item.event_date }}</div>
         </div>
-        <div>
-          <label class="block text-xs font-semibold text-[#6e585c] mb-1">Текущий пароль (для подтверждения изменений)</label>
-          <input type="password" name="old_password" required placeholder="Введите текущий пароль" class="w-full px-3.5 py-2 bg-white border border-[#d6ccc8] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#5c0613]">
+        <span class="hours-pill">+{{ item.hours }} ч.</span>
+      </div>
+      {% else %}
+      <div style="text-align: center; padding: 20px 0; font-size: 0.88rem; color: var(--text-muted);">
+        У вас пока нет начисленных часов за проведённые акции.
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="card">
+      <h2 class="card-title" style="margin-bottom: 16px;">Безопасность профиля</h2>
+      <form action="/profile/update" method="post" class="sec-form">
+        <div class="field">
+          <label>Ваш логин</label>
+          <input type="text" name="new_login" value="{{ user.username }}" required>
         </div>
-        <button type="submit" class="bg-[#5c0613] text-white px-5 py-2.5 rounded-lg font-semibold text-sm hover:bg-[#3f030b] transition shadow-sm">
-          Сохранить изменения
-        </button>
+        <div class="field">
+          <label>Новый пароль (оставьте пустым, если не меняете)</label>
+          <input type="password" name="new_password" placeholder="Минимум 6 символов">
+        </div>
+        <div class="field">
+          <label>Текущий пароль (для подтверждения)</label>
+          <input type="password" name="old_password" required placeholder="Введите текущий пароль">
+        </div>
+        <button type="submit" class="btn-save">Сохранить изменения</button>
       </form>
     </div>
-
   </div>
 </body>
 </html>
